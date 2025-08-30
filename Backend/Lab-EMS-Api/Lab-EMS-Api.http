@@ -1,0 +1,6 @@
+@Lab_EMS_Api_HostAddress = http://localhost:5282
+
+GET {{Lab_EMS_Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
