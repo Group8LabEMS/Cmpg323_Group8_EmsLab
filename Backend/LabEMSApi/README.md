@@ -7,11 +7,13 @@ Follow this guide to bootup the boilerplate
 
 - **Controllers/** → Handles API endpoints (e.g., EquipmentController, BookingController)
 - **Data/** → Database context and migrations
-- **DTO/** → Data Transfer Objects (request/response models)
+- **DTOs/** → Data Transfer Objects (request/response models)
 - **Middlewares/** → Custom middleware (e.g., role-based authorization)
 - **Services/** → Business logic (equipment booking, availability checks)
 - **Repository/** → Data access layer (CRUD operations, queries)
 - **Models/** → Entity classes (Equipment, User, Booking, etc.)
+- **Exceptions/** -> contains global exception handlers.
+
 
 # /Folders not limited to these/.
 

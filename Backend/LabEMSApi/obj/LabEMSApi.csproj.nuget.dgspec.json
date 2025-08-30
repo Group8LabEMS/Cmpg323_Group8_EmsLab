@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Givenchie\\Desktop\\NWU 2025\\SEMESTER 2\\IT DEV- CMPG323\\Cmpg323_Group8_EmsLab\\backend\\LabEMSApi\\LabEMSApi.csproj": {}
+    "C:\\Users\\Givenchie\\Desktop\\NWU 2025\\SEMESTER 2\\IT DEV- CMPG323\\Cmpg323_Group8_EmsLab\\Backend\\LabEMSApi\\LabEMSApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Givenchie\\Desktop\\NWU 2025\\SEMESTER 2\\IT DEV- CMPG323\\Cmpg323_Group8_EmsLab\\backend\\LabEMSApi\\LabEMSApi.csproj": {
+    "C:\\Users\\Givenchie\\Desktop\\NWU 2025\\SEMESTER 2\\IT DEV- CMPG323\\Cmpg323_Group8_EmsLab\\Backend\\LabEMSApi\\LabEMSApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Givenchie\\Desktop\\NWU 2025\\SEMESTER 2\\IT DEV- CMPG323\\Cmpg323_Group8_EmsLab\\backend\\LabEMSApi\\LabEMSApi.csproj",
+        "projectUniqueName": "C:\\Users\\Givenchie\\Desktop\\NWU 2025\\SEMESTER 2\\IT DEV- CMPG323\\Cmpg323_Group8_EmsLab\\Backend\\LabEMSApi\\LabEMSApi.csproj",
         "projectName": "LabEMSApi",
-        "projectPath": "C:\\Users\\Givenchie\\Desktop\\NWU 2025\\SEMESTER 2\\IT DEV- CMPG323\\Cmpg323_Group8_EmsLab\\backend\\LabEMSApi\\LabEMSApi.csproj",
+        "projectPath": "C:\\Users\\Givenchie\\Desktop\\NWU 2025\\SEMESTER 2\\IT DEV- CMPG323\\Cmpg323_Group8_EmsLab\\Backend\\LabEMSApi\\LabEMSApi.csproj",
         "packagesPath": "C:\\Users\\Givenchie\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Givenchie\\Desktop\\NWU 2025\\SEMESTER 2\\IT DEV- CMPG323\\Cmpg323_Group8_EmsLab\\backend\\LabEMSApi\\obj\\",
+        "outputPath": "C:\\Users\\Givenchie\\Desktop\\NWU 2025\\SEMESTER 2\\IT DEV- CMPG323\\Cmpg323_Group8_EmsLab\\Backend\\LabEMSApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Givenchie\\AppData\\Roaming\\NuGet\\NuGet.Config",
