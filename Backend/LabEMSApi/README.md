@@ -15,16 +15,18 @@ Follow this guide to bootup the boilerplate
 - **Exceptions/** -> contains global exception handlers.
 
 
-# /Folders not limited to these/.
-
 ## ⚙️ Requirements
 - .NET 8.0 SDK (8.0.100 or higher)
-- MySQL will be configure in `appsettings.json`
+-  MySQL will be configure in `appsettings.json`
 
 ## 🚀 Running the Backend
 
 ```bash
-cd backend/Lab-EMS-API
+docker build -t lab-ems-api .
+
+docker run -d -p 5000:5000 -p 7000:7000 --name labemsapi labemsapi
+
+cd backend/LabEMSAPI
 dotnet restore    # install dependencies
 dotnet build      # build the project
 dotnet run        # run the API

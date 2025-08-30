@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LabEMSApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7ee11be00f11c1e0e655e688d57b3f2178996400")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+edef6b86dafab8d09602effe380319ff6cf5b47c")]
 [assembly: System.Reflection.AssemblyProductAttribute("LabEMSApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LabEMSApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
