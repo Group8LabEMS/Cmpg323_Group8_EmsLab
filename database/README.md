@@ -4,7 +4,6 @@ This folder contains SQL scripts for creating and managing the database for the 
 
 ## Available Scripts
 
-- **create_tables.sql**: Basic SQL schema for creating tables with SQLite syntax
 - **create_tables_mysql.sql**: MySQL-compatible version of the database schema
 
 ## MySQL Docker Setup Guide
@@ -126,7 +125,7 @@ The system uses a relational database with the following tables:
 
 ## Entity Relationship Diagram (ERD)
 
-The database structure is based on the ERD located at `/documents/Diagrams/5_Data_Architecture_ERD.drawio`.
+The database structure is based on the ERD located at TBC!!!
 
 ## Additional Database Setup Instructions
 
@@ -199,18 +198,6 @@ docker logs ems-mysql
 # Remove container
 docker rm ems-mysql
 ```
-
-### For SQLite
-
-1. Install SQLite if not already installed
-2. Create a new database:
-   ```
-   sqlite3 ems_lab.db
-   ```
-3. Run the SQLite script:
-   ```
-   .read create_tables.sql
-   ```
 
 ## Best Practices
 
