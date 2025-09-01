@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "exanVogsMpDQSPPtjKlsXbd6sQxkAN3tfJ8lUW1QjzU=",
+  "Source": "LabEMSApi",
+  "BasePath": "_content/LabEMSApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

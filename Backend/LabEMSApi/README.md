@@ -21,11 +21,15 @@ Follow this guide to bootup the boilerplate
 
 ## 🚀 Running the Backend
 
+## Docker
 ```bash
-docker build -t lab-ems-api .
+
+docker build -t labemsapi .
 
 docker run -d -p 5000:5000 -p 7000:7000 --name labemsapi labemsapi
 
+
+### Run Locally 
 cd backend/LabEMSAPI
 dotnet restore    # install dependencies
 dotnet build      # build the project

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using LabEMSApi.Models;
 
 
 namespace LabEMSApi.DTO.Equipment
@@ -17,7 +18,7 @@ namespace LabEMSApi.DTO.Equipment
         public required String Type { get; set; }       //clarify if we wont have a Type Entity => 1:M
 
         [Required]
-        public required EquipmentStatus Status { get; set; } = EquipmentStatus.Status1;
+        public required EquipmentStatus Status { get; set; } = EquipmentStatus.Available;
 
         [Required]
         public required EquipmentAvailability Availability { get; set; } = EquipmentAvailability.Available;
@@ -25,17 +26,5 @@ namespace LabEMSApi.DTO.Equipment
         public DateTime CreatedDate { get; set; } = DateTime.Now;
     }
 
-    public enum EquipmentStatus
-    {
-        // clarify in the meeting the status values
-        Status1 = 1,
-        Status2
-    }
-
-    public enum EquipmentAvailability
-    {
-        Available = 1,      //user can book it
-        Unavailable,    //currently booked by another user
-        InMaintenance   // still being maintained
-    }
+   
 }
