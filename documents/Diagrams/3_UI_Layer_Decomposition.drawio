@@ -1,0 +1,76 @@
+<mxfile host="65bd71144e">
+    <diagram name="UI Layer Decomposition" id="0">
+        <mxGraphModel dx="801" dy="747" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="lane_users" value="Users" style="shape=swimlane;rounded=1;horizontal=0;startSize=28;swimlaneFillColor=#FAFAFA;strokeColor=#BDBDBD;fontStyle=1;rotation=90;" parent="1" vertex="1">
+                    <mxGeometry x="-60" y="240" width="480" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor_students" value="Students" style="shape=rectangle;rounded=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontStyle=1;" parent="lane_users" vertex="1">
+                    <mxGeometry x="160" y="-5" width="160" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor_staff" value="Lab Staff" style="shape=rectangle;rounded=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontStyle=1;" parent="lane_users" vertex="1">
+                    <mxGeometry x="160" y="80" width="160" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor_admins" value="Administrators" style="shape=rectangle;rounded=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontStyle=1;" parent="lane_users" vertex="1">
+                    <mxGeometry x="160" y="165" width="160" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="lane_ui" value="UI Layer" style="shape=swimlane;rounded=1;horizontal=0;startSize=28;swimlaneFillColor=#FAFAFA;strokeColor=#BDBDBD;fontStyle=1;rotation=90;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="220" width="620" height="280" as="geometry"/>
+                </mxCell>
+                <mxCell id="ui_student" value="" style="shape=rectangle;rounded=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontStyle=1;align=center;" parent="lane_ui" vertex="1">
+                    <mxGeometry x="210" y="-110" width="220" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="ui_staffadmin" value="" style="shape=rectangle;rounded=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontStyle=1;" parent="lane_ui" vertex="1">
+                    <mxGeometry x="210" y="115" width="220" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-weight: 700; text-wrap-mode: nowrap;&quot;&gt;Student Portal&lt;/span&gt;&lt;br style=&quot;color: rgb(63, 63, 63); scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); padding: 0px; margin: 0px; font-weight: 700; text-wrap-mode: nowrap;&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-weight: 700; text-wrap-mode: nowrap;&quot;&gt;&amp;nbsp;- Maintain Bookings&lt;/span&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="lane_ui">
+                    <mxGeometry x="247.5" y="-50" width="145" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-weight: 700; text-wrap-mode: nowrap;&quot;&gt;Staff/Admin Portal&lt;/span&gt;&lt;br style=&quot;color: rgb(63, 63, 63); scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); padding: 0px; margin: 0px; font-weight: 700; text-wrap-mode: nowrap;&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-weight: 700; text-wrap-mode: nowrap;&quot;&gt;&amp;nbsp;- Maintain Equipment&lt;/span&gt;&lt;br style=&quot;color: rgb(63, 63, 63); scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); padding: 0px; margin: 0px; font-weight: 700; text-wrap-mode: nowrap;&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-weight: 700; text-wrap-mode: nowrap;&quot;&gt;&amp;nbsp;- Maintain&lt;/span&gt;&lt;b&gt;&lt;span style=&quot;color: rgb(0, 0, 0); text-wrap-mode: nowrap;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0); text-align: center; text-wrap-mode: nowrap;&quot;&gt;Maintenance Scheduling&lt;/span&gt;&lt;/b&gt;&lt;br style=&quot;color: rgb(63, 63, 63); scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); padding: 0px; margin: 0px; font-weight: 700; text-wrap-mode: nowrap;&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-weight: 700; text-wrap-mode: nowrap;&quot;&gt;&amp;nbsp;- Report Audit Dashboards&lt;/span&gt;&lt;div&gt;&lt;b&gt;&lt;font color=&quot;#000000&quot;&gt;&lt;span style=&quot;text-wrap-mode: nowrap;&quot;&gt;&amp;nbsp;- Maintain&amp;nbsp;&lt;/span&gt;&lt;/font&gt;&lt;span style=&quot;color: rgb(0, 0, 0); text-align: center; text-wrap-mode: nowrap; background-color: transparent;&quot;&gt;Access Management&lt;/span&gt;&lt;/b&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="lane_ui">
+                    <mxGeometry x="219" y="180" width="222.5" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="lane_shared" value="Shared Features" style="shape=swimlane;rounded=1;horizontal=0;startSize=28;swimlaneFillColor=#FAFAFA;strokeColor=#BDBDBD;fontStyle=1;rotation=90;" parent="1" vertex="1">
+                    <mxGeometry x="740" y="200" width="280" height="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="feat_notifications" value="Maintain Notifications" style="shape=rectangle;rounded=1;fillColor=#FFF3E0;strokeColor=#EF6C00;fontStyle=1;" parent="lane_shared" vertex="1">
+                    <mxGeometry x="30" y="40" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="feat_rbac" value="Role-Based Access Control (RBAC)" style="shape=rectangle;rounded=1;fillColor=#FFF3E0;strokeColor=#EF6C00;fontStyle=1;" parent="lane_shared" vertex="1">
+                    <mxGeometry x="30" y="120" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Login" style="shape=rectangle;rounded=1;fillColor=#FFF3E0;strokeColor=#EF6C00;fontStyle=1;" vertex="1" parent="lane_shared">
+                    <mxGeometry x="30" y="190" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" style="endArrow=block;edgeStyle=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="actor_students" target="ui_student" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" style="endArrow=block;edgeStyle=none;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="actor_staff" target="ui_staffadmin" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" style="endArrow=block;edgeStyle=none;" parent="1" source="actor_admins" target="ui_staffadmin" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" style="endArrow=block;edgeStyle=none;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="ui_student" target="feat_notifications" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e5" style="endArrow=block;edgeStyle=none;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" parent="1" source="ui_staffadmin" target="feat_notifications" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e6" style="endArrow=block;edgeStyle=none;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="ui_student" target="feat_rbac" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7" style="endArrow=block;edgeStyle=none;" parent="1" source="ui_staffadmin" target="feat_rbac" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" style="edgeStyle=none;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="ui_student" target="5">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" style="edgeStyle=none;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="1" source="ui_staffadmin" target="5">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
