@@ -10,12 +10,12 @@
     <h1>NWU LabEMS</h1>
     <form onsubmit="login(event)">
       <input 
-  type="text" 
-  id="username" 
-  placeholder="Enter Student/Staff Number" 
-  required 
-  pattern="\d{8}" 
-  title="Must be an 8-digit student/staff number">
+          type="text" 
+          id="username" 
+          placeholder="Enter Student/Staff Number" 
+          required 
+          pattern="\d{8}" 
+          title="Must be an 8-digit student/staff number">
       
       <select id="role" required>
         <option value="">Select Role</option>
@@ -26,9 +26,11 @@
       </select>
       
       <button type="submit">Login</button>
+      
+
       <p id="loginError" class="error"></p>
     </form>
   </div>
-  <script src="script.js"></script>
+  <script src="script.js" type=""module></script>
 </body>
 </html>
