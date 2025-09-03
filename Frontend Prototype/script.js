@@ -1,4 +1,4 @@
-// Fake Data Stores (not needed can be removed once API is implemented)
+// Fake Data for testing (not needed in final)
 let equipment = [
   { id: 1, name: "Centrifuge", type: "Lab Equipment", status: "Available" },
   { id: 2, name: "Microscope", type: "Lab Equipment", status: "In Use" }
@@ -43,7 +43,7 @@ window.onload = function() {
   updateDashboard();
 };
 
-// Setup navigation menu based on role
+// Setup navigation menu based on users role
 function setupMenu() {
   const navMenu = document.getElementById("navMenu");
   navMenu.innerHTML = "";
@@ -55,7 +55,7 @@ function setupMenu() {
     navMenu.appendChild(link);
   });
 
-  // Toggle forms based on role
+  // Toggle forms based on users role
   if (currentUser.role === "admin" || currentUser.role === "lecturer") {
     document.getElementById("equipmentForm").classList.remove("hidden");
   }
@@ -148,14 +148,14 @@ function addMaintenance() {
   }
 }
 
-// Audit logging
+// Audit
 function login(event) {
   event.preventDefault();
   const username = document.getElementById("username").value;
   const role = document.getElementById("role").value;
   const errorEl = document.getElementById("loginError");
 
-  // Validate student/staff number (8 digits only)
+  // Validate student/staff number
   if (!/^\d{8}$/.test(username)) {
     errorEl.textContent = "Invalid number. Please enter an 8-digit student/staff number.";
     return;
