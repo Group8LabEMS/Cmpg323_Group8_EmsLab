@@ -1,4 +1,4 @@
-// Fake Data Stores
+// Fake Data Stores (not needed can be removed once API is implemented)
 let equipment = [
   { id: 1, name: "Centrifuge", type: "Lab Equipment", status: "Available" },
   { id: 2, name: "Microscope", type: "Lab Equipment", status: "In Use" }
