@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NWU LabEMS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>NWU LabEMS</h1>
+    <nav id="navMenu"></nav>
+    <button id="logoutBtn" onclick="logout()">Logout</button>
+  </header>
+
+  <div class="container">
+    <!-- Dashboard -->
+    <div id="dashboard" class="page active">
+      <h2>Dashboard</h2>
+      <div class="dashboard-cards">
+        <div class="card"><h3>Total Equipment</h3><p id="totalEquipment">0</p></div>
+        <div class="card"><h3>Total Bookings</h3><p id="totalBookings">0</p></div>
+        <div class="card"><h3>Total Maintenance</h3><p id="totalMaintenance">0</p></div>
+        <div class="card"><h3>Total Audit Logs</h3><p id="totalAudit">0</p></div>
+      </div>
+    </div>
+
+    <!-- Equipment -->
+    <div id="equipment" class="page">
+      <h2>Equipment</h2>
+      <table>
+        <thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Status</th></tr></thead>
+        <tbody id="equipmentTable"></tbody>
+      </table>
+      <div id="equipmentForm" class="form-section hidden">
+        <h3>Add New Equipment</h3>
+        <input type="text" id="eqName" placeholder="Equipment Name">
+        <select id="eqType"><option>Lab Equipment</option><option>Microscope</option></select>
+        <select id="eqStatus"><option>Available</option><option>In Use</option><option>Under Maintenance</option></select>
+        <button onclick="addEquipment()">Add Equipment</button>
+      </div>
+    </div>
+
+    <!-- Bookings -->
+    <div id="bookings" class="page">
+      <h2>Bookings</h2>
+      <table>
+        <thead><tr><th>ID</th><th>User</th><th>Equipment</th><th>From</th><th>To</th><th>Status</th></tr></thead>
+        <tbody id="bookingTable"></tbody>
+      </table>
+      <div class="form-section">
+        <h3>Create Booking</h3>
+        <input type="text" id="bkUser" placeholder="User Name">
+        <input type="text" id="bkEquipment" placeholder="Equipment Name">
+        <input type="datetime-local" id="bkFrom">
+        <input type="datetime-local" id="bkTo">
+        <select id="bkStatus"><option>Pending</option><option>Approved</option><option>Rejected</option></select>
+        <button onclick="addBooking()">Create Booking</button>
+      </div>
+    </div>
+
+    <!-- Maintenance -->
+    <div id="maintenance" class="page">
+      <h2>Maintenance</h2>
+      <table>
+        <thead><tr><th>ID</th><th>Equipment</th><th>Type</th><th>Status</th><th>Scheduled For</th></tr></thead>
+        <tbody id="maintenanceTable"></tbody>
+      </table>
+      <div id="maintenanceForm" class="form-section hidden">
+        <h3>Schedule Maintenance</h3>
+        <input type="text" id="mtEquipment" placeholder="Equipment Name">
+        <select id="mtType"><option>Routine</option><option>Repair</option><option>Inspection</option></select>
+        <select id="mtStatus"><option>Scheduled</option><option>In Progress</option><option>Completed</option></select>
+        <input type="datetime-local" id="mtScheduled">
+        <button onclick="addMaintenance()">Schedule</button>
+      </div>
+    </div>
+
+    <!-- Audit -->
+    <div id="audit" class="page">
+      <h2>Audit Logs</h2>
+      <table>
+        <thead><tr><th>ID</th><th>User</th><th>Action</th><th>Entity</th><th>Timestamp</th></tr></thead>
+        <tbody id="auditTable"></tbody>
+      </table>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
