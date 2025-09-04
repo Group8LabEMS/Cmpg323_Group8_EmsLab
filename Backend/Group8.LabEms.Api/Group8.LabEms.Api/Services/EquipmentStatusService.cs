@@ -38,9 +38,18 @@ namespace Group8.LabEms.Api.Services
 
         }
 
-        public Task<bool> DeleteEquipmentStatus(int id)
+        public async Task<bool> DeleteEquipmentStatus(int id)
         {
-            throw new NotImplementedException();
+            var equipStatusToDelete = await _context
+            .equipment_status
+            .FirstOrDefaultAsync(es => es.Id == id);
+            if (equipStatusToDelete == null) return false;
+            
+            _context.equipment_status.Remove(equipStatusToDelete);
+            await _context.SaveChangesAsync();
+            return true;
+
+
         }
 
         public async Task<IEnumerable<EquipmentStatusDTO>> GetAllEquipmentStatus()

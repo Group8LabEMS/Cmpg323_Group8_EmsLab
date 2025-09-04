@@ -16,6 +16,28 @@ namespace Group8.LabEms.Api.Controllers
 
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteEquipmentStatus(int id)
+        {
+            try
+            {
+                var status = await _service.DeleteEquipmentStatus(id);
+                if (!status) return NotFound($"status with id {id} does not exist");
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500,
+             new
+             {
+                 message = "An error occurred while deleting equipment status",
+                 error = ex.Message
+             });
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<EquipmentStatusDTO>> AddEquipmentStatus([FromBody] EquipmentStatusDTO dto)
         {
