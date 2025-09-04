@@ -16,6 +16,46 @@ namespace Group8.LabEms.Api.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<ActionResult<EquipmentDTO>> AddEquipment([FromBody] EquipmentDTO dto)
+        {
+            try
+            {
+                var equipment = await _service.AddEquipment(dto);
+                return CreatedAtAction(nameof(GetEquipmentById), new { id = equipment.Id }, equipment);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500,
+               new
+               {
+                   message = "An error occurred while adding new equipment",
+                   error = ex.Message
+               });
+            }
+        }
+
+        [HttpGet("id")]
+        public async Task<ActionResult<EquipmentDTO>> GetEquipmentById(int id)
+        {
+            try
+            {
+                var equipment = await _service.GetEquipmentById(id);
+                if (equipment == null) return NotFound("Equipment with that id does not exist");
+                return Ok(equipment);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500,
+                new
+                {
+                    message = "An error occurred while retrieving equipment",
+                    error = ex.Message
+                });
+            }
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EquipmentDTO>>> GetAllEquipment()
         {

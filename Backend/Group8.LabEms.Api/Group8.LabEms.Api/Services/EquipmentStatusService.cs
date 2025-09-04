@@ -1,5 +1,6 @@
 using Group8.LabEms.Api.Data;
 using Group8.LabEms.Api.DTO.EquipmentStatus;
+using Group8.LabEms.Api.Models.Equipments;
 using Group8.LabEms.Api.Profiles;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,9 +17,25 @@ namespace Group8.LabEms.Api.Services
         }
 
 
-        public Task<EquipmentStatusDTO> AddEquipmentStatus(EquipmentStatusDTO dto)
+        //ADD NEW EQUIPMENT STATUS TO THE DATABASE
+        public async Task<EquipmentStatusDTO> AddEquipmentStatus(EquipmentStatusDTO dto)
         {
-            throw new NotImplementedException();
+            var newEquipmentStatus = new EquipmentStatus
+            {
+                Description = dto.Description,
+                Name = dto.Description
+            };
+
+            await _context.equipment_status.AddAsync(newEquipmentStatus);
+            await _context.SaveChangesAsync();
+
+            return new EquipmentStatusDTO
+            {
+                Id = newEquipmentStatus.Id,
+                Description = newEquipmentStatus.Description,
+                Name = newEquipmentStatus.Name
+            };
+
         }
 
         public Task<bool> DeleteEquipmentStatus(int id)

@@ -1,3 +1,4 @@
+using Group8.LabEms.Api.DTO.Equipments;
 using Group8.LabEms.Api.DTO.EquipmentStatus;
 using Group8.LabEms.Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,26 @@ namespace Group8.LabEms.Api.Controllers
         {
             _service = service;
 
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<EquipmentStatusDTO>> AddEquipmentStatus([FromBody] EquipmentStatusDTO dto)
+        {
+            try
+            {
+                var status = await _service.AddEquipmentStatus(dto);
+                return CreatedAtAction(nameof(GetEquipmentStatusById), new { id = status.Id }, status);
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500,
+               new
+               {
+                   message = "An error occurred while adding new status",
+                   error = ex.Message
+               });
+            }
         }
 
         [HttpGet("id")]

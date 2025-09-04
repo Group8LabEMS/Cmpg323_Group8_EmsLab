@@ -1,6 +1,7 @@
 
 using Group8.LabEms.Api.Data;
 using Group8.LabEms.Api.DTO.Equipments;
+using Group8.LabEms.Api.Models.Equipments;
 using Group8.LabEms.Api.Profiles;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,9 +18,30 @@ namespace Group8.LabEms.Api.Services
             _context = context;
 
         }
-        public Task<EquipmentDTO> AddEquipment(EquipmentDTO equipmentDto)
+        public async Task<EquipmentDTO> AddEquipment(EquipmentDTO equipmentDto)
         {
-            throw new NotImplementedException();
+            var newEquipment = new Equipment
+            {
+                Availability = equipmentDto.Availability,
+                Name = equipmentDto.Name,
+                CreatedAt = equipmentDto.CreatedAt,
+                EquipmentStatusId = equipmentDto.EquipmentStatusId,
+                EquipmentTypeId = equipmentDto.EquipmentStatusId,
+
+            };
+
+            await _context.equipment.AddAsync(newEquipment);
+            await _context.SaveChangesAsync();
+
+            return new EquipmentDTO
+            {
+                Id = newEquipment.Id,
+                Availability = newEquipment.Availability,
+                Name = newEquipment.Name,
+                CreatedAt = newEquipment.CreatedAt,
+                EquipmentStatusId = newEquipment.EquipmentStatusId,
+                EquipmentTypeId = newEquipment.EquipmentTypeId
+            };
         }
 
         public Task<bool> DeleteEquipment(int id)
@@ -33,9 +55,21 @@ namespace Group8.LabEms.Api.Services
             return EquipmentMapper.MapToDTOList(equipments);
         }
 
-        public Task<EquipmentDTO?> GetEquipmentById(int id)
+        public async Task<EquipmentDTO?> GetEquipmentById(int id)
         {
-            throw new NotImplementedException();
+            var equipment = await _context.equipment.FindAsync(id);
+            if (equipment == null) return null;
+
+            var equipDTO = new EquipmentDTO
+            {
+                Availability = equipment.Availability,
+                CreatedAt = equipment.CreatedAt,
+                EquipmentStatusId = equipment.EquipmentStatusId,
+                EquipmentTypeId = equipment.EquipmentTypeId,
+                Id = equipment.Id,
+                Name = equipment.Name
+            };
+            return equipDTO;
         }
 
         public Task<EquipmentDTO?> UpdateEquipment(int id, EquipmentDTO equipmentDto)
