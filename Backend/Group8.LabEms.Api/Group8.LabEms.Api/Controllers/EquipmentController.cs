@@ -1,5 +1,5 @@
-using System.Collections;
 using Group8.LabEms.Api.DTO.Equipments;
+using Group8.LabEms.Api.DTO.EquipmentStatus;
 using Group8.LabEms.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,7 +26,12 @@ namespace Group8.LabEms.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An error occurred while retrieving available equipmentss", error = ex.Message });
+                return StatusCode(500,
+                new
+                {
+                    message = "An error occurred while retrieving available equipmentss",
+                    error = ex.Message
+                });
 
             }
         }

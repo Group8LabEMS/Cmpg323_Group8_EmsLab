@@ -10,6 +10,7 @@ namespace Group8.LabEms.Api.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         DbSet<UserModel> Users { get; set; }
-        public DbSet<Equipment> Equipments { get; set; }
+        public DbSet<Equipment> equipment { get; set; }
+        public DbSet<EquipmentStatus> equipment_status { get; set; }
     }
 }

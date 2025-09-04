@@ -29,7 +29,7 @@ namespace Group8.LabEms.Api.Services
 
         public async Task<IEnumerable<EquipmentDTO>> GetAllEquipment()
         {
-            var equipments = await _context.Equipments.ToListAsync();
+            var equipments = await _context.equipment.ToListAsync();
             return EquipmentMapper.MapToDTOList(equipments);
         }
 

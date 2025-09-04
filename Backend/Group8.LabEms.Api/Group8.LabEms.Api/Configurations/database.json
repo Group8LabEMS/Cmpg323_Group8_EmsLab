@@ -1,5 +1,5 @@
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Port=3306;Database=labems;User Id=labuser;Password=StrongPassword123;"
+    "DefaultConnection": "Server=localhost;Port=3306;Database=labems;User=root;Password=root;"
   }
 }

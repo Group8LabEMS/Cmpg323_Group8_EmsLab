@@ -2,23 +2,32 @@ using Group8.LabEms.Api.Data;
 using Group8.LabEms.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
-using MySqlConnector;
-
-
-
 var builder = WebApplication.CreateBuilder(args);
-
-//ALL SERVICES HERE
-builder.Services.AddScoped<IEquipmentService, EquipmentService>();
-
 
 // Add services to the container
 builder.Services.AddControllers();
 
+// Get connection string
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+if (string.IsNullOrEmpty(connectionString))
+{
+    // Fallback for development - replace with your actual credentials
+    connectionString = "Server=localhost;Database=labems;User=root;Password=root;";
+    Console.WriteLine("Using fallback connection string");
+}
+
+// Add DbContext with proper error handling
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+{
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+});
+
+Console.WriteLine($"Connected to database with connection string: {connectionString}");
+
+// ALL SERVICES HERE
+builder.Services.AddScoped<IEquipmentService, EquipmentService>();
+builder.Services.AddScoped<IEquipmentStatusService, EquipmentStatusService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -37,4 +46,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
