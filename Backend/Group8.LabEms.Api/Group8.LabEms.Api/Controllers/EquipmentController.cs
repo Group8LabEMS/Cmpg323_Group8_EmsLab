@@ -21,7 +21,7 @@ namespace Group8.LabEms.Api.Controllers
         {
             try
             {
-                var equipments = await _service.GetAllEquipments();
+                var equipments = await _service.GetAllEquipment();
                 return Ok(equipments);
             }
             catch (Exception ex)

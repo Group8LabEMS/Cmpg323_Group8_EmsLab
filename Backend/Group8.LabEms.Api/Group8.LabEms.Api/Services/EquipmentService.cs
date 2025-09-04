@@ -1,5 +1,7 @@
+
 using Group8.LabEms.Api.Data;
 using Group8.LabEms.Api.DTO.Equipments;
+using Group8.LabEms.Api.Profiles;
 using Microsoft.EntityFrameworkCore;
 
 namespace Group8.LabEms.Api.Services
@@ -8,39 +10,35 @@ namespace Group8.LabEms.Api.Services
     {
 
         private readonly AppDbContext _context;
-        private readonly IEquipmentService _equipmentService;
-        public EquipmentService(AppDbContext context,
-        IEquipmentService equipmentService)
+
+
+        public EquipmentService(AppDbContext context)
         {
             _context = context;
-            _equipmentService = equipmentService;
+
+        }
+        public Task<EquipmentDTO> AddEquipment(EquipmentDTO equipmentDto)
+        {
+            throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<EquipmentDTO>> GetAllEquipments()
+        public Task<bool> DeleteEquipment(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<EquipmentDTO>> GetAllEquipment()
         {
             var equipments = await _context.Equipments.ToListAsync();
-
-            return (IEnumerable<EquipmentDTO>)equipments;
+            return EquipmentMapper.MapToDTOList(equipments);
         }
 
-        Task<EquipmentDTO> IEquipmentService.CreateEquipment(AddEquipmentDTO addEquipmentDTO)
+        public Task<EquipmentDTO?> GetEquipmentById(int id)
         {
             throw new NotImplementedException();
         }
 
-        Task<bool> IEquipmentService.DeleteEquipment(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-
-
-        Task<EquipmentDTO> IEquipmentService.GetEquipment(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<EquipmentDTO> IEquipmentService.UpdateEquipment(int id, UpdateEquipmentDTO updateEquipmentDTO)
+        public Task<EquipmentDTO?> UpdateEquipment(int id, EquipmentDTO equipmentDto)
         {
             throw new NotImplementedException();
         }
