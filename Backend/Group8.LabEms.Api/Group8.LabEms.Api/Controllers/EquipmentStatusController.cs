@@ -16,6 +16,27 @@ namespace Group8.LabEms.Api.Controllers
 
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult<EquipmentStatusDTO>> UpdateStatus(int id, [FromBody] UpdateEquipmentStatusDTO dto)
+        {
+            try
+            {
+                var equipment = await _service.UpdateEquipmentStatus(id, dto);
+                return Ok(equipment);
+
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500,
+            new
+            {
+                message = "An error occurred while updating equipment",
+                error = ex.Message
+            });
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEquipmentStatus(int id)
         {

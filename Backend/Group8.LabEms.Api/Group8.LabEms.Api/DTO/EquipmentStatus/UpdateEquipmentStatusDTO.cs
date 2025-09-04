@@ -4,6 +4,6 @@ namespace Group8.LabEms.Api.DTO.Equipments
 {
     public class UpdateEquipmentStatusDTO : AddEquipmentStatusDTO
     {
-        public int Id { get; set; }
+       public int Id { get; set; }
     }
 }

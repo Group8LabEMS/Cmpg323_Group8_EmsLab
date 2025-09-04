@@ -1,4 +1,5 @@
 using Group8.LabEms.Api.Data;
+using Group8.LabEms.Api.DTO.Equipments;
 using Group8.LabEms.Api.DTO.EquipmentStatus;
 using Group8.LabEms.Api.Models.Equipments;
 using Group8.LabEms.Api.Profiles;
@@ -18,7 +19,7 @@ namespace Group8.LabEms.Api.Services
 
 
         //ADD NEW EQUIPMENT STATUS TO THE DATABASE
-        public async Task<EquipmentStatusDTO> AddEquipmentStatus(EquipmentStatusDTO dto)
+        public async Task<EquipmentStatusDTO> AddEquipmentStatus(AddEquipmentStatusDTO dto)
         {
             var newEquipmentStatus = new EquipmentStatus
             {
@@ -44,7 +45,7 @@ namespace Group8.LabEms.Api.Services
             .equipment_status
             .FirstOrDefaultAsync(es => es.Id == id);
             if (equipStatusToDelete == null) return false;
-            
+
             _context.equipment_status.Remove(equipStatusToDelete);
             await _context.SaveChangesAsync();
             return true;
@@ -72,9 +73,30 @@ namespace Group8.LabEms.Api.Services
             return statusDTO;
         }
 
-        public Task<EquipmentStatusDTO?> UpdateEquipmentStatus(int id, EquipmentStatusDTO dto)
+        public async Task<EquipmentStatusDTO?> UpdateEquipmentStatus(int id, UpdateEquipmentStatusDTO dto)
         {
-            throw new NotImplementedException();
+            var status = await _context.equipment_status.FirstOrDefaultAsync(s => s.Id == id);
+
+            if (status == null) return null;
+
+            //  UPDATE THE FIELDS HERE
+            status.Description = dto.Description;
+            status.Name = dto.Name;
+          
+
+            //PERSIST THE CHANGES
+
+            await _context.SaveChangesAsync();
+
+            //CONVERT BACK TO DTO 
+            return new EquipmentStatusDTO
+            {
+                Id = status.Id,
+                Description = status.Description,
+                Name = status.Name
+            };
         }
+
+       
     }
 }

@@ -1,3 +1,4 @@
+using Group8.LabEms.Api.DTO.Equipments;
 using Group8.LabEms.Api.DTO.EquipmentStatus;
 
 namespace Group8.LabEms.Api.Services
@@ -6,8 +7,8 @@ namespace Group8.LabEms.Api.Services
     {
         Task<IEnumerable<EquipmentStatusDTO>> GetAllEquipmentStatus();
         Task<EquipmentStatusDTO?> GetEquipmentStatusById(int id);
-        Task<EquipmentStatusDTO> AddEquipmentStatus(EquipmentStatusDTO dto);
-        Task<EquipmentStatusDTO?> UpdateEquipmentStatus(int id, EquipmentStatusDTO dto);
+        Task<EquipmentStatusDTO> AddEquipmentStatus(AddEquipmentStatusDTO dto);
+        Task<EquipmentStatusDTO?> UpdateEquipmentStatus(int id, UpdateEquipmentStatusDTO dto);
         Task<bool> DeleteEquipmentStatus(int id);
     }
     

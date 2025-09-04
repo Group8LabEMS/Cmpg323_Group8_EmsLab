@@ -18,7 +18,7 @@ namespace Group8.LabEms.Api.Services
             _context = context;
 
         }
-        public async Task<EquipmentDTO> AddEquipment(EquipmentDTO equipmentDto)
+        public async Task<EquipmentDTO> AddEquipment(AddEquipmentDTO equipmentDto)
         {
             var newEquipment = new Equipment
             {
@@ -79,9 +79,32 @@ namespace Group8.LabEms.Api.Services
             return equipDTO;
         }
 
-        public Task<EquipmentDTO?> UpdateEquipment(int id, EquipmentDTO equipmentDto)
+        public async Task<EquipmentDTO?> UpdateEquipment(int id, UpdateEquipmentDTO dto)
         {
-            throw new NotImplementedException();
+            var equipment = await _context
+            .equipment
+            .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (equipment == null) return null;
+
+            equipment.Availability = dto.Availability;
+            equipment.Name = dto.Name;
+            equipment.CreatedAt = dto.CreatedAt;
+            equipment.EquipmentStatusId = dto.EquipmentStatusId;
+            equipment.EquipmentTypeId = dto.EquipmentTypeId;
+
+
+            await _context.SaveChangesAsync();
+
+            return new EquipmentDTO
+            {
+                Availability = equipment.Availability,
+                Name = equipment.Name,
+                CreatedAt = equipment.CreatedAt,
+                EquipmentStatusId = equipment.EquipmentStatusId,
+                EquipmentTypeId = equipment.EquipmentTypeId,
+                Id = equipment.Id
+            };
         }
     }
 }

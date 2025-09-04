@@ -6,8 +6,8 @@ namespace Group8.LabEms.Api.Services
     {
         Task<IEnumerable<EquipmentDTO>> GetAllEquipment();
         Task<EquipmentDTO?> GetEquipmentById(int id);
-        Task<EquipmentDTO> AddEquipment(EquipmentDTO equipmentDto);
-        Task<EquipmentDTO?> UpdateEquipment(int id, EquipmentDTO equipmentDto);
+        Task<EquipmentDTO> AddEquipment(AddEquipmentDTO equipmentDto);
+        Task<EquipmentDTO?> UpdateEquipment(int id, UpdateEquipmentDTO equipmentDto);
         Task<bool> DeleteEquipment(int id);
 
     }
