@@ -10,6 +10,7 @@ namespace Group8.LabEms.Api.Controllers
     public class EquipmentTypeController : ControllerBase
     {
         private readonly IEquipmentTypeService _service;
+        
         public EquipmentTypeController(IEquipmentTypeService service)
         {
             _service = service;
@@ -108,7 +109,9 @@ namespace Group8.LabEms.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An error occurred while retrieving available equipment types", error = ex.Message });
+                return StatusCode(500, 
+                new { message = "An error occurred while retrieving available equipment types",
+                 error = ex.Message });
 
             }
         }

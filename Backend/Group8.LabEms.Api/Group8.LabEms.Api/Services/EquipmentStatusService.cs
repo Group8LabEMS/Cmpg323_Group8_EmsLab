@@ -56,7 +56,7 @@ namespace Group8.LabEms.Api.Services
         public async Task<IEnumerable<EquipmentStatusDTO>> GetAllEquipmentStatus()
         {
             var equipStatuses = await _context.equipment_status.ToListAsync();
-            return (IEnumerable<EquipmentStatusDTO>)Mapper.MapToDTOList(equipStatuses);
+            return Mapper.MapToDTOList(equipStatuses);
         }
 
         public async Task<EquipmentStatusDTO?> GetEquipmentStatusById(int id)

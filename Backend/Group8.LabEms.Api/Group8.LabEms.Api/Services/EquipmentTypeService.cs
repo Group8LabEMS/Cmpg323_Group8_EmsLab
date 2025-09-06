@@ -1,4 +1,5 @@
 using Group8.LabEms.Api.Data;
+using Group8.LabEms.Api.DTO.EquipmentStatus;
 using Group8.LabEms.Api.DTO.EquipmentType;
 using Group8.LabEms.Api.Models.Equipments;
 using Group8.LabEms.Api.Profiles;
@@ -10,6 +11,7 @@ namespace Group8.LabEms.Api.Services
     {
 
         private readonly AppDbContext _context;
+
         public EquipmentTypeService(AppDbContext context)
         {
             _context = context;
@@ -44,11 +46,11 @@ namespace Group8.LabEms.Api.Services
             return true;
         }
 
-        public async Task<IEnumerable<EquipmentTypeDTO>> GetAllEquipmentType()
+        public async Task<IEnumerable<EquipmentTypeDTO>?> GetAllEquipmentType()
         {
             var equipmentTypes = await _context.equipment_type.ToListAsync();
             if (equipmentTypes == null) return null;
-            return (IEnumerable<EquipmentTypeDTO>)Mapper.MapToDTOList(equipmentTypes);
+            return Mapper.MapToDTOList(equipmentTypes);
         }
 
         public async Task<EquipmentTypeDTO?> GetEquipmentTypeById(int id)

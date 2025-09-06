@@ -27,6 +27,7 @@ namespace Group8.LabEms.Api.Profiles
             };
         }
 
+        //CONVERTS  MODEL INTO AN EQUIPMENT DTO AND RETURN AS A LIST.
         public static IEnumerable<EquipmentDTO> MapToDTOList(IEnumerable<Equipment> equipments)
         {
             return equipments.Select(e => new EquipmentDTO
@@ -58,8 +59,9 @@ namespace Group8.LabEms.Api.Profiles
         //for equipment type
         public static IEnumerable<EquipmentTypeDTO> MapToDTOList(IEnumerable<EquipmentType> equipmentTypes)
         {
-            return equipmentTypes.Select(et => new EquipmentTypeDTO
-            {
+            return equipmentTypes.
+            Select(et => new EquipmentTypeDTO
+            {        
                 Description = et.Description,
                 Name = et.Name,
                 Id = et.Id

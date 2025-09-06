@@ -26,25 +26,31 @@ namespace Group8.LabEms.Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("equipment_id");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Availability")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("availability");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_date");
 
                     b.Property<int>("EquipmentStatusId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("equipment_status_id");
 
                     b.Property<int>("EquipmentTypeId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("equipment_type_id");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("longtext")
+                        .HasColumnName("name");
 
                     b.HasKey("Id");
 
@@ -72,7 +78,7 @@ namespace Group8.LabEms.Api.Migrations
                     b.ToTable("equipment_status");
                 });
 
-            modelBuilder.Entity("Group8.LabEms.Api.Models.User.UserModel", b =>
+            modelBuilder.Entity("Group8.LabEms.Api.Models.Equipments.EquipmentType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -80,9 +86,17 @@ namespace Group8.LabEms.Api.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("equipment_type");
                 });
 #pragma warning restore 612, 618
         }
