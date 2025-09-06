@@ -1,5 +1,6 @@
 using Group8.LabEms.Api.DTO.Equipments;
 using Group8.LabEms.Api.DTO.EquipmentStatus;
+using Group8.LabEms.Api.DTO.EquipmentType;
 using Group8.LabEms.Api.Models.Equipments;
 namespace Group8.LabEms.Api.Profiles
 {
@@ -9,7 +10,7 @@ namespace Group8.LabEms.Api.Profiles
         THIS CLASS HELPS IN CONVERTING FROM DTO TO MODEL AND VICE VERSUS.
     */
 
-    public static class EquipmentMapper
+    public static class Mapper
     {
         public static Equipment MapToModel(EquipmentDTO equipmentDTO)
         {
@@ -41,7 +42,7 @@ namespace Group8.LabEms.Api.Profiles
             }).ToList();
         }
 
-
+        //for equipment status
         public static IEnumerable<EquipmentStatusDTO> MapToDTOList(IEnumerable<EquipmentStatus> equipStatuses)
         {
             return equipStatuses.
@@ -51,6 +52,17 @@ namespace Group8.LabEms.Api.Profiles
                 Description = e.Description,
                 Name = e.Name
 
+            }).ToList();
+        }
+
+        //for equipment type
+        public static IEnumerable<EquipmentTypeDTO> MapToDTOList(IEnumerable<EquipmentType> equipmentTypes)
+        {
+            return equipmentTypes.Select(et => new EquipmentTypeDTO
+            {
+                Description = et.Description,
+                Name = et.Name,
+                Id = et.Id
             }).ToList();
         }
 

@@ -1,10 +1,12 @@
 using Group8.LabEms.Api.DTO.Equipments;
 using Group8.LabEms.Api.DTO.EquipmentStatus;
 using Group8.LabEms.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Group8.LabEms.Api.Controllers
 {
+    // [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class EquipmentController : ControllerBase
@@ -80,7 +82,7 @@ namespace Group8.LabEms.Api.Controllers
             }
         }
 
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<EquipmentDTO>> GetEquipmentById(int id)
         {
             try

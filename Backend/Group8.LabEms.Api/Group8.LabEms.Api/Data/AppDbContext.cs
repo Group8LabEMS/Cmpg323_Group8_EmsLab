@@ -12,5 +12,6 @@ namespace Group8.LabEms.Api.Data
         DbSet<UserModel> Users { get; set; }
         public DbSet<Equipment> equipment { get; set; }
         public DbSet<EquipmentStatus> equipment_status { get; set; }
+        public DbSet<EquipmentStatus> equipment_type { get; set; }
     }
 }

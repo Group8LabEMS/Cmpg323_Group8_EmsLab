@@ -79,7 +79,7 @@ namespace Group8.LabEms.Api.Controllers
             }
         }
 
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<EquipmentStatusDTO>> GetEquipmentStatusById(int id)
         {
             try
