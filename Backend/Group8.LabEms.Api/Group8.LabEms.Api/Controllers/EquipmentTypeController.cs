@@ -59,7 +59,7 @@ namespace Group8.LabEms.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<EquipmentTypeDTO>> AddEquipmentStatus([FromBody] AddEquipmentTypeDTO dto)
+        public async Task<ActionResult<EquipmentTypeDTO>> AddEquipmentType([FromBody] AddEquipmentTypeDTO dto)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace Group8.LabEms.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EquipmentTypeDTO>>> GetAllEquipmentStatus()
+        public async Task<ActionResult<IEnumerable<EquipmentTypeDTO>>> GetAllEquipmentType()
         {
             try
             {
