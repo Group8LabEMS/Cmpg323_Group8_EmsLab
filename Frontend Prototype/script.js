@@ -1,173 +1,196 @@
-// Fake Data for testing (not needed in final)
-let equipment = [
-  { id: 1, name: "Centrifuge", type: "Lab Equipment", status: "Available" },
-  { id: 2, name: "Microscope", type: "Lab Equipment", status: "In Use" }
+
+
+//static equipment and booking data example, removed after backend and database integration
+let equipmentList = [
+  { id: 1, name: "Microscope", desc: "MSC-132", loc: "Lab A", status: "Available" },
+  { id: 2, name: "Spectrometer", desc: "SPM-2004", loc: "Lab A", status: "Available" },
 ];
-let bookings = [];
-let maintenance = [];
-let audit = [];
 
-// Role-based menu items
-const roleMenus = {
-  demi: ["dashboard", "equipment", "bookings"],
-  postgraduate: ["dashboard", "equipment", "bookings", "maintenance"],
-  admin: ["dashboard", "equipment", "maintenance", "audit"],
-  lecturer: ["dashboard", "equipment", "bookings", "maintenance", "audit"]
-};
+let bookings = [
+  { name: "Spectrometer", date: "2025-09-23", start: "13:00", end: "16:00", status: "Active" }
+]
 
-let currentUser = null;
+//refernces to the DOM Elements
+const equipmentTableBody = document.getElementById("equipmentTableBody");
+const bookingTableBody = document.getElementById("bookingTableBody");
+const bookingModal = document.getElementById("bookingModal");
+const confirmBooking = document.getElementById("confirmBooking");
+const cancelBooking = document.getElementById("cancelBooking");
 
-// Login
-function login(event) {
-  event.preventDefault();
-  const username = document.getElementById("username").value;
-  const role = document.getElementById("role").value;
-  currentUser = { username, role };
-  localStorage.setItem("currentUser", JSON.stringify(currentUser));
-  window.location.href = "index.html";
-}
+//modals for the updateing and delteing of bookings
+const updateModal = document.getElementById("updateModal");
+const deleteModal = document.getElementById("deleteModal");
+const deleteMessage = document.getElementById("deleteMessage");
 
-// Logout
-function logout() {
-  localStorage.removeItem("currentUser");
-  window.location.href = "login.html";
-}
+let selectedEquipment = null;
+let selectedBookingIndex = null;
 
-// Init App
-window.onload = function() {
-  if (document.body.classList.contains("login-body")) return; // Skip on login.html
-  currentUser = JSON.parse(localStorage.getItem("currentUser"));
-  if (!currentUser) window.location.href = "login.html";
 
-  setupMenu();
-  updateDashboard();
-};
-
-// Setup navigation menu based on users role
-function setupMenu() {
-  const navMenu = document.getElementById("navMenu");
-  navMenu.innerHTML = "";
-  roleMenus[currentUser.role].forEach(page => {
-    const link = document.createElement("a");
-    link.href = "#";
-    link.innerText = page.charAt(0).toUpperCase() + page.slice(1);
-    link.onclick = () => showPage(page);
-    navMenu.appendChild(link);
-  });
-
-  // Toggle forms based on users role
-  if (currentUser.role === "admin" || currentUser.role === "lecturer") {
-    document.getElementById("equipmentForm").classList.remove("hidden");
-  }
-  if (currentUser.role === "postgraduate" || currentUser.role === "admin" || currentUser.role === "lecturer") {
-    document.getElementById("maintenanceForm").classList.remove("hidden");
-  }
-  if (currentUser.role === "admin" || currentUser.role === "lecturer") {
-    document.getElementById("audit").classList.remove("hidden");
-  }
-}
-
-// Page navigation
-function showPage(pageId) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(pageId).classList.add("active");
-
-  if(pageId === "equipment") renderEquipment();
-  if(pageId === "bookings") renderBookings();
-  if(pageId === "maintenance") renderMaintenance();
-  if(pageId === "audit") renderAudit();
-  if(pageId === "dashboard") updateDashboard();
-}
-
-// Render functions
+/* -------- render equipment table -------- */
 function renderEquipment() {
-  const tbody = document.getElementById("equipmentTable");
-  tbody.innerHTML = "";
-  equipment.forEach(eq => {
-    tbody.innerHTML += `<tr><td>${eq.id}</td><td>${eq.name}</td><td>${eq.type}</td><td>${eq.status}</td></tr>`;
+  equipmentTableBody.innerHTML = "";
+  equipmentList.forEach(eq => {
+    let row = `
+      <tr>
+        <td>${eq.name}</td>
+        <td>${eq.desc}</td>
+        <td>${eq.loc}</td>
+        <td>
+          ${eq.status === "Available" 
+            ? `<span class="status-available">${eq.status}</span>` 
+            : `<span class="status-maintenance">${eq.status}</span>`}
+        </td>
+        <td>
+          ${eq.status === "Available" 
+            ? `<button class="action-book" onclick="openBooking(${eq.id})">Book</button>` 
+            : `<button class="action-disabled" disabled>N/A</button>`}
+        </td>
+      </tr>
+    `;
+    equipmentTableBody.innerHTML += row;
   });
 }
+
+/* -------- render bookings table -------- */
 function renderBookings() {
-  const tbody = document.getElementById("bookingTable");
-  tbody.innerHTML = "";
-  bookings.forEach(bk => {
-    tbody.innerHTML += `<tr><td>${bk.id}</td><td>${bk.user}</td><td>${bk.equipment}</td><td>${bk.from}</td><td>${bk.to}</td><td>${bk.status}</td></tr>`;
-  });
-}
-function renderMaintenance() {
-  const tbody = document.getElementById("maintenanceTable");
-  tbody.innerHTML = "";
-  maintenance.forEach(mt => {
-    tbody.innerHTML += `<tr><td>${mt.id}</td><td>${mt.equipment}</td><td>${mt.type}</td><td>${mt.status}</td><td>${mt.scheduled}</td></tr>`;
-  });
-}
-function renderAudit() {
-  const tbody = document.getElementById("auditTable");
-  tbody.innerHTML = "";
-  audit.forEach(log => {
-    tbody.innerHTML += `<tr><td>${log.id}</td><td>${log.user}</td><td>${log.action}</td><td>${log.entity}</td><td>${log.timestamp}</td></tr>`;
+  bookingTableBody.innerHTML = "";
+  bookings.forEach((b, i) => {
+    let row = `
+      <tr>
+        <td>${b.name}</td>
+        <td>${b.date}</td>
+        <td>${b.start} - ${b.end}</td>
+        <td>${b.status}</td>
+        <td>
+          <button class="action-book" onclick="openUpdate(${i})">Update</button>
+          <button class="action-delete" onclick="openDelete(${i})">Delete</button>
+        </td>
+      </tr>
+    `;
+    bookingTableBody.innerHTML += row;
   });
 }
 
-// Add functions
-function addEquipment() {
-  const name = document.getElementById("eqName").value;
-  const type = document.getElementById("eqType").value;
-  const status = document.getElementById("eqStatus").value;
-  if(name) {
-    equipment.push({ id: equipment.length+1, name, type, status });
-    renderEquipment();
-    updateDashboard();
-    document.getElementById("eqName").value = "";
-    logAction("Added Equipment", "Equipment");
-  }
+/* -------- Functions for bookings -------- */
+//Clicking book on equpment opens bookingModal
+function openBooking(id) {
+  selectedEquipment = equipmentList.find(eq => eq.id === id);
+  bookingModal.classList.remove("hidden");
 }
-function addBooking() {
-  const user = document.getElementById("bkUser").value;
-  const eq = document.getElementById("bkEquipment").value;
-  const from = document.getElementById("bkFrom").value;
-  const to = document.getElementById("bkTo").value;
-  const status = document.getElementById("bkStatus").value;
-  if(user && eq && from && to) {
-    bookings.push({ id: bookings.length+1, user, equipment: eq, from, to, status });
+
+//confirmation of booking, adds booking to bookings list
+confirmBooking.addEventListener("click", () => {
+  let date = document.getElementById("bookingDate").value;
+  let start = document.getElementById("startTime").value;
+  let end = document.getElementById("endTime").value;
+
+  if (selectedEquipment && date && start && end) {
+    //add new booking
+    bookings.push({
+      name: selectedEquipment.name,
+      date,
+      start,
+      end,
+      status: "Active"
+    });
     renderBookings();
-    updateDashboard();
-    logAction("Created Booking", "Booking");
+    bookingModal.classList.add("hidden");
+  } else {
+    alert("Please fill in all fields.");
   }
+});
+
+cancelBooking.addEventListener("click", () => {
+  bookingModal.classList.add("hidden");
+});
+
+/* -------- functions for updating bookings -------- */
+//opens the update modal with existing booking info
+function openUpdate(index) {
+  selectedBookingIndex = index;
+  const booking = bookings[index];
+
+  document.getElementById("updateDate").value = booking.date;
+  document.getElementById("updateStartTime").value = booking.start;
+  document.getElementById("updateEndTime").value = booking.end;
+
+  updateModal.classList.remove("hidden");
 }
-function addMaintenance() {
-  const eq = document.getElementById("mtEquipment").value;
-  const type = document.getElementById("mtType").value;
-  const status = document.getElementById("mtStatus").value;
-  const scheduled = document.getElementById("mtScheduled").value;
-  if(eq && scheduled) {
-    maintenance.push({ id: maintenance.length+1, equipment: eq, type, status, scheduled });
-    renderMaintenance();
-    updateDashboard();
-    logAction("Scheduled Maintenance", "Maintenance");
+
+
+//confirm booking update
+document.getElementById("confirmUpdate").addEventListener("click", () => {
+  let date = document.getElementById("updateDate").value;
+  let start = document.getElementById("updateStartTime").value;
+  let end = document.getElementById("updateEndTime").value;
+
+  if (date && start && end) {
+    bookings[selectedBookingIndex].date = date;
+    bookings[selectedBookingIndex].start = start;
+    bookings[selectedBookingIndex].end = end;
+    renderBookings();
+    updateModal.classList.add("hidden");
+  } else {
+    alert("Please fill in all fields.");
   }
+});
+
+//cancel booking
+document.getElementById("cancelUpdate").addEventListener("click", () => {
+  updateModal.classList.add("hidden");
+});
+
+/* -------- function for deleteing booking -------- */
+//opens the delete modal
+function openDelete(index) {
+  selectedBookingIndex = index;
+  const booking = bookings[index];
+
+  deleteMessage.innerHTML = `
+    Are you sure you want to delete booking?<br>
+    <b>Equipment:</b> ${booking.name}<br>
+    <b>Date:</b> ${booking.date}<br>
+    <b>Time:</b> ${booking.start} - ${booking.end}
+  `;
+
+  deleteModal.classList.remove("hidden");
 }
 
-// Audit
-function login(event) {
-  event.preventDefault();
-  const username = document.getElementById("username").value;
-  const role = document.getElementById("role").value;
-  const errorEl = document.getElementById("loginError");
+//confirm the deletion of the booking and update the booking list
+document.getElementById("confirmDelete").addEventListener("click", () => {
+  bookings.splice(selectedBookingIndex, 1);
+  renderBookings();
+  deleteModal.classList.add("hidden");
+});
 
-  // Validate student/staff number
-  if (!/^\d{8}$/.test(username)) {
-    errorEl.textContent = "Invalid number. Please enter an 8-digit student/staff number.";
-    return;
-  }
+//cancel the delete of booking
+document.getElementById("cancelDelete").addEventListener("click", () => {
+  deleteModal.classList.add("hidden");
+});
 
-  if (!role) {
-    errorEl.textContent = "Please select a role.";
-    return;
-  }
+/* -------- function for tab switching -------- */
+document.querySelectorAll(".sidebar-btn[data-target]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(tab => tab.classList.add("hidden"));
+    document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
+    let target = btn.dataset.target;
+    document.getElementById(target).classList.remove("hidden");
+    btn.classList.add("active");
+  });
+});
 
-  // Save user and redirect
-  currentUser = { username, role };
-  localStorage.setItem("currentUser", JSON.stringify(currentUser));
-  window.location.href = "index.html";
+// Book Now button in topbar redirects user to the equipment section
+const bookNowBtn = document.getElementById("bookNowBtn");
+if (bookNowBtn) {
+  bookNowBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    document.querySelectorAll(".tab").forEach(tab => tab.classList.add("hidden"));
+    document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
+    document.getElementById("equipment").classList.remove("hidden");
+    document.querySelector('.sidebar-btn[data-target="equipment"]').classList.add("active");
+  });
 }
+
+/* -------- initial page load -------- */
+renderEquipment();
+renderBookings();

@@ -1,0 +1,6 @@
+@Group8.LabEms.Api_HostAddress = http://localhost:5237
+
+GET {{Group8.LabEms.Api_HostAddress}}/user/
+Accept: application/json
+
+###
