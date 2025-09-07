@@ -1,21 +1,38 @@
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Group8.LabEms.Api.Models
 {
+    [Table("audit_log")]
     public class AuditLogModel
     {
-        public int auditlog_Id { get; set; }
-        public DateTime timestamp { get; set; }
+        [Key]
+        [Column("audit_log_id")]
+        public int AuditLogId { get; set; }
 
-        public int user_id { get; set; }
-        public UserModel user { get; set; } = null!;
+        [Column("timestamp")]
+        public DateTime TimeStamp { get; set; }
 
-        public required string action { get; set; }
-        public required string entity_type { get; set; }
-        public required int entity_id { get; set; }
+        [Column("user_id")]
+        public int UserId { get; set; }
+        public UserModel User { get; set; } = null!;
 
-        public string? details { get; set; } //json stored as string at runtime
+        [Required]
+        [Column("action")]
+        public string Action { get; set; } = string.Empty;
+
+        [Required]
+        [Column("entity_type")]
+        public string EntityType { get; set; } = string.Empty;
+
+        [Required]
+        [Column("entity_id")]
+        public int EntityId { get; set; }
+
+        [Column("details")]
+        public string? Details { get; set; } // JSON stored as string at runtime
     }
 }

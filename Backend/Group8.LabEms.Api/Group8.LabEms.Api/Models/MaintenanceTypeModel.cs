@@ -1,14 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Group8.LabEms.Api.Models
-{ 
-     public class MaintenanceTypeModel
+{
+    [Table("maintenance_type")]
+    public class MaintenanceTypeModel
     {
-        public int maintenance_type_id { get; set; }
-        public required string name { get; set; }
-        public string? description { get; set; }
+        [Key]
+        [Column("maintenance_type_id")]
+        public int MaintenanceTypeId { get; set; }
+
+        [Column("name")]
+        public required string Name { get; set; }
+
+        [Column("description")]
+        public string? Description { get; set; }
 
         public ICollection<MaintenanceModel> Maintenances { get; set; } = new List<MaintenanceModel>();
     }
