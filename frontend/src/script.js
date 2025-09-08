@@ -4,12 +4,14 @@ import { renderEquipment } from "./pages/equipent.js";
 
 //---------- Tab switching ----------//
 document.querySelectorAll(".sidebar-btn[data-target]").forEach(btn => {
-  btn.addEventListener("click", () => {
+  const sidebarBtn = /** @type {HTMLButtonElement} */ (btn);
+
+  sidebarBtn.addEventListener("click", () => {
     document.querySelectorAll(".tab").forEach(tab => tab.classList.add("hidden"));
     document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
-    let target = btn.dataset.target;
+    let target = sidebarBtn.dataset.target;
     document.getElementById(target).classList.remove("hidden");
-    btn.classList.add("active");
+    sidebarBtn.classList.add("active");
   });
 });
 

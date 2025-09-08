@@ -1,5 +1,7 @@
 import { deleteMessage } from "../util/modals.js";
 import { equipmentList } from "./equipent.js";
+import { updateModal, deleteModal } from "../util/modals.js";
+import { getInputById } from "../util/dom.js";
 
 //---------- Element references ----------//
 const bookingTableBody = document.getElementById("bookingTableBody");
@@ -12,31 +14,45 @@ const cancelBooking = document.getElementById("cancelBooking");
 let selectedEquipment = null;
 let selectedBookingIndex = null;
 
+/**
+ * List of current equipment bookings.
+ * @type {Array<{name: string, date: string, start: string, end: string, status: string}>}
+ */
 export let bookings = [
   { name: "Spectrometer", date: "2025-09-23", start: "13:00", end: "16:00", status: "Active" }
 ];
 
 
 //---------- Utils ----------//
-//Clicking book on equpment opens bookingModal
+
+/**
+ * Opens the booking modal for the equipment with the specified ID.
+ * @param {number} id - The ID of the equipment to book.
+ */
 export function openBooking(id) {
   selectedEquipment = equipmentList.find(eq => eq.id === id);
   bookingModal.classList.remove("hidden");
 }
 
-//opens the update modal with existing booking info
+/**
+ * Opens the update modal with pre-filled data for an existing booking.
+ * @param {number} index - Index of the booking to update.
+ */
 export function openUpdate(index) {
   selectedBookingIndex = index;
   const booking = bookings[index];
 
-  document.getElementById("updateDate").value = booking.date;
-  document.getElementById("updateStartTime").value = booking.start;
-  document.getElementById("updateEndTime").value = booking.end;
+  getInputById("updateDate").value = booking.date;
+  getInputById("updateStartTime").value = booking.start;
+  getInputById("updateEndTime").value = booking.end;
 
   updateModal.classList.remove("hidden");
 }
 
-//opens the delete modal
+/**
+ * Opens the delete confirmation modal for a selected booking.
+ * @param {number} index - Index of the booking to delete.
+ */
 export function openDelete(index) {
   selectedBookingIndex = index;
   const booking = bookings[index];
@@ -74,6 +90,10 @@ export function openDelete(index) {
 
 
 //---------- Renderers ----------//
+
+/**
+ * Renders the list of bookings into the bookings table.
+ */
 export function renderBookings() {
   bookingTableBody.replaceChildren();
 
@@ -126,9 +146,9 @@ export function renderBookings() {
 
 //confirmation of booking, adds booking to bookings list
 confirmBooking.addEventListener("click", () => {
-  let date = document.getElementById("bookingDate").value;
-  let start = document.getElementById("startTime").value;
-  let end = document.getElementById("endTime").value;
+  let date = getInputById("bookingDate").value;
+  let start = getInputById("startTime").value;
+  let end = getInputById("endTime").value;
 
   if (selectedEquipment && date && start && end) {
     //add new booking
@@ -152,9 +172,9 @@ cancelBooking.addEventListener("click", () => {
 
 //confirm booking update
 document.getElementById("confirmUpdate").addEventListener("click", () => {
-  let date = document.getElementById("updateDate").value;
-  let start = document.getElementById("updateStartTime").value;
-  let end = document.getElementById("updateEndTime").value;
+  let date = getInputById("updateDate").value;
+  let start = getInputById("updateStartTime").value;
+  let end = getInputById("updateEndTime").value;
 
   if (date && start && end) {
     bookings[selectedBookingIndex].date = date;
