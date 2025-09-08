@@ -28,6 +28,8 @@ let selectedBookingIndex = null;
 
 /* -------- render equipment table -------- */
 function renderEquipment() {
+  // innerhtml version - removed
+  /*
   equipmentTableBody.innerHTML = "";
   equipmentList.forEach(eq => {
     let row = `
@@ -49,10 +51,105 @@ function renderEquipment() {
     `;
     equipmentTableBody.innerHTML += row;
   });
+  */
+
+  // DOM safe version - new
+  equipmentTableBody.replaceChildren();
+
+  equipmentList.forEach(eq => {
+    const row = document.createElement("tr");
+
+    // Name
+    const nameTd = document.createElement("td");
+    nameTd.textContent = eq.name;
+    row.appendChild(nameTd);
+
+    // Description
+    const descTd = document.createElement("td");
+    descTd.textContent = eq.desc;
+    row.appendChild(descTd);
+
+    // Location
+    const locTd = document.createElement("td");
+    locTd.textContent = eq.loc;
+    row.appendChild(locTd);
+
+    // Status
+    const statusTd = document.createElement("td");
+    const statusSpan = document.createElement("span");
+    statusSpan.textContent = eq.status;
+    statusSpan.className = eq.status === "Available" ? "status-available" : "status-maintenance";
+    statusTd.appendChild(statusSpan);
+    row.appendChild(statusTd);
+
+    // Action
+    const actionTd = document.createElement("td");
+    const btn = document.createElement("button");
+    if (eq.status === "Available") {
+      btn.textContent = "Book";
+      btn.className = "action-book";
+      btn.addEventListener("click", () => openBooking(eq.id));
+    } else {
+      btn.textContent = "N/A";
+      btn.className = "action-disabled";
+      btn.disabled = true;
+    }
+    actionTd.appendChild(btn);
+    row.appendChild(actionTd);
+
+    equipmentTableBody.appendChild(row);
+  });
 }
 
 /* -------- render bookings table -------- */
 function renderBookings() {
+  bookingTableBody.replaceChildren();
+
+  bookings.forEach((b, i) => {
+    const row = document.createElement("tr");
+
+    // Name
+    const nameTd = document.createElement("td");
+    nameTd.textContent = b.name;
+    row.appendChild(nameTd);
+
+    // Date
+    const dateTd = document.createElement("td");
+    dateTd.textContent = b.date;
+    row.appendChild(dateTd);
+
+    // Time
+    const timeTd = document.createElement("td");
+    timeTd.textContent = `${b.start} - ${b.end}`;
+    row.appendChild(timeTd);
+
+    // Status
+    const statusTd = document.createElement("td");
+    statusTd.textContent = b.status;
+    row.appendChild(statusTd);
+
+    // Actions
+    const actionTd = document.createElement("td");
+
+    const updateBtn = document.createElement("button");
+    updateBtn.textContent = "Update";
+    updateBtn.className = "action-book";
+    updateBtn.addEventListener("click", () => openUpdate(i));
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete";
+    deleteBtn.className = "action-delete";
+    deleteBtn.addEventListener("click", () => openDelete(i));
+
+    actionTd.appendChild(updateBtn);
+    actionTd.appendChild(deleteBtn);
+    row.appendChild(actionTd);
+
+    bookingTableBody.appendChild(row);
+  });
+
+  // innerHTML version - removed
+  /*
   bookingTableBody.innerHTML = "";
   bookings.forEach((b, i) => {
     let row = `
@@ -69,6 +166,7 @@ function renderBookings() {
     `;
     bookingTableBody.innerHTML += row;
   });
+  */
 }
 
 /* -------- Functions for bookings -------- */
@@ -146,12 +244,43 @@ function openDelete(index) {
   selectedBookingIndex = index;
   const booking = bookings[index];
 
+  // innerHTML version -removed
+  /*
   deleteMessage.innerHTML = `
     Are you sure you want to delete booking?<br>
     <b>Equipment:</b> ${booking.name}<br>
     <b>Date:</b> ${booking.date}<br>
     <b>Time:</b> ${booking.start} - ${booking.end}
   `;
+  */
+
+  // DOM safe - new
+  deleteMessage.replaceChildren();
+
+  const msg = document.createElement("p");
+  msg.textContent = "Are you sure you want to delete booking?";
+  deleteMessage.appendChild(msg);
+
+  const equipmentLine = document.createElement("p");
+  const eqStrong = document.createElement("strong");
+  eqStrong.textContent = "Equipment: ";
+  equipmentLine.appendChild(eqStrong);
+  equipmentLine.append(booking.name);
+  deleteMessage.appendChild(equipmentLine);
+
+  const dateLine = document.createElement("p");
+  const dateStrong = document.createElement("strong");
+  dateStrong.textContent = "Date: ";
+  dateLine.appendChild(dateStrong);
+  dateLine.append(booking.date);
+  deleteMessage.appendChild(dateLine);
+
+  const timeLine = document.createElement("p");
+  const timeStrong = document.createElement("strong");
+  timeStrong.textContent = "Time: ";
+  timeLine.appendChild(timeStrong);
+  timeLine.append(`${booking.start} - ${booking.end}`);
+  deleteMessage.appendChild(timeLine);
 
   deleteModal.classList.remove("hidden");
 }
