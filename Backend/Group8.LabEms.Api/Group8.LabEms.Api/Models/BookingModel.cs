@@ -19,7 +19,7 @@ namespace Group8.LabEms.Api.Models
         [Column("equipment_id")]
         public int EquipmentId { get; set; }
         public EquipmentModel Equipment { get; set; } = null!;
-
+        [ForeignKey(nameof(BookingStatusId))]
         [Column("booking_status_id")]
         public int BookingStatusId { get; set; }
         public BookingStatusModel BookingStatus { get; set; } = null!;
