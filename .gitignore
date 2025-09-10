@@ -82,3 +82,5 @@ npm-debug.log*
 # Others
 .env
 .env.*.local
+
+.vscode

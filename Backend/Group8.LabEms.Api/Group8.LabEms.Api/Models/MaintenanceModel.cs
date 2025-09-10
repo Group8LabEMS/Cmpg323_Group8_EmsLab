@@ -1,25 +1,36 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Group8.LabEms.Api.Models
 {
+    [Table("maintenance")]
     public class MaintenanceModel
     {
-        public int maintenance_id { get; set; }
+        [Key]
+        [Column("maintenance_id")]
+        public int MaintenanceId { get; set; }
 
-        public int equipment_id { get; set; }
+        [Column("equipment_id")]
+        public int EquipmentId { get; set; }
         public EquipmentModel Equipment { get; set; } = null!;
 
-        public int maintenance_type_id { get; set; }
+        [Column("maintenance_type_id")]
+        public int MaintenanceTypeId { get; set; }
         public MaintenanceTypeModel MaintenanceType { get; set; } = null!;
-        
-        public int maintenance_status_id { get; set; }
+
+        [Column("maintenance_status_id")]
+        public int MaintenanceStatusId { get; set; }
         public MaintenanceStatusModel MaintenanceStatus { get; set; } = null!;
 
-        public DateTime scheduled_for { get; set; }
-        public DateTime? started_at { get; set; }
-        public DateTime? completed_at { get; set; }
-    }
+        [Column("scheduled_for")]
+        public DateTime ScheduledFor { get; set; }
 
+        [Column("started_at")]
+        public DateTime? StartedAt { get; set; }
+
+        [Column("completed_at")]
+        public DateTime? CompletedAt { get; set; }
+    }
 }
