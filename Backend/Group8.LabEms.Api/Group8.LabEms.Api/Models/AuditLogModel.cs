@@ -6,11 +6,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Group8.LabEms.Api.Models
 {
-    [Table("audit_log")]
+    [Table("auditlog")]
     public class AuditLogModel
     {
         [Key]
-        [Column("audit_log_id")]
+        [Column("auditlog_id")]
         public int AuditLogId { get; set; }
 
         [Column("timestamp")]

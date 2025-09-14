@@ -2,6 +2,7 @@
 using Group8.LabEms.Api.Data;
 using Group8.LabEms.Api.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Group8.LabEms.Api.Controllers
 {
@@ -13,7 +14,7 @@ namespace Group8.LabEms.Api.Controllers
 
         public AuditLogController(AppDbContext context) => _context = context;
 
-       
+        [Authorize(AuthenticationSchemes = "BasicAuthentication")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AuditLogModel>>> GetAuditLogs()
             => await _context.AuditLogs

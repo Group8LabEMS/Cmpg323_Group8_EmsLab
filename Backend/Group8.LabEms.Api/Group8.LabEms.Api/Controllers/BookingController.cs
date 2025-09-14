@@ -3,6 +3,7 @@ using Group8.LabEms.Api.Data;
 using Group8.LabEms.Api.Models;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Group8.LabEms.Api.Controllers
 {
@@ -14,6 +15,7 @@ namespace Group8.LabEms.Api.Controllers
 
         public BookingController(AppDbContext context) => _context = context;
 
+        [Authorize(AuthenticationSchemes = "OAuth2")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookingModel>>> GetBookingStatus()
             => await _context.Bookings
