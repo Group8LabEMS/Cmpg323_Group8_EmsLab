@@ -23,7 +23,7 @@ export let bookings = [
 ];
 
 
-//---------- Utils ----------//
+
 
 /**
  * Opens the booking modal for the equipment with the specified ID.
