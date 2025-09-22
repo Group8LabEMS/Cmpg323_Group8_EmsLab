@@ -75,7 +75,7 @@ namespace Group8.LabEms.Api.Controllers
         }
 
         
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}")] 
         public async Task<IActionResult> DeleteEquipment(int id)
         {
             var equipment = await _context.Equipments.FindAsync(id);
