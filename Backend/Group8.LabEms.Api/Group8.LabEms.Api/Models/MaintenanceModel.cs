@@ -13,14 +13,17 @@ namespace Group8.LabEms.Api.Models
         public int MaintenanceId { get; set; }
 
         [Column("equipment_id")]
+        [ForeignKey(nameof(Equipment))]
         public int EquipmentId { get; set; }
         public EquipmentModel Equipment { get; set; } = null!;
 
         [Column("maintenance_type_id")]
+        [ForeignKey(nameof(MaintenanceType))]
         public int MaintenanceTypeId { get; set; }
         public MaintenanceTypeModel MaintenanceType { get; set; } = null!;
 
         [Column("maintenance_status_id")]
+        [ForeignKey(nameof(MaintenanceStatus))]
         public int MaintenanceStatusId { get; set; }
         public MaintenanceStatusModel MaintenanceStatus { get; set; } = null!;
 

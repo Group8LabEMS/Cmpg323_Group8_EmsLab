@@ -17,6 +17,7 @@ namespace Group8.LabEms.Api.Models
         public DateTime TimeStamp { get; set; }
 
         [Column("user_id")]
+        [ForeignKey(nameof(User))]
         public int UserId { get; set; }
         public UserModel User { get; set; } = null!;
 
