@@ -1,12 +1,15 @@
 using System;
 using Group8.LabEms.Api.Data;
+using Group8.LabEms.Api.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 Console.WriteLine("Connection string = " + builder.Configuration.GetConnectionString("DefaultConnection"));
 
-// Add services to the container
+
 builder.Services.AddControllers();
 
 
@@ -33,6 +36,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
