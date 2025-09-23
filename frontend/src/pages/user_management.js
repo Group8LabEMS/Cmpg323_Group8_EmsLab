@@ -11,9 +11,9 @@ const userTableBody = document.getElementById("userTableBody");
 const userModal = document.getElementById("userModal");
 const userModalTitle = document.getElementById("userModalTitle");
 
-const usernameInput = document.getElementById("usernameInput");
-const roleInput = document.getElementById("roleInput");
-const statusInput = document.getElementById("statusInput");
+const usernameInput = /** @type {HTMLInputElement} */ (document.getElementById("usernameInput"));
+const roleInput = /** @type {HTMLSelectElement} */ (document.getElementById("roleInput"));
+const statusInput = /** @type {HTMLSelectElement} */ (document.getElementById("statusInput"));
 
 const confirmUserBtn = document.getElementById("confirmUser");
 const cancelUserBtn = document.getElementById("cancelUser");
