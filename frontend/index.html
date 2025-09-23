@@ -24,6 +24,7 @@
     <button class="sidebar-btn" data-target="profile">Profile</button>
     <button class="sidebar-btn" data-target="bookings">Bookings</button>
     <button class="sidebar-btn active" data-target="equipment">Equipment</button>
+    <button class="sidebar-btn" data-target="userManagement">User Management</button>
     <button class="sidebar-btn logout">Logout</button>
   </aside>
 
@@ -82,6 +83,25 @@
         <tbody id="equipmentTableBody"></tbody>
       </table>
     </section>
+
+    <!-- User Management -->
+    <section id="userManagement" class="tab hidden">
+      <h2>User Management</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="userTableBody"></tbody>
+      </table>
+
+      <button id="addUserBtn" class="action-book">Add User</button>
+    </section>
+
   </main>
 
     <!-- Booking Modal -->
@@ -140,6 +160,35 @@
     </div>
   </div>
 </div>
+
+<!-- User Management Modal -->
+<div id="userModal" class="modal hidden">
+  <div class="modal-content">
+    <h3 id="userModalTitle">Add User</h3>
+    
+    <label>
+      <input type="text" id="usernameInput" placeholder="Username">
+    </label>
+    <label>
+      <select id="roleInput">
+        <option value="Admin">Admin</option>
+        <option value="User">User</option>
+      </select>
+    </label>
+    <label>
+      <select id="statusInput">
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+      </select>
+    </label>
+
+    <div class="modal-actions">
+      <button id="confirmUser">Save</button>
+      <button id="cancelUser" class="cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
 
   <script type="module" src="src/script.js"></script>
 </body>

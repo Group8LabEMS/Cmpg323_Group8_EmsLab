@@ -1,5 +1,6 @@
 import { renderBookings } from "./pages/bookings.js";
 import { renderEquipment } from "./pages/equipent.js";
+import { renderUsers } from "./pages/user_management.js";
 
 
 //---------- Tab switching ----------//
@@ -27,6 +28,10 @@ if (bookNowBtn) {
     document.querySelector('.sidebar-btn[data-target="equipment"]').classList.add("active");
   });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderUsers();
+});
 
 //---------- Initial page setup ----------//
 renderEquipment();
