@@ -129,9 +129,14 @@ export function renderBookings() {
     updateBtn.addEventListener("click", () => openUpdate(i));
 
     const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Delete";
-    deleteBtn.className = "action-delete";
-    deleteBtn.addEventListener("click", () => openDelete(i));
+  /**
+   * Delete button for booking row
+   * @type {HTMLButtonElement}
+   */
+  deleteBtn.textContent = "Delete";
+  deleteBtn.className = "action-delete";
+  deleteBtn.title = "Delete booking";
+  deleteBtn.addEventListener("click", () => openDelete(i));
 
     actionTd.appendChild(updateBtn);
     actionTd.appendChild(deleteBtn);

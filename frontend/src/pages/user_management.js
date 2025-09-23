@@ -44,24 +44,38 @@ export function renderUsers() {
     // Actions
     const actionTd = document.createElement("td");
 
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "Edit";
-    editBtn.className = "action-book"; 
+  /**
+   * Edit button for user row
+   * @type {HTMLButtonElement}
+   */
+  const editBtn = document.createElement("button");
+  editBtn.textContent = "Edit";
+  editBtn.className = "action-book user-action-btn";
+  editBtn.title = "Edit user";
+  editBtn.addEventListener("click", () => openEditUser(i));
 
+  /**
+   * Delete button for user row
+   * @type {HTMLButtonElement}
+   */
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  deleteBtn.className = "action-delete user-action-btn";
+  deleteBtn.title = "Delete user";
+  deleteBtn.addEventListener("click", () => handleDeleteUser(i));
 
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Delete";
-    deleteBtn.className = "action-book";
+  actionTd.appendChild(editBtn);
+  actionTd.appendChild(deleteBtn);
+  row.appendChild(actionTd);
 
-    actionTd.appendChild(editBtn);
-    actionTd.appendChild(deleteBtn);
-    row.appendChild(actionTd);
-
-    userTableBody.appendChild(row);
+  userTableBody.appendChild(row);
   });
 }
 
 // ---------- Modal Handling ---------- //
+/**
+ * Opens the Add User modal dialog.
+ */
 function openAddUser() {
   editingUserIndex = null;
   userModalTitle.textContent = "Add User";
@@ -71,6 +85,10 @@ function openAddUser() {
   userModal.classList.remove("hidden");
 }
 
+/**
+ * Opens the Edit User modal dialog for a specific user.
+ * @param {number} index - Index of the user to edit.
+ */
 function openEditUser(index) {
   editingUserIndex = index;
   userModalTitle.textContent = "Edit User";
@@ -81,11 +99,28 @@ function openEditUser(index) {
   userModal.classList.remove("hidden");
 }
 
+/**
+ * Closes the user modal dialog.
+ */
 function closeUserModal() {
   userModal.classList.add("hidden");
 }
 
+/**
+ * Handles deleting a user from the list.
+ * @param {number} index - Index of the user to delete.
+ */
+function handleDeleteUser(index) {
+  if (confirm("Are you sure you want to delete this user?")) {
+    users.splice(index, 1);
+    renderUsers();
+  }
+}
+
 // ---------- Actions ---------- //
+/**
+ * Handles confirming add/edit user in modal.
+ */
 confirmUserBtn.addEventListener("click", () => {
   const username = usernameInput.value.trim();
   const role = roleInput.value;
@@ -108,7 +143,13 @@ confirmUserBtn.addEventListener("click", () => {
   closeUserModal();
 });
 
+/**
+ * Handles canceling user modal.
+ */
 cancelUserBtn.addEventListener("click", closeUserModal);
+/**
+ * Handles opening add user modal.
+ */
 addUserBtn.addEventListener("click", openAddUser);
 
 function deleteUser(index) {
