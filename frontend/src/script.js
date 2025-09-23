@@ -1,12 +1,14 @@
+
+import { renderDashboard } from "./pages/dashboard.js";
+import { renderProfile } from "./pages/profile.js";
 import { renderBookings } from "./pages/bookings.js";
 import { renderEquipment } from "./pages/equipent.js";
 import { renderUsers } from "./pages/user_management.js";
 import { renderAdminDashboard } from "./pages/admin_dashboard.js";
 
-
 const tabRenderers = {
-  dashboard: () => {}, // placeholder
-  profile: () => {},   // placeholder
+  dashboard: renderDashboard,
+  profile: renderProfile,
   bookings: renderBookings,
   equipment: renderEquipment,
   userManagement: renderUsers,
