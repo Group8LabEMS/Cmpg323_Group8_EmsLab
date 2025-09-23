@@ -7,6 +7,7 @@ let users = [
 let editingUserIndex = null;
 
 // ---------- DOM Refs ---------- //
+import { html, render as litRender } from "lit";
 const userTableBody = document.getElementById("userTableBody");
 const userModal = document.getElementById("userModal");
 const userModalTitle = document.getElementById("userModalTitle");
@@ -21,55 +22,18 @@ const addUserBtn = document.getElementById("addUserBtn");
 
 // ---------- Render ---------- //
 export function renderUsers() {
-  userTableBody.replaceChildren();
-
-  users.forEach((u, i) => {
-    const row = document.createElement("tr");
-
-    // Username
-    const userTd = document.createElement("td");
-    userTd.textContent = u.username;
-    row.appendChild(userTd);
-
-    // Role
-    const roleTd = document.createElement("td");
-    roleTd.textContent = u.role;
-    row.appendChild(roleTd);
-
-    // Status
-    const statusTd = document.createElement("td");
-    statusTd.textContent = u.status;
-    row.appendChild(statusTd);
-
-    // Actions
-    const actionTd = document.createElement("td");
-
-  /**
-   * Edit button for user row
-   * @type {HTMLButtonElement}
-   */
-  const editBtn = document.createElement("button");
-  editBtn.textContent = "Edit";
-  editBtn.className = "action-book user-action-btn";
-  editBtn.title = "Edit user";
-  editBtn.addEventListener("click", () => openEditUser(i));
-
-  /**
-   * Delete button for user row
-   * @type {HTMLButtonElement}
-   */
-  const deleteBtn = document.createElement("button");
-  deleteBtn.textContent = "Delete";
-  deleteBtn.className = "action-delete user-action-btn";
-  deleteBtn.title = "Delete user";
-  deleteBtn.addEventListener("click", () => handleDeleteUser(i));
-
-  actionTd.appendChild(editBtn);
-  actionTd.appendChild(deleteBtn);
-  row.appendChild(actionTd);
-
-  userTableBody.appendChild(row);
-  });
+  const tableRows = users.map((u, i) => html`
+    <tr>
+      <td>${u.username}</td>
+      <td>${u.role}</td>
+      <td>${u.status}</td>
+      <td>
+        <button class="action-book user-action-btn" title="Edit user" @click=${() => openEditUser(i)}>Edit</button>
+        <button class="action-delete user-action-btn" title="Delete user" @click=${() => handleDeleteUser(i)}>Delete</button>
+      </td>
+    </tr>
+  `);
+  litRender(html`${tableRows}`, userTableBody);
 }
 
 // ---------- Modal Handling ---------- //
