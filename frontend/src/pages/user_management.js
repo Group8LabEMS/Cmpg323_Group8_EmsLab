@@ -20,6 +20,13 @@ const confirmUserBtn = document.getElementById("confirmUser");
 const cancelUserBtn = document.getElementById("cancelUser");
 const addUserBtn = document.getElementById("addUserBtn");
 
+// User Delete Modal Refs
+const userDeleteModal = document.getElementById("userDeleteModal");
+const userDeleteMessage = document.getElementById("userDeleteMessage");
+const confirmUserDeleteBtn = document.getElementById("confirmUserDelete");
+const cancelUserDeleteBtn = document.getElementById("cancelUserDelete");
+let pendingDeleteUserIndex = null;
+
 // ---------- Render ---------- //
 export function renderUsers() {
   const tableRows = users.map((u, i) => html`
@@ -29,7 +36,7 @@ export function renderUsers() {
       <td>${u.status}</td>
       <td>
         <button class="action-book user-action-btn" title="Edit user" @click=${() => openEditUser(i)}>Edit</button>
-        <button class="action-delete user-action-btn" title="Delete user" @click=${() => handleDeleteUser(i)}>Delete</button>
+  <button class="action-delete-outline user-action-btn" title="Delete user" @click=${() => openUserDeleteModal(i)}>Delete</button>
       </td>
     </tr>
   `);
@@ -70,14 +77,33 @@ function closeUserModal() {
   userModal.classList.add("hidden");
 }
 
+
 /**
- * Handles deleting a user from the list.
+ * Opens the user delete confirmation modal.
  * @param {number} index - Index of the user to delete.
  */
-function handleDeleteUser(index) {
-  if (confirm("Are you sure you want to delete this user?")) {
-    users.splice(index, 1);
+function openUserDeleteModal(index) {
+  pendingDeleteUserIndex = index;
+  userDeleteMessage.textContent = `Are you sure you want to delete user '${users[index].username}'?`;
+  userDeleteModal.classList.remove("hidden");
+}
+
+/**
+ * Closes the user delete modal.
+ */
+function closeUserDeleteModal() {
+  userDeleteModal.classList.add("hidden");
+  pendingDeleteUserIndex = null;
+}
+
+/**
+ * Confirms user deletion.
+ */
+function confirmUserDelete() {
+  if (pendingDeleteUserIndex !== null) {
+    users.splice(pendingDeleteUserIndex, 1);
     renderUsers();
+    closeUserDeleteModal();
   }
 }
 
@@ -111,14 +137,8 @@ confirmUserBtn.addEventListener("click", () => {
  * Handles canceling user modal.
  */
 cancelUserBtn.addEventListener("click", closeUserModal);
-/**
- * Handles opening add user modal.
- */
 addUserBtn.addEventListener("click", openAddUser);
 
-function deleteUser(index) {
-  if (confirm("Are you sure you want to delete this user?")) {
-    users.splice(index, 1);
-    renderUsers();
-  }
-}
+// User delete modal actions
+confirmUserDeleteBtn.addEventListener("click", confirmUserDelete);
+cancelUserDeleteBtn.addEventListener("click", closeUserDeleteModal);
