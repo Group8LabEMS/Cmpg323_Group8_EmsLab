@@ -32,5 +32,17 @@ namespace Group8.LabEms.Api.Models
 
         [Column("completed_at")]
         public DateTime? CompletedAt { get; set; }
+
+        //ADD SOME VALIDATIONS
+        public bool IsValid(out string err)
+        {
+            err = string.Empty;
+            if(ScheduledFor < DateTime.UtcNow)
+            
+                err = "Scheduled date must be in the future";
+                return string.IsNullOrEmpty(err);
+            
+
+        }
     }
 }
