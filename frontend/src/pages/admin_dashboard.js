@@ -34,6 +34,5 @@ export function renderAdminDashboard() {
   statsDiv.innerHTML = `
       <div class="stat-card">👥 Users: ${totalUsers}</div>
       <div class="stat-card">📅 Bookings: ${totalBookings}</div>
-      <div class="stat-card">💰 Revenue: $${totalRevenue.toLocaleString()}</div>
   `;
 }
