@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-grid { 
+        display: grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 15px 30px; 
+        }
+
+         .form-container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 600px;
+            max-width: 90%;
+        }
+
+        .form-container h2 {
+            color: #7b5ebf;
+            margin-bottom: 10px;
+        }
+
+        .form-container p {
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .form-grid input {
+            padding: 10px 5px;
+            border-radius: 8px;
+            border: 2px solid #b79fe8;
+            outline: none;
+            font-size: 14px;
+            width: 100%;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="topbar">
+      <div class="logo">LabEMS</div>
+      <nav>
+        <a href="#" id="btnLogin" data-target="bookings">Login</a>
+        <a href="#" id="bookNowBtn" data-target="bookings">Book Now</a>
+        <a href="#">About</a>
+        <a href="#">Contact Us</a>
+      </nav>
+    </header>
+
+    <div class="form-container" style="margin-top: 35px;">
+        <h2>Register</h2>
+        <p>Please provide all required details to register.</p>
+        <div class="form-grid">
+            <input type="text" placeholder="First Name">
+            <input type="text" placeholder="Faculty">
+            <input type="text" placeholder="Last Name">
+            <input type="text" placeholder="Department">
+            <input type="text" placeholder="University No">
+            <input type="text" placeholder="Password">
+            <input type="text" placeholder="Email">
+            <input type="text" placeholder="Re-enter Password">
+            <input type="text" placeholder="Cellphone No">
+
+        </div>
+
+    </div>
+    <script type="module" src="src/script.js"></script>
+</body>
+</html>
