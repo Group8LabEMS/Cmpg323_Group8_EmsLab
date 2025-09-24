@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;  /* centers horizontally */
+            align-items: center;      /* centers vertically */
+            min-height: 100vh;        /* full viewport height */
+            margin: 0;                /* remove default margin */
+            background-color: #f6f4fa; /* your light background */
+        }
+
+        .contactus-action {
+            background: #8561B3;
+            color: white;
+            border: none;
+            padding: 15px 200px;
+            border-radius: 6px;
+            margin-right: 5px;
+        }
+
+        .contactus-action:hover{
+            background-color:  #5D4685;
+            color: white;
+        }
+        .contactus-textarea{
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 2px solid #C3B5E2;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="topbar">
+      <div class="logo">LabEMS</div>
+      <nav>
+        <a href="#" id="btnLogin" data-target="bookings">Login</a>
+        <a href="#" id="bookNowBtn" data-target="bookings">Book Now</a>
+        <a href="#">About</a>
+        <a href="#">Contact Us</a>
+      </nav>
+    </header>
+
+    <div>
+        <div class="modal-content">
+            <h2>Contact Us</h2>
+            <input type="text" placeholder="Your Email">
+            <textarea name="txt_email_description" cols="40" rows="5" class="contactus-textarea" placeholder="Description"></textarea>
+            <div>
+                <button class="contactus-action">Submit</button>
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>
