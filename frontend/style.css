@@ -472,3 +472,84 @@ body.login-page {
   text-align: center;
 }
 }
+
+/* Register Page */
+   .signup-form-grid { 
+        display: grid; 
+        grid-template-columns: 1fr 1fr; 
+        gap: 15px 30px; 
+        }
+
+        .signup-form-grid input {
+            padding: 10px 5px;
+            border-radius: 8px;
+            border: 2px solid #b79fe8;
+            outline: none;
+            font-size: 14px;
+            width: 100%;
+            margin-right: 10px;
+        }
+
+    .signup-action {
+            background: #8561B3;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-right: 5px;
+        }
+
+        .signup-action:hover{
+            background-color:  #5D4685;
+            color: white;
+        }
+
+        .signup-action-cancel{
+            background: white;
+            color:  #8561B3;
+            border:  #8561B3;
+            padding: 15px 20px;
+            border-radius: 6px;
+        }
+        .signup-action-cancel:hover{
+            background-color:  #8561B3;
+            border:  #8561B3;
+            color: white;
+        }
+/* Forgot Password Page */
+        .forgotpassword-action{
+            background: #8561B3;
+            color: white;
+            border: none;
+            padding: 15px 200px;
+            border-radius: 6px;
+            margin-right: 5px;
+        }
+        .forgotpassword-action:hover{
+            background-color:  #5D4685;
+            color: white;
+        }
+/* About Us Page */
+
+/* Contact Us Page */
+      .contactus-action {
+            background: #8561B3;
+            color: white;
+            border: none;
+            padding: 15px 200px;
+            border-radius: 6px;
+            margin-right: 5px;
+        }
+
+        .contactus-action:hover{
+            background-color:  #5D4685;
+            color: white;
+        }
+        .contactus-textarea{
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 2px solid #C3B5E2;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }  
