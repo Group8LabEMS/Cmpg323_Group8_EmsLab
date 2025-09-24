@@ -7,6 +7,7 @@ let users = [
 let editingUserIndex = null;
 
 // ---------- DOM Refs ---------- //
+import { html, render as litRender } from "lit";
 const userTableBody = document.getElementById("userTableBody");
 const userModal = document.getElementById("userModal");
 const userModalTitle = document.getElementById("userModalTitle");
@@ -19,49 +20,33 @@ const confirmUserBtn = document.getElementById("confirmUser");
 const cancelUserBtn = document.getElementById("cancelUser");
 const addUserBtn = document.getElementById("addUserBtn");
 
+// User Delete Modal Refs
+const userDeleteModal = document.getElementById("userDeleteModal");
+const userDeleteMessage = document.getElementById("userDeleteMessage");
+const confirmUserDeleteBtn = document.getElementById("confirmUserDelete");
+const cancelUserDeleteBtn = document.getElementById("cancelUserDelete");
+let pendingDeleteUserIndex = null;
+
 // ---------- Render ---------- //
 export function renderUsers() {
-  userTableBody.replaceChildren();
-
-  users.forEach((u, i) => {
-    const row = document.createElement("tr");
-
-    // Username
-    const userTd = document.createElement("td");
-    userTd.textContent = u.username;
-    row.appendChild(userTd);
-
-    // Role
-    const roleTd = document.createElement("td");
-    roleTd.textContent = u.role;
-    row.appendChild(roleTd);
-
-    // Status
-    const statusTd = document.createElement("td");
-    statusTd.textContent = u.status;
-    row.appendChild(statusTd);
-
-    // Actions
-    const actionTd = document.createElement("td");
-
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "Edit";
-    editBtn.className = "action-book"; 
-
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Delete";
-    deleteBtn.className = "action-book";
-
-    actionTd.appendChild(editBtn);
-    actionTd.appendChild(deleteBtn);
-    row.appendChild(actionTd);
-
-    userTableBody.appendChild(row);
-  });
+  const tableRows = users.map((u, i) => html`
+    <tr>
+      <td>${u.username}</td>
+      <td>${u.role}</td>
+      <td>${u.status}</td>
+      <td>
+        <button class="action-book user-action-btn" title="Edit user" @click=${() => openEditUser(i)}>Edit</button>
+  <button class="action-delete-outline user-action-btn" title="Delete user" @click=${() => openUserDeleteModal(i)}>Delete</button>
+      </td>
+    </tr>
+  `);
+  litRender(html`${tableRows}`, userTableBody);
 }
 
 // ---------- Modal Handling ---------- //
+/**
+ * Opens the Add User modal dialog.
+ */
 function openAddUser() {
   editingUserIndex = null;
   userModalTitle.textContent = "Add User";
@@ -71,6 +56,10 @@ function openAddUser() {
   userModal.classList.remove("hidden");
 }
 
+/**
+ * Opens the Edit User modal dialog for a specific user.
+ * @param {number} index - Index of the user to edit.
+ */
 function openEditUser(index) {
   editingUserIndex = index;
   userModalTitle.textContent = "Edit User";
@@ -81,11 +70,47 @@ function openEditUser(index) {
   userModal.classList.remove("hidden");
 }
 
+/**
+ * Closes the user modal dialog.
+ */
 function closeUserModal() {
   userModal.classList.add("hidden");
 }
 
+
+/**
+ * Opens the user delete confirmation modal.
+ * @param {number} index - Index of the user to delete.
+ */
+function openUserDeleteModal(index) {
+  pendingDeleteUserIndex = index;
+  userDeleteMessage.textContent = `Are you sure you want to delete user '${users[index].username}'?`;
+  userDeleteModal.classList.remove("hidden");
+}
+
+/**
+ * Closes the user delete modal.
+ */
+function closeUserDeleteModal() {
+  userDeleteModal.classList.add("hidden");
+  pendingDeleteUserIndex = null;
+}
+
+/**
+ * Confirms user deletion.
+ */
+function confirmUserDelete() {
+  if (pendingDeleteUserIndex !== null) {
+    users.splice(pendingDeleteUserIndex, 1);
+    renderUsers();
+    closeUserDeleteModal();
+  }
+}
+
 // ---------- Actions ---------- //
+/**
+ * Handles confirming add/edit user in modal.
+ */
 confirmUserBtn.addEventListener("click", () => {
   const username = usernameInput.value.trim();
   const role = roleInput.value;
@@ -108,12 +133,12 @@ confirmUserBtn.addEventListener("click", () => {
   closeUserModal();
 });
 
+/**
+ * Handles canceling user modal.
+ */
 cancelUserBtn.addEventListener("click", closeUserModal);
 addUserBtn.addEventListener("click", openAddUser);
 
-function deleteUser(index) {
-  if (confirm("Are you sure you want to delete this user?")) {
-    users.splice(index, 1);
-    renderUsers();
-  }
-}
+// User delete modal actions
+confirmUserDeleteBtn.addEventListener("click", confirmUserDelete);
+cancelUserDeleteBtn.addEventListener("click", closeUserDeleteModal);
