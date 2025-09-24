@@ -24,9 +24,11 @@
       <button class="sidebar-btn" data-target="profile">Profile</button>
       <button class="sidebar-btn" data-target="bookings">Bookings</button>
       <button class="sidebar-btn active" data-target="equipment">Equipment</button>
+      <button class="sidebar-btn" data-target="maintenance">Maintenance</button>
       <button class="sidebar-btn" data-target="userManagement">User Management</button>
       <button class="sidebar-btn" data-target="adminDashboard">Admin Dashboard</button>
       <button class="sidebar-btn logout">Logout</button>
+      
     </aside>
 
     <!-- Main Content -->
@@ -84,7 +86,24 @@
           <tbody id="equipmentTableBody"></tbody>
         </table>
       </section>
+      <!-- Maintenance -->
+<section id="maintenance" class="tab hidden">
+  <h2>Maintenance Tracking</h2>
+  <p>Track equipment that requires repair, is being repaired, or has been repaired.</p>
 
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Location</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="maintenanceTableBody"></tbody>
+  </table>
+</section>
       <!-- User Management -->
       <section id="userManagement" class="tab hidden">
         <h2>User Management</h2>
