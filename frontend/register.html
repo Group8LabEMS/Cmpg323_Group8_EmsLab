@@ -6,32 +6,13 @@
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .form-grid { 
+        .signup-form-grid { 
         display: grid; 
         grid-template-columns: 1fr 1fr; 
         gap: 15px 30px; 
         }
 
-         .form-container {
-            background-color: #fff;
-            padding: 30px 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            width: 600px;
-            max-width: 90%;
-        }
-
-        .form-container h2 {
-            color: #7b5ebf;
-            margin-bottom: 10px;
-        }
-
-        .form-container p {
-            color: #999;
-            margin-bottom: 20px;
-        }
-
-        .form-grid input {
+        .signup-form-grid input {
             padding: 10px 5px;
             border-radius: 8px;
             border: 2px solid #b79fe8;
@@ -40,6 +21,43 @@
             width: 100%;
             margin-right: 10px;
         }
+
+        body {
+            display: flex;
+            justify-content: center;  /* centers horizontally */
+            align-items: center;      /* centers vertically */
+            min-height: 100vh;        /* full viewport height */
+            margin: 0;                /* remove default margin */
+            background-color: #f6f4fa; /* your light background */
+        }
+
+       .signup-action {
+            background: #8561B3;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-right: 5px;
+        }
+
+        .signup-action:hover{
+            background-color:  #5D4685;
+            color: white;
+        }
+
+        .signup-action-cancel{
+            background: white;
+            color:  #8561B3;
+            border:  #8561B3;
+            padding: 15px 20px;
+            border-radius: 6px;
+        }
+        .signup-action-cancel:hover{
+            background-color:  #8561B3;
+            border:  #8561B3;
+            color: white;
+        }
+
     </style>
 </head>
 <body>
@@ -53,11 +71,11 @@
         <a href="#">Contact Us</a>
       </nav>
     </header>
-
-    <div class="form-container" style="margin-top: 35px;">
+    <div style="margin-top: 35px;">
+        <div class="modal-content" >
         <h2>Register</h2>
         <p>Please provide all required details to register.</p>
-        <div class="form-grid">
+        <div class="signup-form-grid">
             <input type="text" placeholder="First Name">
             <input type="text" placeholder="Faculty">
             <input type="text" placeholder="Last Name">
@@ -67,10 +85,15 @@
             <input type="text" placeholder="Email">
             <input type="text" placeholder="Re-enter Password">
             <input type="text" placeholder="Cellphone No">
-
+            <div>
+                <button class="signup-action">Sign Up</button>
+                <button class="signup-action-cancel">Cancel</button>
+            </div>
         </div>
 
     </div>
+    </div>
+    
     <script type="module" src="src/script.js"></script>
 </body>
 </html>
