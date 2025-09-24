@@ -1,3 +1,57 @@
+.modal-content select {
+  background: #fff;
+  color: #7A4EB0;
+  border: 2px solid #7A4EB0;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.modal-content select:focus {
+  border-color: #5D4685;
+  color: #5D4685;
+  outline: none;
+}
+.cancel-btn {
+  background: white;
+  color: #7A4EB0;
+  border: 2px solid #7A4EB0;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+}
+.cancel-btn:hover {
+  background: #f1e9f9;
+  color: #5D4685;
+  box-shadow: 0 2px 8px rgba(122, 78, 176, 0.15);
+}
+.cancel-btn:active {
+  background: #e0d3f3;
+  color: #3c2c5c;
+}
+
+.action-delete-outline {
+  background: white;
+  color: #d9534f;
+  border: 2px solid #d9534f;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+}
+.action-delete-outline:hover {
+  background: #fbeaea;
+  color: #c9302c;
+  box-shadow: 0 2px 8px rgba(217, 83, 79, 0.15);
+}
+.action-delete-outline:active {
+  background: #f5d6d6;
+  color: #a71d2a;
+}
 /* Base Layout */
 body {
   margin: 0;
@@ -111,13 +165,23 @@ h2 + p {
   border: 1px solid #ccc;
   width: 200px;
 }
-.search-bar select,
+search-bar select,
 .search-bar button {
   padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 2px solid #7A4EB0;
   background: #fff;
+  color: #7A4EB0;
+  font-weight: bold;
   cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+select:focus,
+.search-bar select:focus,
+.modal-content select:focus {
+  border-color: #5D4685;
+  color: #5D4685;
+  outline: none;
 }
 .search-bar button {
   background: #7A4EB0;
@@ -174,6 +238,39 @@ td:nth-child(4) {
   border: none;
   padding: 6px 12px;
   border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.action-book:hover {
+  background: #5D4685;
+  box-shadow: 0 2px 8px rgba(122, 78, 176, 0.15);
+}
+.action-book:active {
+  background: #3c2c5c;
+}
+
+.action-delete {
+  background: white;
+  color: #7A4EB0;
+  border: 2px solid #7A4EB0;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+}
+.action-delete:hover {
+  background: #f1e9f9;
+  color: #5D4685;
+  box-shadow: 0 2px 8px rgba(122, 78, 176, 0.15);
+}
+.action-delete:active {
+  background: #e0d3f3;
+  color: #3c2c5c;
+}
+
+.user-action-btn {
+  margin-right: 8px;
 }
 .action-disabled {
   background: #ccc;
@@ -248,6 +345,32 @@ td:nth-child(4) {
   font-weight: bold;
   font-size: 0.95rem;
 }
+  .modal-actions .action-book {
+    background: #7A4EB0;
+    color: white;
+    border: 2px solid #7A4EB0;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+  .modal-actions .action-book:hover {
+    background: #5D4685;
+    box-shadow: 0 2px 8px rgba(122, 78, 176, 0.15);
+  }
+  .modal-actions .action-book:active {
+    background: #3c2c5c;
+  }
+  .modal-actions .action-delete {
+    background: #d9534f;
+    color: white;
+    border: 2px solid #d9534f;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+  .modal-actions .action-delete:hover {
+    background: #c9302c;
+    box-shadow: 0 2px 8px rgba(217, 83, 79, 0.15);
+  }
+  .modal-actions .action-delete:active {
+    background: #a71d2a;
+  }
 #confirmBooking {
   background: #7A4EB0;
   color: white;
@@ -333,4 +456,19 @@ td:nth-child(4) {
 
 body.login-page {
   flex-direction: column;
+.stats-container {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.stat-card {
+  flex: 1;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  font-size: 1.1rem;
+  text-align: center;
+}
 }
