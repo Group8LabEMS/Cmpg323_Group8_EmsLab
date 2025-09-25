@@ -553,3 +553,15 @@ body.login-page {
             border-radius: 8px;
             font-size: 0.95rem;
         }  
+
+        .forgot-password {
+  display: block;
+  margin-top: 10px;
+  text-align: center;
+  color: #007bff;
+  text-decoration: none;
+  font-size: 14px;
+}
+.forgot-password:hover {
+  text-decoration: underline;
+}

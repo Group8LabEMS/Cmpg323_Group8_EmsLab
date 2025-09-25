@@ -5,6 +5,8 @@ import { renderBookings } from "./pages/bookings.js";
 import { renderEquipment } from "./pages/equipent.js";
 import { renderUsers } from "./pages/user_management.js";
 import { renderAdminDashboard } from "./pages/admin_dashboard.js";
+import { renderMaintenance } from "./pages/maintenance.js";
+
 
 const tabRenderers = {
   dashboard: renderDashboard,
@@ -12,7 +14,8 @@ const tabRenderers = {
   bookings: renderBookings,
   equipment: renderEquipment,
   userManagement: renderUsers,
-  adminDashboard: renderAdminDashboard
+  adminDashboard: renderAdminDashboard,
+   maintenance: renderMaintenance,
 };
 
 document.querySelectorAll(".sidebar-btn[data-target]").forEach(btn => {
