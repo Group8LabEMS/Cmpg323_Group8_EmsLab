@@ -13,13 +13,16 @@ namespace Group8.LabEms.Api.Models
         public int BookingId { get; set; }
 
         [Column("user_id")]
+        [ForeignKey(nameof(User))]
         public int UserId { get; set; }
         public UserModel User { get; set; } = null!;
 
         [Column("equipment_id")]
+        [ForeignKey(nameof(Equipment))]
         public int EquipmentId { get; set; }
         public EquipmentModel Equipment { get; set; } = null!;
-        [ForeignKey(nameof(BookingStatusId))]
+
+        [ForeignKey(nameof(BookingStatus))]
         [Column("booking_status_id")]
         public int BookingStatusId { get; set; }
         public BookingStatusModel BookingStatus { get; set; } = null!;

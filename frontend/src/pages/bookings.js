@@ -1,3 +1,4 @@
+import { html, render as litRender } from "lit";
 import { deleteMessage } from "../util/modals.js";
 import { equipmentList } from "./equipent.js";
 import { updateModal, deleteModal } from "../util/modals.js";
@@ -57,34 +58,12 @@ export function openDelete(index) {
   selectedBookingIndex = index;
   const booking = bookings[index];
 
-  // DOM safe - new
-  deleteMessage.replaceChildren();
-
-  const msg = document.createElement("p");
-  msg.textContent = "Are you sure you want to delete booking?";
-  deleteMessage.appendChild(msg);
-
-  const equipmentLine = document.createElement("p");
-  const eqStrong = document.createElement("strong");
-  eqStrong.textContent = "Equipment: ";
-  equipmentLine.appendChild(eqStrong);
-  equipmentLine.append(booking.name);
-  deleteMessage.appendChild(equipmentLine);
-
-  const dateLine = document.createElement("p");
-  const dateStrong = document.createElement("strong");
-  dateStrong.textContent = "Date: ";
-  dateLine.appendChild(dateStrong);
-  dateLine.append(booking.date);
-  deleteMessage.appendChild(dateLine);
-
-  const timeLine = document.createElement("p");
-  const timeStrong = document.createElement("strong");
-  timeStrong.textContent = "Time: ";
-  timeLine.appendChild(timeStrong);
-  timeLine.append(`${booking.start} - ${booking.end}`);
-  deleteMessage.appendChild(timeLine);
-
+  litRender(html`
+    <p>Are you sure you want to delete booking?</p>
+    <p><strong>Equipment: </strong>${booking.name}</p>
+    <p><strong>Date: </strong>${booking.date}</p>
+    <p><strong>Time: </strong>${booking.start} - ${booking.end}</p>
+  `, deleteMessage);
   deleteModal.classList.remove("hidden");
 }
 
@@ -95,50 +74,19 @@ export function openDelete(index) {
  * Renders the list of bookings into the bookings table.
  */
 export function renderBookings() {
-  bookingTableBody.replaceChildren();
-
-  bookings.forEach((b, i)=> {
-    const row = document.createElement("tr");
-
-    // Name
-    const nameTd = document.createElement("td");
-    nameTd.textContent = b.name;
-    row.appendChild(nameTd);
-
-    // Date
-    const dateTd = document.createElement("td");
-    dateTd.textContent = b.date;
-    row.appendChild(dateTd);
-
-    // Time
-    const timeTd = document.createElement("td");
-    timeTd.textContent = `${b.start} - ${b.end}`;
-    row.appendChild(timeTd);
-
-    // Status
-    const statusTd = document.createElement("td");
-    statusTd.textContent = b.status;
-    row.appendChild(statusTd);
-
-    // Actions
-    const actionTd = document.createElement("td");
-
-    const updateBtn = document.createElement("button");
-    updateBtn.textContent = "Update";
-    updateBtn.className = "action-book";
-    updateBtn.addEventListener("click", () => openUpdate(i));
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Delete";
-    deleteBtn.className = "action-delete";
-    deleteBtn.addEventListener("click", () => openDelete(i));
-
-    actionTd.appendChild(updateBtn);
-    actionTd.appendChild(deleteBtn);
-    row.appendChild(actionTd);
-
-    bookingTableBody.appendChild(row);
-  });
+  const tableRows = bookings.map((b, i) => html`
+    <tr>
+      <td>${b.name}</td>
+      <td>${b.date}</td>
+      <td>${b.start} - ${b.end}</td>
+      <td>${b.status}</td>
+      <td>
+        <button class="action-book" @click=${() => openUpdate(i)}>Update</button>
+        <button class="action-delete" title="Delete booking" @click=${() => openDelete(i)}>Delete</button>
+      </td>
+    </tr>
+  `);
+  litRender(html`${tableRows}`, bookingTableBody);
 }
 
 

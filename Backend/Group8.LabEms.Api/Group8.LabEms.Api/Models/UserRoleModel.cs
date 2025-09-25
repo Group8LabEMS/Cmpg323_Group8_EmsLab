@@ -13,10 +13,12 @@ namespace Group8.LabEms.Api.Models
         public int UserRoleId { get; set; }  // Primary key for the join table
 
         [Column("user_id")]
+        [ForeignKey(nameof(User))] 
         public int UserId { get; set; }
         public UserModel User { get; set; } = null!;
 
         [Column("role_id")]
+        [ForeignKey(nameof(Role))]  
         public int RoleId { get; set; }
         public RoleModel Role { get; set; } = null!;
     }

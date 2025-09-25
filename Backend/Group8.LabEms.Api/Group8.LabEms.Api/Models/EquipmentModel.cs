@@ -17,15 +17,13 @@ namespace Group8.LabEms.Api.Models
         public string Name { get; set; } = null!;
 
         [Column("equipment_type_id")]
+        [ForeignKey(nameof(EquipmentType))]
         public int EquipmentTypeId { get; set; }
-
-        [ForeignKey(nameof(EquipmentTypeId))]
         public EquipmentTypeModel EquipmentType { get; set; } = null!;
 
         [Column("equipment_status_id")]
+        [ForeignKey(nameof(EquipmentStatus))]
         public int EquipmentStatusId { get; set; }
-
-        [ForeignKey(nameof(EquipmentStatusId))]
         public EquipmentStatusModel EquipmentStatus { get; set; } = null!;
 
         [Column("availability")]
