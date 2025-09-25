@@ -10,12 +10,25 @@ var builder = WebApplication.CreateBuilder(args);
 Console.WriteLine("Connection string = " + builder.Configuration.GetConnectionString("DefaultConnection"));
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy.WithOrigins() 
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+});
+
 
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
-        "server=localhost;port=3306;database=labems;user=root;password=labems12345;",
+        "server=127.0.0.1;port=3306;database=ems_lab;user=ems_user;password=ems_password;",
         new MySqlServerVersion(new Version(8, 0, 36)) // use your MySQL version
     ));
 
@@ -31,6 +44,9 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Middleware
+
+Console.WriteLine("Environment = " + app.Environment.EnvironmentName);
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -41,6 +57,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-
+app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.Run();
 

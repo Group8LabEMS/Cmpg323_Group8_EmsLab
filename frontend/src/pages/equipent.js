@@ -1,5 +1,6 @@
 import { html, render as litRender } from "lit";
 import { openBooking } from "./bookings.js";
+import { getEquipment } from "../util/api";
 
 //---------- Element references ----------//
 const equipmentTableBody = document.getElementById("equipmentTableBody");
@@ -31,23 +32,19 @@ export let equipmentList = [
  * If equipment is available, a "Book" button is shown that opens the booking modal.
  */
 export function renderEquipment() {
-  // DOM safe version - new
-  const tableRows = equipmentList.map(eq => html`
-    <tr>
-      <td>${eq.name}</td>
-      <td>${eq.desc}</td>
-      <td>${eq.loc}</td>
-      <td>
-        <span class="${eq.status === "Available" ? "status-available" : "status-maintenance"}">${eq.status}</span>
-      </td>
-      <td>
-        ${eq.status === "Available" ? html`
-          <button class="action-book" @click=${() => openBooking(eq.id)}>Book</button>
-        ` : html`
-          <button class="action-disabled" disabled>N/A</button>
-        `}
-      </td>
-    </tr>
-  `);
-  litRender(html`${tableRows}`, equipmentTableBody);
+  getEquipment()
+    .then(equipment => {
+      // Use the fetched equipment array to render your table
+      const tableRows = equipment.map(eq => html`
+        <tr>
+          <td>${eq.name}</td>
+          <td>${eq.equipmentStatus.description}</td>
+        </tr>
+      `);
+      litRender(html`${tableRows}`, equipmentTableBody);
+    })
+    .catch(err => console.error(err));
+
+
+
 }
