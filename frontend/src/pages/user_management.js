@@ -1,7 +1,8 @@
 // ---------- State ---------- //
 let users = [
-  { username: "john_doe", role: "Admin", status: "Active" },
-  { username: "jane_smith", role: "User", status: "Inactive" }
+  { name: "Cosmo Kramer", universityNo: "12123434", email: "ckramer@mynwu.ac.za", role: "Student" },
+  { name: "Jerry Seinfeld", universityNo: "10067546", email: "jseinfeld@nwu.ac.za", role: "Lab Manager" },
+  { name: "George Costanza", universityNo: "23454567", email: "gcostanza@nwu.ac.za", role: "Lab Assistant" }
 ];
 
 let editingUserIndex = null;
@@ -12,9 +13,16 @@ const userTableBody = document.getElementById("userTableBody");
 const userModal = document.getElementById("userModal");
 const userModalTitle = document.getElementById("userModalTitle");
 
-const usernameInput = /** @type {HTMLInputElement} */ (document.getElementById("usernameInput"));
-const roleInput = /** @type {HTMLSelectElement} */ (document.getElementById("roleInput"));
-const statusInput = /** @type {HTMLSelectElement} */ (document.getElementById("statusInput"));
+const nameInput = /** @type {HTMLInputElement} */ (document.getElementById("nameInput"));
+const surnameInput = /** @type {HTMLInputElement} */ (document.getElementById("surnameInput"));
+const universityNoInput = /** @type {HTMLInputElement} */ (document.getElementById("universityNoInput"));
+const emailInput = /** @type {HTMLInputElement} */ (document.getElementById("emailInput"));
+const cellInput = /** @type {HTMLInputElement} */ (document.getElementById("cellInput"));
+const facultyInput = /** @type {HTMLInputElement} */ (document.getElementById("facultyInput"));
+const departmentInput = /** @type {HTMLInputElement} */ (document.getElementById("departmentInput"));
+const passwordInput = /** @type {HTMLInputElement} */ (document.getElementById("passwordInput"));
+const repasswordInput = /** @type {HTMLInputElement} */ (document.getElementById("repasswordInput"));
+// roleInput already exists for role
 
 const confirmUserBtn = document.getElementById("confirmUser");
 const cancelUserBtn = document.getElementById("cancelUser");
@@ -28,19 +36,103 @@ const cancelUserDeleteBtn = document.getElementById("cancelUserDelete");
 let pendingDeleteUserIndex = null;
 
 // ---------- Render ---------- //
+// --- UI State ---
+let searchTerm = "";
+let sortKey = "name";
+let sortAsc = true;
+
+function handleSearch(e) {
+  searchTerm = e.target.value;
+  renderUsers();
+}
+function handleSort(e) {
+  sortKey = e.target.value;
+  renderUsers();
+}
+function toggleSortDir() {
+  sortAsc = !sortAsc;
+  renderUsers();
+}
+
+function getFilteredSortedList() {
+  let list = [...users];
+  if (searchTerm)
+    list = list.filter(u =>
+      u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.universityNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.role.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  list.sort((a, b) => {
+    let v1 = a[sortKey]?.toLowerCase?.() || a[sortKey];
+    let v2 = b[sortKey]?.toLowerCase?.() || b[sortKey];
+    if (v1 < v2) return sortAsc ? -1 : 1;
+    if (v1 > v2) return sortAsc ? 1 : -1;
+    return 0;
+  });
+  return list;
+}
+
 export function renderUsers() {
-  const tableRows = users.map((u, i) => html`
-    <tr>
-      <td>${u.username}</td>
-      <td>${u.role}</td>
-      <td>${u.status}</td>
-      <td>
-        <button class="action-book user-action-btn" title="Edit user" @click=${() => openEditUser(i)}>Edit</button>
-  <button class="action-delete-outline user-action-btn" title="Delete user" @click=${() => openUserDeleteModal(i)}>Delete</button>
-      </td>
-    </tr>
-  `);
-  litRender(html`${tableRows}`, userTableBody);
+  const section = document.getElementById("userManagement");
+  if (!section) return;
+  litRender(html`
+    <h2 style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;">User Management</h2>
+    <div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;">View, add, update and delete users.</div>
+    <button style="float:right;margin-bottom:1.5rem;background:#8d5fc5;color:#fff;font-size:1.2rem;padding:0.7rem 2.5rem;border-radius:8px;border:none;box-shadow:0 2px 8px #bdbdbd;" @click=${openAddUser}>Create User</button>
+    <div style="clear:both"></div>
+    <div style="background:#fff;border-radius:20px;box-shadow:0 4px 15px #e0d3f3;padding:2rem 1.5rem 1.5rem 1.5rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <select @change=${handleSort} style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
+            <option value="name">Sort by</option>
+            <option value="name">Name</option>
+            <option value="universityNo">University No</option>
+            <option value="email">Email</option>
+            <option value="role">Role</option>
+          </select>
+          <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;margin-left:0.5rem;display:flex;align-items:center;gap:0.3rem;" @click=${toggleSortDir}>
+            <span style="font-size:1.2rem;">${sortAsc ? "\u25B2" : "\u25BC"}</span>
+          </button>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <input type="text" placeholder="Search ..." @input=${handleSearch} value=${searchTerm} style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;" />
+          <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
+            <span style="font-size:1.2rem;">&#128269;</span>
+          </button>
+          <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
+            <span style="font-size:1.2rem;">&#128465;</span> FILTER
+          </button>
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
+        <thead>
+          <tr style="background:#8d5fc5;color:#fff;">
+            <th style="padding:1rem 0.5rem;">NAME</th>
+            <th>UNIVERSITY NO</th>
+            <th>EMAIL</th>
+            <th>ROLE</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${[...getFilteredSortedList(), {}, {}, {}].slice(0, 5).map((u, i) => u.name ? html`
+            <tr style="background:${i%2===1?'#f7f6fb':'#fff'};">
+              <td><span style="font-weight:bold;color:#6d4eb0;">${u.name}</span></td>
+              <td>${u.universityNo}</td>
+              <td>${u.email}</td>
+              <td>${u.role}</td>
+              <td>
+                <a href="#" style="color:#8d5fc5;font-weight:bold;cursor:pointer;" @click=${e => { e.preventDefault(); openEditUser(i); }}>Update</a>
+                |
+                <a href="#" style="color:#8d5fc5;font-weight:bold;cursor:pointer;" @click=${e => { e.preventDefault(); openUserDeleteModal(i); }}>Delete</a>
+              </td>
+            </tr>
+          ` : html`<tr><td></td><td></td><td></td><td></td><td></td></tr>`)}
+        </tbody>
+      </table>
+    </div>
+  `, section);
 }
 
 // ---------- Modal Handling ---------- //
@@ -49,10 +141,16 @@ export function renderUsers() {
  */
 function openAddUser() {
   editingUserIndex = null;
-  userModalTitle.textContent = "Add User";
-  usernameInput.value = "";
-  roleInput.value = "User";
-  statusInput.value = "Active";
+  userModalTitle.textContent = "User Profile";
+  nameInput.value = "";
+  surnameInput.value = "";
+  universityNoInput.value = "";
+  emailInput.value = "";
+  cellInput.value = "";
+  facultyInput.value = "";
+  departmentInput.value = "";
+  passwordInput.value = "";
+  repasswordInput.value = "";
   userModal.classList.remove("hidden");
 }
 
@@ -62,11 +160,20 @@ function openAddUser() {
  */
 function openEditUser(index) {
   editingUserIndex = index;
-  userModalTitle.textContent = "Edit User";
+  userModalTitle.textContent = "User Profile";
   const u = users[index];
-  usernameInput.value = u.username;
-  roleInput.value = u.role;
-  statusInput.value = u.status;
+  // Split name into first and last if possible
+  const [first, ...last] = (u.name || "").split(" ");
+  nameInput.value = first || "";
+  surnameInput.value = last.join(" ") || "";
+  universityNoInput.value = u.universityNo || "";
+  emailInput.value = u.email || "";
+  cellInput.value = u.cell || "";
+  facultyInput.value = u.faculty || "";
+  departmentInput.value = u.department || "";
+  passwordInput.value = u.password || "";
+  repasswordInput.value = u.password || "";
+  // roleInput is not present in modal, so skip
   userModal.classList.remove("hidden");
 }
 
@@ -112,21 +219,41 @@ function confirmUserDelete() {
  * Handles confirming add/edit user in modal.
  */
 confirmUserBtn.addEventListener("click", () => {
-  const username = usernameInput.value.trim();
-  const role = roleInput.value;
-  const status = statusInput.value;
+  const name = nameInput.value.trim();
+  const surname = surnameInput.value.trim();
+  const universityNo = universityNoInput.value.trim();
+  const email = emailInput.value.trim();
+  const cell = cellInput.value.trim();
+  const faculty = facultyInput.value.trim();
+  const department = departmentInput.value.trim();
+  const password = passwordInput.value;
+  const repassword = repasswordInput.value;
+  const role = document.getElementById("roleInput") ? /** @type {HTMLSelectElement} */ (document.getElementById("roleInput")).value : "";
 
-  if (!username) {
-    alert("Username is required.");
+  if (!name || !surname || !universityNo || !email || !cell || !faculty || !department || !password || !repassword) {
+    alert("All fields are required.");
+    return;
+  }
+  if (password !== repassword) {
+    alert("Passwords do not match.");
     return;
   }
 
+  const userObj = {
+    name: name + " " + surname,
+    universityNo,
+    email,
+    cell,
+    faculty,
+    department,
+    password,
+    role
+  };
+
   if (editingUserIndex !== null) {
-    // Update existing
-    users[editingUserIndex] = { username, role, status };
+    users[editingUserIndex] = userObj;
   } else {
-    // Add new
-    users.push({ username, role, status });
+    users.push(userObj);
   }
 
   renderUsers();
