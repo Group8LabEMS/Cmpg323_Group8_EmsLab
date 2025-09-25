@@ -1,7 +1,7 @@
 using System;
 using Group8.LabEms.Api.Data;
-using Group8.LabEms.Api.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Group8.LabEms.Api.Services;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
