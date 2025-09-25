@@ -13,17 +13,17 @@ Console.WriteLine("Connection string = " + builder.Configuration.GetConnectionSt
 builder.Services.AddControllers();
 
 
-//builder.Services.AddDbContext<AppDbContext>(options =>
-  //  options.UseMySql(
-    //    "server=localhost;port=3306;database=labems;user=root;password=labems12345;",
-      //  new MySqlServerVersion(new Version(8, 0, 36)) // use your MySQL version
-    //));
-
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
-   ));
+        "server=localhost;port=3306;database=labems;user=root;password=labems12345;",
+        new MySqlServerVersion(new Version(8, 0, 36)) // use your MySQL version
+    ));
+
+//builder.Services.AddDbContext<AppDbContext>(options =>
+  //  options.UseMySql(
+    //    builder.Configuration.GetConnectionString("DefaultConnection"),
+      //  ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
+   //));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
