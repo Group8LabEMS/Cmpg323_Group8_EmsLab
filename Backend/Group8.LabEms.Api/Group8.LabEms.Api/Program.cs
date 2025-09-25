@@ -43,11 +43,11 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
-        "server=localhost;port=3306;database=labems;user=root;password=root;",
-        new MySqlServerVersion(new Version(8, 4, 6)) // use your MySQL version
+        // "server=localhost;port=3306;database=labems;user=root;password=root;",
+        // new MySqlServerVersion(new Version(8, 4, 6)) // use your MySQL version
 
-        // "server=localhost;port=3306;database=labems;user=root;password=labems12345;",
-        // new MySqlServerVersion(new Version(8, 0, 36)) // use your MySQL version
+        "server=localhost;port=3306;database=labems;user=root;password=labems12345;",
+        new MySqlServerVersion(new Version(8, 0, 36)) // use your MySQL version
     ));
 
 //builder.Services.AddDbContext<AppDbContext>(options =>
