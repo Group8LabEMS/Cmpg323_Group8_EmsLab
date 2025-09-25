@@ -26,7 +26,7 @@ const repasswordInput = /** @type {HTMLInputElement} */ (document.getElementById
 
 const confirmUserBtn = document.getElementById("confirmUser");
 const cancelUserBtn = document.getElementById("cancelUser");
-const addUserBtn = document.getElementById("addUserBtn");
+//const addUserBtn = document.getElementById("addUserBtn");
 
 // User Delete Modal Refs
 const userDeleteModal = document.getElementById("userDeleteModal");
@@ -264,7 +264,7 @@ confirmUserBtn.addEventListener("click", () => {
  * Handles canceling user modal.
  */
 cancelUserBtn.addEventListener("click", closeUserModal);
-addUserBtn.addEventListener("click", openAddUser);
+//addUserBtn.addEventListener("click", openAddUser);
 
 // User delete modal actions
 confirmUserDeleteBtn.addEventListener("click", confirmUserDelete);

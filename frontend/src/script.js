@@ -11,6 +11,7 @@ const TABS_BY_ROLE = {
     { id: 'userManagement', label: 'User Management' },
     { id: 'bookings', label: 'Bookings Management' },
     { id: 'equipment', label: 'Equipment Management' },
+    { id: 'maintenance', label: 'Maintenance' },
     { id: 'adminDashboard', label: 'Audit Trails' },
     { id: 'reports', label: 'Reports' },
     { id: 'settings', label: 'Settings' }
@@ -85,7 +86,7 @@ const tabRenderers = {
   equipment: currentRole === 'admin' ? renderEquipmentManagement : renderEquipment,
   userManagement: renderUsers,
   adminDashboard: renderAdminDashboard,
-   maintenance: renderMaintenance,
+  maintenance: renderMaintenance,
 };
 
 document.querySelectorAll(".sidebar-btn[data-target]").forEach(btn => {

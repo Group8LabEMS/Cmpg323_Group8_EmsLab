@@ -19,15 +19,9 @@
 
     <!-- Sidebar -->
     <aside class="sidebar">
-      <h3>John Doe</h3>
-      <button class="sidebar-btn" data-target="dashboard">Dashboard</button>
-      <button class="sidebar-btn" data-target="profile">Profile</button>
-      <button class="sidebar-btn" data-target="bookings">Bookings</button>
-      <button class="sidebar-btn active" data-target="equipment">Equipment</button>
-      <button class="sidebar-btn" data-target="maintenance">Maintenance</button>
-      <button class="sidebar-btn" data-target="userManagement">User Management</button>
-      <button class="sidebar-btn" data-target="adminDashboard">Admin Dashboard</button>
-      <button class="sidebar-btn logout">Logout</button>
+  <h3>John Doe</h3>
+  <!-- Sidebar buttons are rendered dynamically by script.js based on role -->
+  <button class="sidebar-btn logout">Logout</button>
       
     </aside>
 
@@ -69,32 +63,29 @@
           <tbody id="equipmentTableBody"></tbody>
         </table>
       </section>
-      <!-- Maintenance -->
-<section id="maintenance" class="tab hidden">
-  <h2>Maintenance Tracking</h2>
-  <p>Track equipment that requires repair, is being repaired, or has been repaired.</p>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Location</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="maintenanceTableBody"></tbody>
-  </table>
-</section>
+      <!-- Maintenance Tab (Admin only) -->
+      <section id="maintenance" class="tab hidden">
+        <h2 style="color:#7A4EB0;font-size:2rem;margin-bottom:1.5rem;">Maintenance Tracking</h2>
+        <p style="margin-bottom:1.5rem;">Track equipment that requires repair, is being repaired, or has been repaired.</p>
+        <table class="maintenance-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="maintenanceTableBody"></tbody>
+        </table>
+      </section>
       <!-- User Management -->
       <section id="userManagement" class="tab hidden">
         
 
-        <button id="addUserBtn" class="action-book">Add User</button>
       </section>
 
-      <!-- Admin Dashboard -->
       <section id="adminDashboard" class="tab hidden">
         
         <div id="adminStats" class="stats-container"></div>

@@ -1,3 +1,70 @@
+/* Maintenance Table Styles */
+.maintenance-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(122, 78, 176, 0.08);
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+.maintenance-table th, .maintenance-table td {
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid #e5d6f7;
+  text-align: left;
+  color: #7A4EB0;
+  font-size: 1.1rem;
+}
+.maintenance-table th {
+  background: #f6f1fa;
+  font-weight: bold;
+}
+.maintenance-table tr:last-child td {
+  border-bottom: none;
+}
+.status-needs-repair {
+  color: #fff;
+  background: #e57373;
+  border-radius: 6px;
+  padding: 0.3em 0.8em;
+  font-weight: 500;
+}
+.status-repair-progress {
+  color: #fff;
+  background: #ffb300;
+  border-radius: 6px;
+  padding: 0.3em 0.8em;
+  font-weight: 500;
+}
+.status-repair-completed {
+  color: #fff;
+  background: #81c784;
+  border-radius: 6px;
+  padding: 0.3em 0.8em;
+  font-weight: 500;
+}
+.action-book {
+  background: #8d5fc5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5em 1.2em;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.action-book:hover {
+  background: #7A4EB0;
+}
+.action-disabled {
+  background: #ccc;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5em 1.2em;
+  font-size: 1rem;
+  cursor: not-allowed;
+}
 /* Admin Dashboard Custom Styles */
 .admin-dashboard-grid {
   display: flex;
