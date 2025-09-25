@@ -1,5 +1,4 @@
 using Group8.LabEms.Api.Data;
-using Group8.LabEms.Api.Data.Enums;
 using Group8.LabEms.Api.Models;
 using System.Linq;
 
@@ -8,7 +7,6 @@ namespace Group8.LabEms.Api.BusinessLogic
     /*
         SOME METHODS TO IMPROVE VALIDATIONS AND 
         ENHANCE THE OVERALL BUSINESS LOGIC OF THE APPLICATION
-
     */
     public class BusinessLogic
     {
@@ -30,7 +28,6 @@ namespace Group8.LabEms.Api.BusinessLogic
 
             if (latestMaintenance == null || 
                 latestMaintenance.MaintenanceType.Name != "Completed") return false;
-
             return true;               
         }
 
