@@ -186,11 +186,10 @@ litRender(html`
 			<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
 				<div style="display:flex;align-items:center;gap:0.5rem;">
 					<label style="font-size:1.1rem;margin-right:0.5rem;">Sort by</label>
-					<select @change=${handleSort} style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
-						<option value="name">Name</option>
-						<option value="status">Status</option>
-						<option value="loc">Location</option>
-					</select>
+					   <select @change=${handleSort} style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
+						   <option value="name">Name</option>
+						   <option value="status">Status</option>
+					   </select>
 					<button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;margin-left:0.5rem;display:flex;align-items:center;gap:0.3rem;">
 						<span style="font-size:1.2rem;">&#x25BC;</span>
 					</button>
@@ -206,22 +205,20 @@ litRender(html`
 				</div>
 			</div>
 			<table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
-				<thead>
-					<tr style="background:#8d5fc5;color:#fff;">
-						<th style="padding:1rem 0.5rem;">NAME</th>
-						<th>DESCRIPTION</th>
-						<th>LOCATION</th>
-						<th>STATUS</th>
-						<th>ACTION</th>
-					</tr>
-				</thead>
+				   <thead>
+					   <tr style="background:#8d5fc5;color:#fff;">
+						   <th style="padding:1rem 0.5rem;">NAME</th>
+						   <th>DESCRIPTION</th>
+						   <th>STATUS</th>
+						   <th>ACTION</th>
+					   </tr>
+				   </thead>
 				<tbody>
 					${getFilteredSortedList().map(eq => html`
 						<tr style="background:${(eq.equipmentId ?? 0)%2===0?'#f7f6fb':'#fff'};">
-							<td>${eq.name || ''}</td>
-							<td>${eq.equipmentType?.name || ''}</td>
-							<td>${eq.availability || ''}</td>
-							<td>
+							   <td>${eq.name || ''}</td>
+							   <td>${eq.equipmentType?.name || ''}</td>
+							   <td>
 								<span style="background:${eq.equipmentStatus?.name==='Available'?'#d9f2d9':'#6c757d'};color:${eq.equipmentStatus?.name==='Available'?'#2d7a2d':'#fff'};padding:4px 12px;border-radius:6px;font-weight:bold;">${eq.equipmentStatus?.name || ''}</span>
 							</td>
 							<td>
@@ -243,8 +240,6 @@ litRender(html`
 										</div>
 									</div>
 								` : ""}
-							</td>
-							<td style="text-align:right;">
 							</td>
 						</tr>
 					`)}
