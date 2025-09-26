@@ -27,15 +27,18 @@ namespace Group8.LabEms.Api.Models
         public int BookingStatusId { get; set; }
         public BookingStatusModel BookingStatus { get; set; } = null!;
 
+        [Required]
         [Column("from_date")]
         public DateTime FromDate { get; set; }
 
+        [Required]
         [Column("to_date")]
         public DateTime ToDate { get; set; }
 
         [Column("notes")]
         public string? Notes { get; set; }
 
+        [Required]
         [Column("created_date")]
         public DateTime CreatedDate { get; set; }
     }

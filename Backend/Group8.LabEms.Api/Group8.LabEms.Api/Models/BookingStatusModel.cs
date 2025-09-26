@@ -11,12 +11,15 @@ namespace Group8.LabEms.Api.Models
         [Key]
         [Column("booking_status_id")]
         public int BookingStatusId { get; set; }
-        [Column("name")]
-        public required string name { get; set; }
-        [Column("description")]
-        public string? description { get; set; }
 
-        //public ICollection<BookingModel> Bookings { get; set; } = new List<BookingModel>();
+        [Required]
+        [Column("name")]
+        public required string Name { get; set; }
+
+        [Column("description")]
+        public string? Description { get; set; }
+
+        public ICollection<BookingModel> Bookings { get; set; } = new List<BookingModel>();
 
     }
 }

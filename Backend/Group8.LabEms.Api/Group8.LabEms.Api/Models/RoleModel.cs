@@ -12,6 +12,7 @@ namespace Group8.LabEms.Api.Models
         [Column("role_id")]
         public int RoleId { get; set; }
 
+        [Required]
         [Column("name")]
         public required string Name { get; set; }
 

@@ -12,6 +12,7 @@ namespace Group8.LabEms.Api.Models
         [Column("maintenance_type_id")]
         public int MaintenanceTypeId { get; set; }
 
+        [Required]
         [Column("name")]
         public required string Name { get; set; }
 

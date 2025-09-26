@@ -29,6 +29,7 @@ namespace Group8.LabEms.Api.Models
         [Column("availability")]
         public string? Availability { get; set; }
 
+        [Required]
         [Column("created_date")]
         public DateTime CreatedDate { get; set; }
 
