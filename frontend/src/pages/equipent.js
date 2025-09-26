@@ -1,39 +1,35 @@
 import { html, render as litRender } from "lit";
 import { openBooking } from "./bookings.js";
 
-//---------- Element references ----------//
-const equipmentTableBody = document.getElementById("equipmentTableBody");
-
-
 //---------- State ----------//
-
-/**
- * Currently selected equipment.
- * @type {{ id: number, name: string, desc: string, loc: string, status: string } | null}
- */
 export let selectedEquipment = null;
+export let equipmentList = [];
 
-/**
- * List of all available equipment.
- * @type {Array<{ id: number, name: string, desc: string, loc: string, status: string }>}
- */
-export let equipmentList = [
-  { id: 1, name: "Microscope", desc: "MSC-132", loc: "Lab A", status: "Available" },
-  { id: 2, name: "Spectrometer", desc: "SPM-2004", loc: "Lab A", status: "Available" },
-];
-
-
-//---------- Renderers ----------//
-
-/**
- * Renders the equipment list into the equipment table.
- * Displays name, description, location, status, and booking action.
- * If equipment is available, a "Book" button is shown that opens the booking modal.
- */
 // --- UI State ---
 let searchTerm = "";
 let sortKey = "name";
 let sortAsc = true;
+
+// Fetch equipment from backend
+async function fetchEquipment() {
+  console.log('Fetching equipment userEquipment.js...');
+  try {
+    const res = await fetch('/api/Equipment');
+    if (!res.ok) throw new Error('Failed to fetch equipment');
+    const data = await res.json();
+    // Map backend fields to table columns
+    equipmentList = data.map(eq => ({
+      id: eq.equipmentId,
+      name: eq.name,
+      desc: eq.equipmentType?.name || '',
+      loc: eq.availability || '',
+      status: eq.equipmentStatus?.name || '',
+    }));
+  } catch (err) {
+    console.error('Error fetching equipment:', err);
+    equipmentList = [];
+  }
+}
 
 function handleSearch(e) {
   searchTerm = e.target.value;
@@ -62,9 +58,12 @@ function getFilteredSortedList() {
   return list;
 }
 
-export function renderEquipment() {
-  const section = document.getElementById("equipment");
-  if (!section) return;
+export async function renderEquipment() {
+    const section = document.getElementById("equipment");
+    if (!section) return;
+  litRender(html`<div>Loading equipment...</div>`, section);
+  await fetchEquipment();
+  
   litRender(html`
     <h2 style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;">Equipment</h2>
     <div style="color:#8d5fc5;font-size:1.1rem;margin-bottom:0.7rem;">View, add and update equipment</div>
@@ -118,3 +117,4 @@ export function renderEquipment() {
     </table>
   `, section);
 }
+

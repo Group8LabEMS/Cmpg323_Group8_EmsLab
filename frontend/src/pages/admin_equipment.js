@@ -2,6 +2,7 @@ import { html, render as litRender } from "lit";
 
 // --- API Integration --- //
 async function fetchEquipment() {
+	console.log('Fetching equipment...');
 	const res = await fetch('/api/Equipment');
 	const data = await res.json();
 	equipmentList = data.map(eq => ({
@@ -15,17 +16,16 @@ async function fetchEquipment() {
 		availability: eq.availability,
 		createdDate: eq.createdDate,
 	}));
-	renderEquipmentManagement();
 }
 
-async function fetchEquipmentTypes() {
-	const res = await fetch('/api/EquipmentType');
-	equipmentTypes = await res.json();
-}
-
-async function fetchEquipmentStatuses() {
-	const res = await fetch('/api/EquipmentStatus');
-	equipmentStatuses = await res.json();
+async function fetchEquipmentTypesAndStatuses() {
+	await Promise.all([
+		fetch('/api/EquipmentType').then(res => res.json()),
+		fetch('/api/EquipmentStatus').then(res => res.json())
+	]).then(([types, statuses]) => {
+		equipmentTypes = types;
+		equipmentStatuses = statuses;
+	});
 }
 
 let equipmentList = [];
@@ -41,20 +41,19 @@ let showDeleteModal = false;
 let deleteEquipmentObj = null;
 let editEquipment = null;
 
-function openAddModal() {
-		// Always fetch latest types and statuses before showing modal
-		fetchEquipmentTypes().then(() => {
-			fetchEquipmentStatuses().then(() => {
-				showAddModal = true;
-				renderEquipmentManagement();
-			});
-		});
+
+async function openAddModal() {
+	// Always fetch latest types and statuses before showing modal
+	await fetchEquipmentTypesAndStatuses();
+	showAddModal = true;
+	renderEquipmentManagement();
 }
 function closeAddModal() {
 	showAddModal = false;
 	renderEquipmentManagement();
 }
-function openEditModal(eq) {
+async function openEditModal(eq) {
+	await fetchEquipmentTypesAndStatuses();
 	editEquipment = { ...eq };
 	showEditModal = true;
 	renderEquipmentManagement();
@@ -68,7 +67,6 @@ function closeEditModal() {
 function handleInput(e, field) {
 	if (showAddModal) addEquipmentForm[field] = e.target.value;
 	if (showEditModal && editEquipment) editEquipment[field] = e.target.value;
-	renderEquipmentManagement();
 }
 
 let addEquipmentForm = { name: "", type: "", status: "" };
@@ -77,38 +75,36 @@ function resetAddForm() {
 }
 
 async function addEquipment() {
-			// Use default type/status IDs (1) for minimal add
-						// Find selected type and status IDs
-						const typeObj = equipmentTypes.find(t => t.name === addEquipmentForm.type) || equipmentTypes[0];
-						const statusObj = equipmentStatuses.find(s => s.name === addEquipmentForm.status) || equipmentStatuses[0];
-						const payload = {
-							name: addEquipmentForm.name,
-							equipmentTypeId: typeObj?.equipmentTypeId || 1,
-							equipmentStatusId: statusObj?.equipmentStatusId || 1,
-							availability: statusObj?.name || 'Available',
-							createdDate: new Date().toISOString(),
-						};
-			try {
-				const res = await fetch('/api/Equipment', {
-					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify(payload)
-				});
-					const result = await res.json().catch(() => ({}));
-					console.log('Add Equipment response:', res.status, result);
-					if (!res.ok) {
-						let msg = 'Failed to add equipment: ' + (result?.message || res.status);
-						if (result?.errors) msg += '\n' + JSON.stringify(result.errors);
-						alert(msg);
-						return;
-					}
-				await fetchEquipment();
-				resetAddForm();
-				closeAddModal();
-			} catch (err) {
-				console.error('Add Equipment error:', err);
-				alert('Error adding equipment: ' + err.message);
+	const typeObj = equipmentTypes.find(t => t.name === addEquipmentForm.type) || equipmentTypes[0];
+	const statusObj = equipmentStatuses.find(s => s.name === addEquipmentForm.status) || equipmentStatuses[0];
+	const payload = { 
+		name: addEquipmentForm.name,
+		equipmentTypeId: typeObj?.equipmentTypeId || 1,
+		equipmentStatusId: statusObj?.equipmentStatusId || 1,
+		availability: statusObj?.name || 'Available',
+		createdDate: new Date().toISOString(),
+	};
+	try {
+		const res = await fetch('/api/Equipment', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
+		});
+			const result = await res.json().catch(() => ({}));
+			console.log('Add Equipment response:', res.status, result);
+			if (!res.ok) {
+				let msg = 'Failed to add equipment: ' + (result?.message || res.status);
+				if (result?.errors) msg += '\n' + JSON.stringify(result.errors);
+				alert(msg);
+				return;
 			}
+		await fetchEquipment();
+		resetAddForm();
+		closeAddModal();
+	} catch (err) {
+		console.error('Add Equipment error:', err);
+		alert('Error adding equipment: ' + err.message);
+	}
 }
 
 async function updateEquipment() {
@@ -173,9 +169,13 @@ function getFilteredSortedList() {
   return list;
 }
 
-export function renderEquipmentManagement() {
-const section = document.getElementById("equipment");
-if (!section) return;
+export async function renderEquipmentManagement() {
+	const section = document.getElementById("equipment");
+	if (!section) return;
+	litRender(html`<div>Loading equipment management...</div>`, section);
+	await fetchEquipment();
+	console.log('Rendering equipment management UI...');
+
 section.classList.remove('hidden');
 litRender(html`
 		<h2 class="tab-title" style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;">Equipment</h2>
@@ -245,7 +245,6 @@ litRender(html`
 								` : ""}
 							</td>
 							<td style="text-align:right;">
-								<span style="display:inline-block;width:2rem;text-align:center;cursor:pointer;font-size:1.5rem;color:#8d5fc5;">&#9776;</span>
 							</td>
 						</tr>
 					`)}
@@ -289,6 +288,7 @@ litRender(html`
 							<option value="">Select Status</option>
 							${equipmentStatuses.map(s => html`<option value="${s.name}">${s.name}</option>`) }
 						</select>
+
 					<div style="display:flex;gap:1.5rem;justify-content:center;">
 						<button class="action-book" @click=${updateEquipment}>Update</button>
 						<button class="action-delete" @click=${closeEditModal}>Cancel</button>
@@ -298,11 +298,3 @@ litRender(html`
 		` : ""}
 	`, section);
 }
-
-// Ensure equipment loads on page load
-window.addEventListener('DOMContentLoaded', async () => {
-	await fetchEquipmentTypes();
-	await fetchEquipmentStatuses();
-	await fetchEquipment();
-	// No need to call renderEquipmentManagement() here, fetchEquipment does it
-});
