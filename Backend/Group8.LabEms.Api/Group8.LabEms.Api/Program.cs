@@ -38,7 +38,13 @@ Console.WriteLine("Connection string = " + builder.Configuration.GetConnectionSt
 
 
 
-builder.Services.AddControllers();
+
+// Fix JSON serialization cycles for navigation properties
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 
 
 builder.Services.AddDbContext<AppDbContext>(options =>

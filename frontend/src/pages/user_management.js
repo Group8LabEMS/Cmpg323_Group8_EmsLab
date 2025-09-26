@@ -1,9 +1,6 @@
 // ---------- State ---------- //
-let users = [
-  { name: "Cosmo Kramer", universityNo: "12123434", email: "ckramer@mynwu.ac.za", role: "Student" },
-  { name: "Jerry Seinfeld", universityNo: "10067546", email: "jseinfeld@nwu.ac.za", role: "Lab Manager" },
-  { name: "George Costanza", universityNo: "23454567", email: "gcostanza@nwu.ac.za", role: "Lab Assistant" }
-];
+
+let users = [];
 
 let editingUserIndex = null;
 
@@ -58,10 +55,10 @@ function getFilteredSortedList() {
   let list = [...users];
   if (searchTerm)
     list = list.filter(u =>
-      u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      u.universityNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      u.role.toLowerCase().includes(searchTerm.toLowerCase())
+      (u.displayName || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (u.ssoId || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (u.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (u.role || "").toLowerCase().includes(searchTerm.toLowerCase())
     );
   list.sort((a, b) => {
     let v1 = a[sortKey]?.toLowerCase?.() || a[sortKey];
@@ -85,9 +82,9 @@ export function renderUsers() {
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
         <div style="display:flex;align-items:center;gap:0.5rem;">
           <select @change=${handleSort} style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
-            <option value="name">Sort by</option>
-            <option value="name">Name</option>
-            <option value="universityNo">University No</option>
+            <option value="displayName">Sort by</option>
+            <option value="displayName">Name</option>
+            <option value="ssoId">University No</option>
             <option value="email">Email</option>
             <option value="role">Role</option>
           </select>
@@ -116,12 +113,12 @@ export function renderUsers() {
           </tr>
         </thead>
         <tbody>
-          ${[...getFilteredSortedList(), {}, {}, {}].slice(0, 5).map((u, i) => u.name ? html`
+          ${getFilteredSortedList().map((u, i) => u.displayName ? html`
             <tr style="background:${i%2===1?'#f7f6fb':'#fff'};">
-              <td><span style="font-weight:bold;color:#6d4eb0;">${u.name}</span></td>
-              <td>${u.universityNo}</td>
+              <td><span style="font-weight:bold;color:#6d4eb0;">${u.displayName}</span></td>
+              <td>${u.ssoId}</td>
               <td>${u.email}</td>
-              <td>${u.role}</td>
+              <td>${u.role || ''}</td>
               <td>
                 <a href="#" style="color:#8d5fc5;font-weight:bold;cursor:pointer;" @click=${e => { e.preventDefault(); openEditUser(i); }}>Update</a>
                 |
@@ -162,11 +159,11 @@ function openEditUser(index) {
   editingUserIndex = index;
   userModalTitle.textContent = "User Profile";
   const u = users[index];
-  // Split name into first and last if possible
-  const [first, ...last] = (u.name || "").split(" ");
+  // Split displayName into first and last if possible
+  const [first, ...last] = (u.displayName || "").split(" ");
   nameInput.value = first || "";
   surnameInput.value = last.join(" ") || "";
-  universityNoInput.value = u.universityNo || "";
+  universityNoInput.value = u.ssoId || "";
   emailInput.value = u.email || "";
   cellInput.value = u.cell || "";
   facultyInput.value = u.faculty || "";
@@ -191,7 +188,7 @@ function closeUserModal() {
  */
 function openUserDeleteModal(index) {
   pendingDeleteUserIndex = index;
-  userDeleteMessage.textContent = `Are you sure you want to delete user '${users[index].username}'?`;
+  userDeleteMessage.textContent = `Are you sure you want to delete user '${users[index].displayName}'?`;
   userDeleteModal.classList.remove("hidden");
 }
 
@@ -206,10 +203,17 @@ function closeUserDeleteModal() {
 /**
  * Confirms user deletion.
  */
-function confirmUserDelete() {
+async function confirmUserDelete() {
   if (pendingDeleteUserIndex !== null) {
-    users.splice(pendingDeleteUserIndex, 1);
-    renderUsers();
+    const user = users[pendingDeleteUserIndex];
+    if (user && user.userId) {
+      try {
+        await fetch(`/api/User/${user.userId}`, { method: "DELETE" });
+        await fetchUsers();
+      } catch (e) {
+        alert("Failed to delete user.");
+      }
+    }
     closeUserDeleteModal();
   }
 }
@@ -218,10 +222,11 @@ function confirmUserDelete() {
 /**
  * Handles confirming add/edit user in modal.
  */
-confirmUserBtn.addEventListener("click", () => {
+
+confirmUserBtn.addEventListener("click", async () => {
   const name = nameInput.value.trim();
   const surname = surnameInput.value.trim();
-  const universityNo = universityNoInput.value.trim();
+  const ssoId = universityNoInput.value.trim();
   const email = emailInput.value.trim();
   const cell = cellInput.value.trim();
   const faculty = facultyInput.value.trim();
@@ -230,7 +235,7 @@ confirmUserBtn.addEventListener("click", () => {
   const repassword = repasswordInput.value;
   const role = document.getElementById("roleInput") ? /** @type {HTMLSelectElement} */ (document.getElementById("roleInput")).value : "";
 
-  if (!name || !surname || !universityNo || !email || !cell || !faculty || !department || !password || !repassword) {
+  if (!name || !surname || !ssoId || !email || !cell || !faculty || !department || !password || !repassword) {
     alert("All fields are required.");
     return;
   }
@@ -240,24 +245,36 @@ confirmUserBtn.addEventListener("click", () => {
   }
 
   const userObj = {
-    name: name + " " + surname,
-    universityNo,
+    displayName: name + " " + surname,
+    ssoId,
     email,
-    cell,
-    faculty,
-    department,
     password,
-    role
+    // Optionally add extra fields if your backend supports them
+    // cell, faculty, department, role
   };
 
-  if (editingUserIndex !== null) {
-    users[editingUserIndex] = userObj;
-  } else {
-    users.push(userObj);
+  try {
+    if (editingUserIndex !== null) {
+      // Update
+      const user = users[editingUserIndex];
+      await fetch(`/api/User/${user.userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...user, ...userObj, userId: user.userId })
+      });
+    } else {
+      // Create
+      await fetch(`/api/User`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userObj)
+      });
+    }
+    await fetchUsers();
+    closeUserModal();
+  } catch (e) {
+    alert("Failed to save user.");
   }
-
-  renderUsers();
-  closeUserModal();
 });
 
 /**
@@ -269,3 +286,20 @@ cancelUserBtn.addEventListener("click", closeUserModal);
 // User delete modal actions
 confirmUserDeleteBtn.addEventListener("click", confirmUserDelete);
 cancelUserDeleteBtn.addEventListener("click", closeUserDeleteModal);
+
+// --- API Integration --- //
+async function fetchUsers() {
+  try {
+    const res = await fetch("/api/User");
+    if (!res.ok) throw new Error("Failed to fetch users");
+    users = await res.json();
+    renderUsers();
+  } catch (e) {
+    users = [];
+    renderUsers();
+    alert("Could not load users from server.");
+  }
+}
+
+// Initial load
+window.addEventListener("DOMContentLoaded", fetchUsers);

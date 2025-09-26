@@ -36,7 +36,7 @@ namespace Group8.LabEms.Api.BusinessLogic
         {
             return _context.Bookings.Any(b =>
                 b.EquipmentId == equipmentId &&
-                b.BookingStatus.name != "Cancelled" &&
+                b.BookingStatus.Name != "Cancelled" &&
                 ((fromDate < b.ToDate && toDate > b.FromDate))
             );
         }
@@ -56,7 +56,7 @@ namespace Group8.LabEms.Api.BusinessLogic
             // Check for any active bookings overlapping with the maintenance window
             return !_context.Bookings.Any(b =>
                 b.EquipmentId == equipmentId &&
-                b.BookingStatus.name != "Cancelled" &&
+                b.BookingStatus.Name != "Cancelled" &&
                 ((scheduledFor < b.ToDate && (completedAt ?? scheduledFor) > b.FromDate))
             );
         }
@@ -68,7 +68,7 @@ namespace Group8.LabEms.Api.BusinessLogic
         {
             // Get the latest completed booking for this equipment
             var latestBooking = _context.Bookings
-                .Where(b => b.EquipmentId == EquipmentId && b.BookingStatus.name == "Completed")
+                .Where(b => b.EquipmentId == EquipmentId && b.BookingStatus.Name == "Completed")
                 .OrderByDescending(b => b.ToDate)
                 .FirstOrDefault();
 

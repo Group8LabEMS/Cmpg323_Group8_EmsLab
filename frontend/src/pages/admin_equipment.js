@@ -1,13 +1,36 @@
 import { html, render as litRender } from "lit";
 
-// Equipment state
-let equipmentList = [
-	{ id: 1, name: "Microscope", desc: "MSC-132", loc: "Lab A", status: "Available" },
-	{ id: 2, name: "Spectrometer", desc: "SPM-2004", loc: "Lab A", status: "Available" },
-	{ id: 3, name: "Centrifuge", desc: "CTF-234", loc: "Lab B", status: "Maintenance" },
-	{ id: 4, name: "Laser Cutter", desc: "LCR-1234", loc: "Lab C", status: "Maintenance" },
-	{ id: 5, name: "Workstation A02", desc: "Lab-A Station-02", loc: "Lab A", status: "Available" },
-];
+// --- API Integration --- //
+async function fetchEquipment() {
+	const res = await fetch('/api/Equipment');
+	const data = await res.json();
+	equipmentList = data.map(eq => ({
+		...eq,
+		name: eq.name,
+		equipmentId: eq.equipmentId,
+		equipmentType: eq.equipmentType,
+		equipmentStatus: eq.equipmentStatus,
+		type: eq.equipmentType?.name || '',
+		status: eq.equipmentStatus?.name || '',
+		availability: eq.availability,
+		createdDate: eq.createdDate,
+	}));
+	renderEquipmentManagement();
+}
+
+async function fetchEquipmentTypes() {
+	const res = await fetch('/api/EquipmentType');
+	equipmentTypes = await res.json();
+}
+
+async function fetchEquipmentStatuses() {
+	const res = await fetch('/api/EquipmentStatus');
+	equipmentStatuses = await res.json();
+}
+
+let equipmentList = [];
+let equipmentTypes = [];
+let equipmentStatuses = [];
 let searchTerm = "";
 let sortKey = "name";
 let sortAsc = true;
@@ -19,8 +42,13 @@ let deleteEquipmentObj = null;
 let editEquipment = null;
 
 function openAddModal() {
-	showAddModal = true;
-	renderEquipmentManagement();
+		// Always fetch latest types and statuses before showing modal
+		fetchEquipmentTypes().then(() => {
+			fetchEquipmentStatuses().then(() => {
+				showAddModal = true;
+				renderEquipmentManagement();
+			});
+		});
 }
 function closeAddModal() {
 	showAddModal = false;
@@ -43,23 +71,63 @@ function handleInput(e, field) {
 	renderEquipmentManagement();
 }
 
-let addEquipmentForm = { name: "", desc: "", loc: "", status: "" };
+let addEquipmentForm = { name: "", type: "", status: "" };
 function resetAddForm() {
-	addEquipmentForm = { name: "", desc: "", loc: "", status: "" };
+	addEquipmentForm = { name: "", type: "", status: "" };
 }
 
-function addEquipment() {
-	equipmentList.push({
-		id: Date.now(),
-		...addEquipmentForm,
+async function addEquipment() {
+			// Use default type/status IDs (1) for minimal add
+						// Find selected type and status IDs
+						const typeObj = equipmentTypes.find(t => t.name === addEquipmentForm.type) || equipmentTypes[0];
+						const statusObj = equipmentStatuses.find(s => s.name === addEquipmentForm.status) || equipmentStatuses[0];
+						const payload = {
+							name: addEquipmentForm.name,
+							equipmentTypeId: typeObj?.equipmentTypeId || 1,
+							equipmentStatusId: statusObj?.equipmentStatusId || 1,
+							availability: statusObj?.name || 'Available',
+							createdDate: new Date().toISOString(),
+						};
+			try {
+				const res = await fetch('/api/Equipment', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(payload)
+				});
+					const result = await res.json().catch(() => ({}));
+					console.log('Add Equipment response:', res.status, result);
+					if (!res.ok) {
+						let msg = 'Failed to add equipment: ' + (result?.message || res.status);
+						if (result?.errors) msg += '\n' + JSON.stringify(result.errors);
+						alert(msg);
+						return;
+					}
+				await fetchEquipment();
+				resetAddForm();
+				closeAddModal();
+			} catch (err) {
+				console.error('Add Equipment error:', err);
+				alert('Error adding equipment: ' + err.message);
+			}
+}
+
+async function updateEquipment() {
+	const type = equipmentTypes.find(t => t.name === editEquipment.type);
+	const status = equipmentStatuses.find(s => s.name === editEquipment.status);
+	const payload = {
+		equipmentId: editEquipment.equipmentId,
+		name: editEquipment.name,
+		equipmentTypeId: type ? type.equipmentTypeId : 1,
+		equipmentStatusId: status ? status.equipmentStatusId : 1,
+		availability: editEquipment.status,
+		createdDate: editEquipment.createdDate || new Date().toISOString(),
+	};
+	await fetch(`/api/Equipment/${editEquipment.equipmentId}`, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(payload)
 	});
-	resetAddForm();
-	closeAddModal();
-}
-
-function updateEquipment() {
-	const idx = equipmentList.findIndex(eq => eq.id === editEquipment.id);
-	if (idx !== -1) equipmentList[idx] = { ...editEquipment };
+	await fetchEquipment();
 	closeEditModal();
 }
 
@@ -74,9 +142,10 @@ function closeDeleteModal() {
 	deleteEquipmentObj = null;
 	renderEquipmentManagement();
 }
-function confirmDeleteEquipment() {
+async function confirmDeleteEquipment() {
 	if (deleteEquipmentObj) {
-		equipmentList = equipmentList.filter(eq => eq.id !== deleteEquipmentObj.id);
+		await fetch(`/api/Equipment/${deleteEquipmentObj.equipmentId}`, { method: 'DELETE' });
+		await fetchEquipment();
 	}
 	closeDeleteModal();
 }
@@ -91,23 +160,24 @@ function handleSort(e) {
 }
 
 function getFilteredSortedList() {
-	let list = [...equipmentList];
-	if (searchTerm)
-		list = list.filter(eq => eq.name.toLowerCase().includes(searchTerm.toLowerCase()) || eq.desc.toLowerCase().includes(searchTerm.toLowerCase()));
-	list.sort((a, b) => {
-		let v1 = a[sortKey]?.toLowerCase?.() || a[sortKey];
-		let v2 = b[sortKey]?.toLowerCase?.() || b[sortKey];
-		if (v1 < v2) return sortAsc ? -1 : 1;
-		if (v1 > v2) return sortAsc ? 1 : -1;
-		return 0;
-	});
-	return list;
+  let list = [...equipmentList];
+  if (searchTerm)
+    list = list.filter(eq => (eq.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || (eq.equipmentType?.name || '').toLowerCase().includes(searchTerm.toLowerCase()));
+  list.sort((a, b) => {
+    let v1 = a[sortKey]?.toLowerCase?.() || a[sortKey];
+    let v2 = b[sortKey]?.toLowerCase?.() || b[sortKey];
+    if (v1 < v2) return sortAsc ? -1 : 1;
+    if (v1 > v2) return sortAsc ? 1 : -1;
+    return 0;
+  });
+  return list;
 }
 
 export function renderEquipmentManagement() {
-	const section = document.getElementById("equipment");
-	if (!section) return;
-	litRender(html`
+const section = document.getElementById("equipment");
+if (!section) return;
+section.classList.remove('hidden');
+litRender(html`
 		<h2 class="tab-title" style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;">Equipment</h2>
 		<div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;">View, add, update and delete equipment</div>
 		<button style="float:right;margin-bottom:1.5rem;background:#8d5fc5;color:#fff;font-size:1.2rem;padding:0.7rem 2.5rem;border-radius:8px;border:none;box-shadow:0 2px 8px #bdbdbd;" @click=${openAddModal}>Add Equipment</button>
@@ -147,33 +217,32 @@ export function renderEquipmentManagement() {
 				</thead>
 				<tbody>
 					${getFilteredSortedList().map(eq => html`
-						<tr style="background:${eq.id%2===0?'#f7f6fb':'#fff'};">
-							<td>${eq.name}</td>
-							<td>${eq.desc}</td>
-							<td>${eq.loc}</td>
+						<tr style="background:${(eq.equipmentId ?? 0)%2===0?'#f7f6fb':'#fff'};">
+							<td>${eq.name || ''}</td>
+							<td>${eq.equipmentType?.name || ''}</td>
+							<td>${eq.availability || ''}</td>
 							<td>
-								<span style="background:${eq.status==='Available'?'#d9f2d9':'#6c757d'};color:${eq.status==='Available'?'#2d7a2d':'#fff'};padding:4px 12px;border-radius:6px;font-weight:bold;">${eq.status}</span>
+								<span style="background:${eq.equipmentStatus?.name==='Available'?'#d9f2d9':'#6c757d'};color:${eq.equipmentStatus?.name==='Available'?'#2d7a2d':'#fff'};padding:4px 12px;border-radius:6px;font-weight:bold;">${eq.equipmentStatus?.name || ''}</span>
 							</td>
 							<td>
 								<a href="#" style="color:#8d5fc5;font-weight:bold;cursor:pointer;" @click=${e => { e.preventDefault(); openEditModal(eq); }}>Update</a>
 								${eq.status==='Available'?html` | <a href="#" style="color:#8d5fc5;font-weight:bold;cursor:pointer;" @click=${e => { e.preventDefault(); openDeleteModal(eq); }}>Delete</a>`:''}
-
-			${showDeleteModal && deleteEquipmentObj ? html`
-				<div class="modal" style="display:flex;">
-					<div class="modal-content" style="width:430px;max-width:95vw;">
-					<h2 style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;font-weight:bold;">Delete Equipment</h2>
-					<div style="color:#555;font-size:1.15rem;margin-bottom:1.2rem;">Are sure you want to delete equipment information?</div>
-					<div style="margin-bottom:1.2rem;font-size:1.15rem;">
-						Equipment ID : <span style="color:#6d4eb0;font-weight:bold;">${deleteEquipmentObj.id}</span><br/>
-						Equipment Name : <span style="color:#6d4eb0;font-weight:bold;">${deleteEquipmentObj.name}</span>
-					</div>
-					<div style="display:flex;gap:1.5rem;justify-content:center;">
-						<button style="background:#8d5fc5;color:#fff;font-size:1.1rem;padding:0.7rem 2.5rem;border-radius:8px;border:none;font-weight:bold;" @click=${confirmDeleteEquipment}>Confirm</button>
-						<button style="background:#fff;color:#8d5fc5;font-size:1.1rem;padding:0.7rem 2.5rem;border-radius:8px;border:2px solid #8d5fc5;font-weight:bold;" @click=${closeDeleteModal}>Cancel</button>
-					</div>
-				</div>
-			</div>
-		` : ""}
+								${showDeleteModal && deleteEquipmentObj && deleteEquipmentObj.equipmentId === eq.equipmentId ? html`
+									<div class="modal" style="display:flex;">
+										<div class="modal-content" style="width:430px;max-width:95vw;">
+											<h2 style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;font-weight:bold;">Delete Equipment</h2>
+											<div style="color:#555;font-size:1.15rem;margin-bottom:1.2rem;">Are sure you want to delete equipment information?</div>
+											<div style="margin-bottom:1.2rem;font-size:1.15rem;">
+												Equipment ID : <span style="color:#6d4eb0;font-weight:bold;">${deleteEquipmentObj.equipmentId}</span><br/>
+												Equipment Name : <span style="color:#6d4eb0;font-weight:bold;">${deleteEquipmentObj.name}</span>
+											</div>
+											<div style="display:flex;gap:1.5rem;justify-content:center;">
+												<button style="background:#8d5fc5;color:#fff;font-size:1.1rem;padding:0.7rem 2.5rem;border-radius:8px;border:none;font-weight:bold;" @click=${confirmDeleteEquipment}>Confirm</button>
+												<button style="background:#fff;color:#8d5fc5;font-size:1.1rem;padding:0.7rem 2.5rem;border-radius:8px;border:2px solid #8d5fc5;font-weight:bold;" @click=${closeDeleteModal}>Cancel</button>
+											</div>
+										</div>
+									</div>
+								` : ""}
 							</td>
 							<td style="text-align:right;">
 								<span style="display:inline-block;width:2rem;text-align:center;cursor:pointer;font-size:1.5rem;color:#8d5fc5;">&#9776;</span>
@@ -189,12 +258,15 @@ export function renderEquipmentManagement() {
 				<div class="modal-content" style="width:500px;max-width:95vw;">
 					<h2 style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;">Add Equipment</h2>
 					<div style="color:#8d5fc5;margin-bottom:1.2rem;">Add new equipment to the system</div>
-					<input type="text" placeholder="Equipment Name" value="${addEquipmentForm.name}" @input=${e => handleInput(e, 'name')} style="margin-bottom:1rem;" />
-					<textarea placeholder="Equipment Description" .value=${addEquipmentForm.desc} @input=${e => handleInput(e, 'desc')} style="margin-bottom:1rem;width:100%;height:60px;border-radius:8px;border:2px solid #8d5fc5;padding:0.7rem;"></textarea>
-					<div style="display:flex;gap:1rem;margin-bottom:1rem;">
-						<input type="text" placeholder="Location" value="${addEquipmentForm.loc}" @input=${e => handleInput(e, 'loc')} style="flex:1;" />
-						<input type="text" placeholder="Status" value="${addEquipmentForm.status}" @input=${e => handleInput(e, 'status')} style="flex:1;" />
-					</div>
+																		<input type="text" placeholder="Equipment Name" value="${addEquipmentForm.name}" @input=${e => handleInput(e, 'name')} style="margin-bottom:1rem;" />
+																		<select @change=${e => handleInput(e, 'type')} style="margin-bottom:1rem;width:100%;" .value=${addEquipmentForm.type}>
+																			<option value="">Select Type</option>
+																			${equipmentTypes.map(t => html`<option value="${t.name}">${t.name}</option>`) }
+																		</select>
+																		<select @change=${e => handleInput(e, 'status')} style="margin-bottom:1rem;width:100%;" .value=${addEquipmentForm.status}>
+																			<option value="">Select Status</option>
+																			${equipmentStatuses.map(s => html`<option value="${s.name}">${s.name}</option>`) }
+																		</select>
 					<div style="display:flex;gap:1.5rem;justify-content:center;">
 						<button class="action-book" @click=${addEquipment}>Save</button>
 						<button class="action-delete" @click=${closeAddModal}>Cancel</button>
@@ -208,12 +280,15 @@ export function renderEquipmentManagement() {
 				<div class="modal-content" style="width:500px;max-width:95vw;">
 					<h2 style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;">Update Equipment</h2>
 					<div style="color:#8d5fc5;margin-bottom:1.2rem;">Update equipment information</div>
-					<input type="text" placeholder="Equipment Name" value="${editEquipment.name}" @input=${e => handleInput(e, 'name')} style="margin-bottom:1rem;" />
-					<textarea placeholder="Equipment Description" .value=${editEquipment.desc} @input=${e => handleInput(e, 'desc')} style="margin-bottom:1rem;width:100%;height:60px;border-radius:8px;border:2px solid #8d5fc5;padding:0.7rem;"></textarea>
-					<div style="display:flex;gap:1rem;margin-bottom:1rem;">
-						<input type="text" placeholder="Location" value="${editEquipment.loc}" @input=${e => handleInput(e, 'loc')} style="flex:1;" />
-						<input type="text" placeholder="Status" value="${editEquipment.status}" @input=${e => handleInput(e, 'status')} style="flex:1;" />
-					</div>
+						<input type="text" placeholder="Equipment Name" value="${editEquipment.name}" @input=${e => handleInput(e, 'name')} style="margin-bottom:1rem;" />
+						<select @change=${e => handleInput(e, 'type')} style="margin-bottom:1rem;width:100%;" .value=${editEquipment.type}>
+							<option value="">Select Type</option>
+							${equipmentTypes.map(t => html`<option value="${t.name}">${t.name}</option>`) }
+						</select>
+						<select @change=${e => handleInput(e, 'status')} style="margin-bottom:1rem;width:100%;" .value=${editEquipment.status}>
+							<option value="">Select Status</option>
+							${equipmentStatuses.map(s => html`<option value="${s.name}">${s.name}</option>`) }
+						</select>
 					<div style="display:flex;gap:1.5rem;justify-content:center;">
 						<button class="action-book" @click=${updateEquipment}>Update</button>
 						<button class="action-delete" @click=${closeEditModal}>Cancel</button>
@@ -223,3 +298,11 @@ export function renderEquipmentManagement() {
 		` : ""}
 	`, section);
 }
+
+// Ensure equipment loads on page load
+window.addEventListener('DOMContentLoaded', async () => {
+	await fetchEquipmentTypes();
+	await fetchEquipmentStatuses();
+	await fetchEquipment();
+	// No need to call renderEquipmentManagement() here, fetchEquipment does it
+});
