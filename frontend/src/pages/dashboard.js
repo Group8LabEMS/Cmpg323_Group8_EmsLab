@@ -10,11 +10,11 @@ export function renderDashboard() {
     adminDash();
     return;
   }
-  // ...existing user dashboard code...
+ 
   // Calendar logic
   const today = new Date();
   const year = today.getFullYear();
-  const month = today.getMonth(); // 0-indexed
+  const month = today.getMonth(); 
   const day = today.getDate();
   const firstDay = new Date(year, month, 1);
   let startDay = firstDay.getDay();

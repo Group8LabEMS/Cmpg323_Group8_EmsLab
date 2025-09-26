@@ -133,9 +133,7 @@ export function renderUsers() {
 }
 
 // ---------- Modal Handling ---------- //
-/**
- * Opens the Add User modal dialog.
- */
+
 function openAddUser() {
   editingUserIndex = null;
   userModalTitle.textContent = "User Profile";
@@ -219,9 +217,7 @@ async function confirmUserDelete() {
 }
 
 // ---------- Actions ---------- //
-/**
- * Handles confirming add/edit user in modal.
- */
+
 
 confirmUserBtn.addEventListener("click", async () => {
   const name = nameInput.value.trim();
@@ -249,8 +245,7 @@ confirmUserBtn.addEventListener("click", async () => {
     ssoId,
     email,
     password,
-    // Optionally add extra fields if your backend supports them
-    // cell, faculty, department, role
+    
   };
 
   try {
@@ -277,11 +272,9 @@ confirmUserBtn.addEventListener("click", async () => {
   }
 });
 
-/**
- * Handles canceling user modal.
- */
+
 cancelUserBtn.addEventListener("click", closeUserModal);
-//addUserBtn.addEventListener("click", openAddUser);
+
 
 // User delete modal actions
 confirmUserDeleteBtn.addEventListener("click", confirmUserDelete);

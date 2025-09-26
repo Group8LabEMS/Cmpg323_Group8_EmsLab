@@ -34,7 +34,7 @@ export function renderAdminDashboard() {
   `, dashboardSection);
 }
 
-// Chart.js loader and chart rendering
+// Chart.js loader
 if (!window.Chart) {
   const script = document.createElement('script');
   script.src = 'https://cdn.jsdelivr.net/npm/chart.js';

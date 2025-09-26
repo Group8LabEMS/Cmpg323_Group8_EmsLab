@@ -1,3 +1,37 @@
+
+/* Admin Bookings Page Styles */
+.tab-title {
+  color: #8d5fc5;
+  font-size: 2.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.admin-table-container {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px #e0d3f3;
+}
+
+.admin-table-header-row {
+  background: #8d5fc5;
+  color: #fff;
+}
+
+.admin-table th, .admin-table td {
+  padding: 0.7rem 0.5rem;
+  text-align: left;
+}
+
+.no-bookings-message {
+  text-align: center;
+}
 /* Maintenance Table Styles */
 .maintenance-table {
   width: 100%;
