@@ -1,4 +1,6 @@
 import { html, render as litRender } from "lit";
+import Chart from 'chart.js/auto';
+
 
 export function renderAdminDashboard() {
   const dashboardSection = document.getElementById("dashboard");
