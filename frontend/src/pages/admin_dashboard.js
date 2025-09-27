@@ -2,11 +2,11 @@ import { html, render as litRender } from "lit";
 import Chart from 'chart.js/auto';
 
 
+
 export function renderAdminDashboard() {
   const dashboardSection = document.getElementById("dashboard");
   if (!dashboardSection) return;
   litRender(html`
-    
     <div class="admin-dashboard-grid">
       <div class="admin-stats-row">
         <div class="admin-stat-card">
@@ -34,25 +34,18 @@ export function renderAdminDashboard() {
       </div>
     </div>
   `, dashboardSection);
-}
-
-// Chart.js loader
-if (!window.Chart) {
-  const script = document.createElement('script');
-  script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-  script.onload = () => {
+  // Only render charts after DOM is updated and canvases exist
+  setTimeout(() => {
     renderEquipmentUsageChart();
     renderBookingsBarChart();
-  };
-  document.head.appendChild(script);
-} else {
-  renderEquipmentUsageChart();
-  renderBookingsBarChart();
+  }, 0);
 }
+
+
 
 function renderEquipmentUsageChart() {
   const ctx = document.getElementById('equipmentUsageChart');
-  if (!ctx) return;
+  if (!(ctx instanceof HTMLCanvasElement)) return;
   const data = {
     labels: ['Spectrometer', 'Microscope', 'Centrifuge', 'Laser Cutter'],
     datasets: [{
@@ -89,7 +82,7 @@ function renderEquipmentUsageChart() {
 
 function renderBookingsBarChart() {
   const ctx = document.getElementById('bookingsBarChart');
-  if (!ctx) return;
+  if (!(ctx instanceof HTMLCanvasElement)) return;
   const data = {
     labels: ['May', 'June', 'July', 'August'],
     datasets: [{
