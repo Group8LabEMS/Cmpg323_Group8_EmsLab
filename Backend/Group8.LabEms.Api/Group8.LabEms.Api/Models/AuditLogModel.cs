@@ -10,7 +10,7 @@ namespace Group8.LabEms.Api.Models
     public class AuditLogModel
     {
         [Key]
-        [Column("audit_log_id")]
+        [Column("auditlog_id")]
         public int AuditLogId { get; set; }
 
         [Column("timestamp")]

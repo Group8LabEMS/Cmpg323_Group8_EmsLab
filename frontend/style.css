@@ -1,3 +1,351 @@
+
+/* Admin Bookings Page Styles */
+.tab-title {
+  color: #8d5fc5;
+  font-size: 2.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.admin-table-container {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px #e0d3f3;
+}
+
+.admin-table-header-row {
+  background: #8d5fc5;
+  color: #fff;
+}
+
+.admin-table th, .admin-table td {
+  padding: 0.7rem 0.5rem;
+  text-align: left;
+}
+
+.no-bookings-message {
+  text-align: center;
+}
+/* Maintenance Table Styles */
+.maintenance-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(122, 78, 176, 0.08);
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+.maintenance-table th, .maintenance-table td {
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid #e5d6f7;
+  text-align: left;
+  color: #7A4EB0;
+  font-size: 1.1rem;
+}
+.maintenance-table th {
+  background: #f6f1fa;
+  font-weight: bold;
+}
+.maintenance-table tr:last-child td {
+  border-bottom: none;
+}
+.status-needs-repair {
+  color: #fff;
+  background: #e57373;
+  border-radius: 6px;
+  padding: 0.3em 0.8em;
+  font-weight: 500;
+}
+.status-repair-progress {
+  color: #fff;
+  background: #ffb300;
+  border-radius: 6px;
+  padding: 0.3em 0.8em;
+  font-weight: 500;
+}
+.status-repair-completed {
+  color: #fff;
+  background: #81c784;
+  border-radius: 6px;
+  padding: 0.3em 0.8em;
+  font-weight: 500;
+}
+.action-book {
+  background: #8d5fc5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5em 1.2em;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.action-book:hover {
+  background: #7A4EB0;
+}
+.action-disabled {
+  background: #ccc;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5em 1.2em;
+  font-size: 1rem;
+  cursor: not-allowed;
+}
+/* Admin Dashboard Custom Styles */
+.admin-dashboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  margin-top: 0;
+  margin-left: auto;
+  margin-right: auto;
+  .admin-dashboard-grid {
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-template-columns: 1fr;
+    row-gap: 2.5rem;
+    margin-top: 0;
+    margin-left: 2rem;
+    margin-right: auto;
+    max-width: 1100px;
+    width: 100%;
+  }
+  .admin-stats-row {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 0;
+    justify-content: flex-start;
+  }
+  .admin-stat-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(122, 78, 176, 0.13);
+    padding: 2rem 3.5rem;
+    min-width: 260px;
+    text-align: center;
+    flex: 1;
+    margin-bottom: 0.5rem;
+  }
+  .admin-stat-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #7A4EB0;
+    margin-bottom: 0.2rem;
+  }
+  .admin-stat-label {
+    color: #555;
+    font-size: 1.25rem;
+    margin-top: 0.3rem;
+  }
+  .admin-charts-row {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+  .admin-chart-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(122, 78, 176, 0.13);
+    padding: 2rem 2.5rem 2.5rem 2.5rem;
+    min-width: 400px;
+    text-align: left;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 500px;
+  }
+  .admin-chart-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 1.5rem;
+  }
+  .admin-pie-legend {
+    list-style: none;
+    padding: 0;
+    margin: 1.2rem 0 0 2.5rem;
+    text-align: left;
+  }
+  .admin-pie-legend li {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  .admin-pie-legend span {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+  list-style: none;
+  padding: 0;
+  margin: 1.2rem 0 0 0;
+  text-align: left;
+}
+.admin-pie-legend li {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  max-width: 500px;
+  margin-bottom: 0.5rem;
+.admin-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 180px;
+  margin: 0 auto;
+  font-size: 13px;
+  color: #5D4685;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+}
+.admin-pie-legend span {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+/* Profile Tab Styles */
+.profile-desc {
+  color: #757575;
+  font-size: 1.15rem;
+  margin-bottom: 1.5rem;
+}
+.profile-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  padding: 2.5rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.profile-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem 1.5rem;
+  align-items: center;
+}
+.profile-input {
+  padding: 1rem;
+  border: 2px solid #8d5fc5;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  background: #faf8fd;
+  color: #7A4EB0;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.profile-input:focus {
+  border-color: #5D4685;
+}
+.profile-save-btn {
+  background: #8d5fc5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  padding: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.profile-save-btn:hover {
+  background: #7A4EB0;
+}
+/* Dashboard Styles */
+.dashboard-flex {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.dashboard-calendar-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 2rem;
+  min-width: 350px;
+  flex: 1;
+  max-width: 420px;
+}
+.dashboard-calendar-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #7A4EB0;
+}
+.dashboard-calendar-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+.dashboard-calendar-table thead tr {
+  color: #7A4EB0;
+}
+.dashboard-calendar-table tbody {
+  font-size: 1rem;
+}
+.dashboard-calendar-table td {
+  padding: 0.3em 0.5em;
+}
+.dashboard-calendar-table td[style*="background:#c6f3c6"] {
+  background: #c6f3c6 !important;
+  border-radius: 6px;
+  font-weight: bold;
+}
+.dashboard-calendar-table td[style*="color:#bbb"] {
+  color: #bbb !important;
+}
+.dashboard-bookings-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 2rem;
+  min-width: 320px;
+  max-width: 350px;
+  flex: 1;
+}
+.dashboard-bookings-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #7A4EB0;
+}
+.dashboard-bookings-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.dashboard-bookings-list li {
+  margin-bottom: 1.2rem;
+}
+.dashboard-booking-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: #a6e7a6;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+.dashboard-booking-equip {
+  color: #7A4EB0;
+  font-weight: bold;
+}
+.dashboard-booking-time {
+  color: #444;
+}
 .modal-content select {
   background: #fff;
   color: #7A4EB0;

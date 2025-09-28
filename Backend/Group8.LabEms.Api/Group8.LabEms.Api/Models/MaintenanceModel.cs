@@ -27,6 +27,7 @@ namespace Group8.LabEms.Api.Models
         public int MaintenanceStatusId { get; set; }
         public MaintenanceStatusModel MaintenanceStatus { get; set; } = null!;
 
+        [Required]
         [Column("scheduled_for")]
         public DateTime ScheduledFor { get; set; }
 

@@ -41,12 +41,17 @@ namespace Group8.LabEms.Api.Controllers
 
         
         [HttpPost]
-        public async Task<ActionResult<EquipmentModel>> CreateEquipment(EquipmentModel equipment)
+        public async Task<ActionResult<EquipmentModel>> CreateEquipment([FromBody] EquipmentModel equipment)
         {
+            if (!ModelState.IsValid)
+            {
+                // Log validation errors for debugging
+                var errors = string.Join("; ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                return BadRequest(new { message = "Validation failed", errors });
+            }
             equipment.CreatedDate = DateTime.UtcNow; 
             _context.Equipments.Add(equipment);
             await _context.SaveChangesAsync();
-
             return CreatedAtAction(nameof(GetEquipment), new { id = equipment.EquipmentId }, equipment);
         }
 

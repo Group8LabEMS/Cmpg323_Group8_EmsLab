@@ -4,9 +4,7 @@ import { html, render as litRender } from "lit";
 const maintenanceTableBody = document.getElementById("maintenanceTableBody");
 
 // ---------- State ---------- //
-/**
- * Equipment under maintenance
- */
+
 export let maintenanceList = [
   { id: 1, name: "Centrifuge", desc: "CF-900", loc: "Lab B", status: "Needs Repair" },
   { id: 2, name: "Oscilloscope", desc: "OSC-500", loc: "Lab C", status: "Repair In Progress" },

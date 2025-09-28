@@ -16,6 +16,7 @@ namespace Group8.LabEms.Api.Controllers
         public UserRoleController(AppDbContext context) => _context = context;
 
       
+      
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserRoleModel>>> GetUserRoles()
             => await _context.UserRoles
@@ -24,13 +25,13 @@ namespace Group8.LabEms.Api.Controllers
                 .ToListAsync();
 
      
-        [HttpGet("{id}")]
-        public async Task<ActionResult<UserRoleModel>> GetUserRole(int id)
+        [HttpGet("{userId}/{roleId}")]
+        public async Task<ActionResult<UserRoleModel>> GetUserRole(int userId, int roleId)
         {
             var userRole = await _context.UserRoles
                 .Include(ur => ur.User)
                 .Include(ur => ur.Role)
-                .FirstOrDefaultAsync(ur => ur.UserRoleId == id);
+                .FirstOrDefaultAsync(ur => ur.UserId == userId && ur.RoleId == roleId);
 
             if (userRole == null)
             {
@@ -47,14 +48,14 @@ namespace Group8.LabEms.Api.Controllers
             _context.UserRoles.Add(userRole);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetUserRole), new { id = userRole.UserRoleId }, userRole);
+            return CreatedAtAction(nameof(GetUserRole), new { userId = userRole.UserId, roleId = userRole.RoleId }, userRole);
         }
 
         
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUserRole(int id, UserRoleModel userRole)
+        [HttpPut("{userId}/{roleId}")]
+        public async Task<IActionResult> UpdateUserRole(int userId, int roleId, UserRoleModel userRole)
         {
-            if (id != userRole.UserRoleId)
+            if (userId != userRole.UserId || roleId != userRole.RoleId)
             {
                 return BadRequest();
             }
@@ -67,7 +68,7 @@ namespace Group8.LabEms.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserRoleExists(id))
+                if (!UserRoleExists(userId, roleId))
                 {
                     return NotFound();
                 }
@@ -81,10 +82,10 @@ namespace Group8.LabEms.Api.Controllers
         }
 
         
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUserRole(int id)
+        [HttpDelete("{userId}/{roleId}")]
+        public async Task<IActionResult> DeleteUserRole(int userId, int roleId)
         {
-            var userRole = await _context.UserRoles.FindAsync(id);
+            var userRole = await _context.UserRoles.FirstOrDefaultAsync(ur => ur.UserId == userId && ur.RoleId == roleId);
             if (userRole == null)
             {
                 return NotFound();
@@ -96,9 +97,9 @@ namespace Group8.LabEms.Api.Controllers
             return NoContent();
         }
 
-        private bool UserRoleExists(int id)
+        private bool UserRoleExists(int userId, int roleId)
         {
-            return _context.UserRoles.Any(e => e.UserRoleId == id);
+            return _context.UserRoles.Any(ur => ur.UserId == userId && ur.RoleId == roleId);
         }
     }
 }

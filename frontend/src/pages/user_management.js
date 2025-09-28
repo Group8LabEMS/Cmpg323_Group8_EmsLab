@@ -1,8 +1,6 @@
 // ---------- State ---------- //
-let users = [
-  { username: "john_doe", role: "Admin", status: "Active" },
-  { username: "jane_smith", role: "User", status: "Inactive" }
-];
+
+let users = [];
 
 let editingUserIndex = null;
 
@@ -12,13 +10,20 @@ const userTableBody = document.getElementById("userTableBody");
 const userModal = document.getElementById("userModal");
 const userModalTitle = document.getElementById("userModalTitle");
 
-const usernameInput = /** @type {HTMLInputElement} */ (document.getElementById("usernameInput"));
-const roleInput = /** @type {HTMLSelectElement} */ (document.getElementById("roleInput"));
-const statusInput = /** @type {HTMLSelectElement} */ (document.getElementById("statusInput"));
+const nameInput = /** @type {HTMLInputElement} */ (document.getElementById("nameInput"));
+const surnameInput = /** @type {HTMLInputElement} */ (document.getElementById("surnameInput"));
+const universityNoInput = /** @type {HTMLInputElement} */ (document.getElementById("universityNoInput"));
+const emailInput = /** @type {HTMLInputElement} */ (document.getElementById("emailInput"));
+const cellInput = /** @type {HTMLInputElement} */ (document.getElementById("cellInput"));
+const facultyInput = /** @type {HTMLInputElement} */ (document.getElementById("facultyInput"));
+const departmentInput = /** @type {HTMLInputElement} */ (document.getElementById("departmentInput"));
+const passwordInput = /** @type {HTMLInputElement} */ (document.getElementById("passwordInput"));
+const repasswordInput = /** @type {HTMLInputElement} */ (document.getElementById("repasswordInput"));
+// roleInput already exists for role
 
 const confirmUserBtn = document.getElementById("confirmUser");
 const cancelUserBtn = document.getElementById("cancelUser");
-const addUserBtn = document.getElementById("addUserBtn");
+//const addUserBtn = document.getElementById("addUserBtn");
 
 // User Delete Modal Refs
 const userDeleteModal = document.getElementById("userDeleteModal");
@@ -28,31 +33,119 @@ const cancelUserDeleteBtn = document.getElementById("cancelUserDelete");
 let pendingDeleteUserIndex = null;
 
 // ---------- Render ---------- //
+// --- UI State ---
+let searchTerm = "";
+let sortKey = "name";
+let sortAsc = true;
+
+function handleSearch(e) {
+  searchTerm = e.target.value;
+  renderUsers();
+}
+function handleSort(e) {
+  sortKey = e.target.value;
+  renderUsers();
+}
+function toggleSortDir() {
+  sortAsc = !sortAsc;
+  renderUsers();
+}
+
+function getFilteredSortedList() {
+  let list = [...users];
+  if (searchTerm)
+    list = list.filter(u =>
+      (u.displayName || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (u.ssoId || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (u.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (u.role || "").toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  list.sort((a, b) => {
+    let v1 = a[sortKey]?.toLowerCase?.() || a[sortKey];
+    let v2 = b[sortKey]?.toLowerCase?.() || b[sortKey];
+    if (v1 < v2) return sortAsc ? -1 : 1;
+    if (v1 > v2) return sortAsc ? 1 : -1;
+    return 0;
+  });
+  return list;
+}
+
 export function renderUsers() {
-  const tableRows = users.map((u, i) => html`
-    <tr>
-      <td>${u.username}</td>
-      <td>${u.role}</td>
-      <td>${u.status}</td>
-      <td>
-        <button class="action-book user-action-btn" title="Edit user" @click=${() => openEditUser(i)}>Edit</button>
-  <button class="action-delete-outline user-action-btn" title="Delete user" @click=${() => openUserDeleteModal(i)}>Delete</button>
-      </td>
-    </tr>
-  `);
-  litRender(html`${tableRows}`, userTableBody);
+  const section = document.getElementById("userManagement");
+  if (!section) return;
+  litRender(html`
+    <h2 style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;">User Management</h2>
+    <div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;">View, add, update and delete users.</div>
+    <button style="float:right;margin-bottom:1.5rem;background:#8d5fc5;color:#fff;font-size:1.2rem;padding:0.7rem 2.5rem;border-radius:8px;border:none;box-shadow:0 2px 8px #bdbdbd;" @click=${openAddUser}>Create User</button>
+    <div style="clear:both"></div>
+    <div style="background:#fff;border-radius:20px;box-shadow:0 4px 15px #e0d3f3;padding:2rem 1.5rem 1.5rem 1.5rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <select @change=${handleSort} style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
+            <option value="displayName">Sort by</option>
+            <option value="displayName">Name</option>
+            <option value="ssoId">University No</option>
+            <option value="email">Email</option>
+            <option value="role">Role</option>
+          </select>
+          <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;margin-left:0.5rem;display:flex;align-items:center;gap:0.3rem;" @click=${toggleSortDir}>
+            <span style="font-size:1.2rem;">${sortAsc ? "\u25B2" : "\u25BC"}</span>
+          </button>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <input type="text" placeholder="Search ..." @input=${handleSearch} value=${searchTerm} style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;" />
+          <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
+            <span style="font-size:1.2rem;">&#128269;</span>
+          </button>
+          <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
+            <span style="font-size:1.2rem;">&#128465;</span> FILTER
+          </button>
+        </div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
+        <thead>
+          <tr style="background:#8d5fc5;color:#fff;">
+            <th style="padding:1rem 0.5rem;">NAME</th>
+            <th>UNIVERSITY NO</th>
+            <th>EMAIL</th>
+            <th>ROLE</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${getFilteredSortedList().map((u, i) => u.displayName ? html`
+            <tr style="background:${i%2===1?'#f7f6fb':'#fff'};">
+              <td><span style="font-weight:bold;color:#6d4eb0;">${u.displayName}</span></td>
+              <td>${u.ssoId}</td>
+              <td>${u.email}</td>
+              <td>${u.role || ''}</td>
+              <td>
+                <a href="#" style="color:#8d5fc5;font-weight:bold;cursor:pointer;" @click=${e => { e.preventDefault(); openEditUser(i); }}>Update</a>
+                |
+                <a href="#" style="color:#8d5fc5;font-weight:bold;cursor:pointer;" @click=${e => { e.preventDefault(); openUserDeleteModal(i); }}>Delete</a>
+              </td>
+            </tr>
+          ` : html`<tr><td></td><td></td><td></td><td></td><td></td></tr>`)}
+        </tbody>
+      </table>
+    </div>
+  `, section);
 }
 
 // ---------- Modal Handling ---------- //
-/**
- * Opens the Add User modal dialog.
- */
+
 function openAddUser() {
   editingUserIndex = null;
-  userModalTitle.textContent = "Add User";
-  usernameInput.value = "";
-  roleInput.value = "User";
-  statusInput.value = "Active";
+  userModalTitle.textContent = "User Profile";
+  nameInput.value = "";
+  surnameInput.value = "";
+  universityNoInput.value = "";
+  emailInput.value = "";
+  cellInput.value = "";
+  facultyInput.value = "";
+  departmentInput.value = "";
+  passwordInput.value = "";
+  repasswordInput.value = "";
   userModal.classList.remove("hidden");
 }
 
@@ -62,11 +155,20 @@ function openAddUser() {
  */
 function openEditUser(index) {
   editingUserIndex = index;
-  userModalTitle.textContent = "Edit User";
+  userModalTitle.textContent = "User Profile";
   const u = users[index];
-  usernameInput.value = u.username;
-  roleInput.value = u.role;
-  statusInput.value = u.status;
+  // Split displayName into first and last if possible
+  const [first, ...last] = (u.displayName || "").split(" ");
+  nameInput.value = first || "";
+  surnameInput.value = last.join(" ") || "";
+  universityNoInput.value = u.ssoId || "";
+  emailInput.value = u.email || "";
+  cellInput.value = u.cell || "";
+  facultyInput.value = u.faculty || "";
+  departmentInput.value = u.department || "";
+  passwordInput.value = u.password || "";
+  repasswordInput.value = u.password || "";
+  // roleInput is not present in modal, so skip
   userModal.classList.remove("hidden");
 }
 
@@ -84,7 +186,7 @@ function closeUserModal() {
  */
 function openUserDeleteModal(index) {
   pendingDeleteUserIndex = index;
-  userDeleteMessage.textContent = `Are you sure you want to delete user '${users[index].username}'?`;
+  userDeleteMessage.textContent = `Are you sure you want to delete user '${users[index].displayName}'?`;
   userDeleteModal.classList.remove("hidden");
 }
 
@@ -99,46 +201,98 @@ function closeUserDeleteModal() {
 /**
  * Confirms user deletion.
  */
-function confirmUserDelete() {
+async function confirmUserDelete() {
   if (pendingDeleteUserIndex !== null) {
-    users.splice(pendingDeleteUserIndex, 1);
-    renderUsers();
+    const user = users[pendingDeleteUserIndex];
+    if (user && user.userId) {
+      try {
+        await fetch(`/api/User/${user.userId}`, { method: "DELETE" });
+        await fetchUsers();
+      } catch (e) {
+        alert("Failed to delete user.");
+      }
+    }
     closeUserDeleteModal();
   }
 }
 
 // ---------- Actions ---------- //
-/**
- * Handles confirming add/edit user in modal.
- */
-confirmUserBtn.addEventListener("click", () => {
-  const username = usernameInput.value.trim();
-  const role = roleInput.value;
-  const status = statusInput.value;
 
-  if (!username) {
-    alert("Username is required.");
+
+confirmUserBtn.addEventListener("click", async () => {
+  const name = nameInput.value.trim();
+  const surname = surnameInput.value.trim();
+  const ssoId = universityNoInput.value.trim();
+  const email = emailInput.value.trim();
+  const cell = cellInput.value.trim();
+  const faculty = facultyInput.value.trim();
+  const department = departmentInput.value.trim();
+  const password = passwordInput.value;
+  const repassword = repasswordInput.value;
+  const role = document.getElementById("roleInput") ? /** @type {HTMLSelectElement} */ (document.getElementById("roleInput")).value : "";
+
+  if (!name || !surname || !ssoId || !email || !cell || !faculty || !department || !password || !repassword) {
+    alert("All fields are required.");
+    return;
+  }
+  if (password !== repassword) {
+    alert("Passwords do not match.");
     return;
   }
 
-  if (editingUserIndex !== null) {
-    // Update existing
-    users[editingUserIndex] = { username, role, status };
-  } else {
-    // Add new
-    users.push({ username, role, status });
-  }
+  const userObj = {
+    displayName: name + " " + surname,
+    ssoId,
+    email,
+    password,
+    
+  };
 
-  renderUsers();
-  closeUserModal();
+  try {
+    if (editingUserIndex !== null) {
+      // Update
+      const user = users[editingUserIndex];
+      await fetch(`/api/User/${user.userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...user, ...userObj, userId: user.userId })
+      });
+    } else {
+      // Create
+      await fetch(`/api/User`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userObj)
+      });
+    }
+    await fetchUsers();
+    closeUserModal();
+  } catch (e) {
+    alert("Failed to save user.");
+  }
 });
 
-/**
- * Handles canceling user modal.
- */
+
 cancelUserBtn.addEventListener("click", closeUserModal);
-addUserBtn.addEventListener("click", openAddUser);
+
 
 // User delete modal actions
 confirmUserDeleteBtn.addEventListener("click", confirmUserDelete);
 cancelUserDeleteBtn.addEventListener("click", closeUserDeleteModal);
+
+// --- API Integration --- //
+async function fetchUsers() {
+  try {
+    const res = await fetch("/api/User");
+    if (!res.ok) throw new Error("Failed to fetch users");
+    users = await res.json();
+    renderUsers();
+  } catch (e) {
+    users = [];
+    renderUsers();
+    alert("Could not load users from server.");
+  }
+}
+
+// Initial load
+window.addEventListener("DOMContentLoaded", fetchUsers);

@@ -31,7 +31,15 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddControllers();
+Console.WriteLine("Connection string = " + builder.Configuration.GetConnectionString("DefaultConnection"));
+
+// Fix JSON serialization cycles for navigation properties
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
+
 
 //READS THE JSON FILES
 builder.Configuration
@@ -46,7 +54,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
     ));
 
+
 Console.WriteLine("Connection string = " + builder.Configuration.GetConnectionString("DefaultConnection"));
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

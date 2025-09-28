@@ -11,23 +11,17 @@
     <header class="topbar">
       <div class="logo">LabEMS</div>
       <nav>
-        <a href="#" id="bookNowBtn" data-target="bookings">Book Now</a>
-        <a href="about_us.html">About</a>
-        <a href="contact_us.html">Contact Us</a>
+  <a href="#bookings" id="bookNowBtn" data-target="bookings">Book Now</a>
+  <a href="about_us.html">About</a>
+  <a href="contact_us.html">Contact Us</a>
       </nav>
     </header>
 
     <!-- Sidebar -->
     <aside class="sidebar">
-      <h3>John Doe</h3>
-      <button class="sidebar-btn" data-target="dashboard">Dashboard</button>
-      <button class="sidebar-btn" data-target="profile">Profile</button>
-      <button class="sidebar-btn" data-target="bookings">Bookings</button>
-      <button class="sidebar-btn active" data-target="equipment">Equipment</button>
-      <button class="sidebar-btn" data-target="maintenance">Maintenance</button>
-      <button class="sidebar-btn" data-target="userManagement">User Management</button>
-      <button class="sidebar-btn" data-target="adminDashboard">Admin Dashboard</button>
-      <button class="sidebar-btn logout">Logout</button>
+  <h3>John Doe</h3>
+  <!-- Sidebar buttons are rendered dynamically by script.js based on role -->
+  <button class="sidebar-btn logout">Logout</button>
       
     </aside>
 
@@ -35,7 +29,7 @@
     <main>
       <!-- Dashboard -->
       <section id="dashboard" class="tab hidden">
-        <h2>Dashboard</h2>
+        <h2 style="color: #7A4EB0; font-size: 2rem; margin-bottom: 1.5rem;">Dashboard</h2>
       </section>
 
       <!-- Profile -->
@@ -62,18 +56,18 @@
 
       <!-- Equipment -->
       <section id="equipment" class="tab">
-        <h2>View and Book Available Equipment</h2>
-
-        <div class="search-bar">
-          <input type="text" placeholder="Search …">
-          <select>
-            <option>Sort by</option>
-            <option>Name</option>
-            <option>Status</option>
-          </select>
-        </div>
+        
 
         <table>
+          
+          <tbody id="equipmentTableBody"></tbody>
+        </table>
+      </section>
+      <!-- Maintenance Tab (Admin only) -->
+      <section id="maintenance" class="tab hidden">
+        <h2 style="color:#7A4EB0;font-size:2rem;margin-bottom:1.5rem;">Maintenance Tracking</h2>
+        <p style="margin-bottom:1.5rem;">Track equipment that requires repair, is being repaired, or has been repaired.</p>
+        <table class="maintenance-table">
           <thead>
             <tr>
               <th>Name</th>
@@ -83,49 +77,48 @@
               <th>Action</th>
             </tr>
           </thead>
-          <tbody id="equipmentTableBody"></tbody>
+          <tbody id="maintenanceTableBody"></tbody>
         </table>
       </section>
-      <!-- Maintenance -->
-<section id="maintenance" class="tab hidden">
-  <h2>Maintenance Tracking</h2>
-  <p>Track equipment that requires repair, is being repaired, or has been repaired.</p>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Location</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="maintenanceTableBody"></tbody>
-  </table>
-</section>
       <!-- User Management -->
       <section id="userManagement" class="tab hidden">
-        <h2>User Management</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="userTableBody"></tbody>
-        </table>
+        
 
-        <button id="addUserBtn" class="action-book">Add User</button>
       </section>
 
-      <!-- Admin Dashboard -->
       <section id="adminDashboard" class="tab hidden">
-        <h2>Admin Dashboard</h2>
+        
         <div id="adminStats" class="stats-container"></div>
+      </section>
+
+      <!-- About Us -->
+      <section id="about" class="tab hidden">
+        <main class="login-container">
+          <section class="login-form">
+            <h2>About LabEMS</h2>
+            <p>Learn more about our mission and services</p>
+            <div class="about-content">
+              <p>
+                LabEMS is a cutting-edge Laboratory Equipment Management System designed to streamline the process of booking, managing, and maintaining laboratory equipment. Our mission is to empower researchers, students, and professionals by providing an intuitive platform to access state-of-the-art equipment with ease.
+              </p>
+              <p>
+                Founded with the goal of enhancing laboratory efficiency, LabEMS offers a user-friendly interface, real-time equipment availability, and robust management tools. Whether you're in academia, industry, or research, LabEMS is here to support your scientific endeavors.
+              </p>
+            </div>
+          </section>
+        </main>
+      </section>
+
+      <!-- Contact Us -->
+      <section id="contact" class="tab hidden">
+        <div class="modal-content">
+          <h2>Contact Us</h2>
+          <input type="text" placeholder="Your Email">
+          <textarea name="txt_email_description" cols="40" rows="5" class="contactus-textarea" placeholder="Description"></textarea>
+          <div>
+            <button class="contactus-action">Submit</button>
+          </div>
+        </div>
       </section>
 
     </main>
@@ -201,29 +194,28 @@
     
     <!-- User Management Modal -->
     <div id="userModal" class="modal hidden">
-      <div class="modal-content">
-        <h3 id="userModalTitle">Add User</h3>
-        
-        <label>
-          <input type="text" id="usernameInput" placeholder="Username">
-        </label>
-        <label>
-          <select id="roleInput">
-            <option value="Admin">Admin</option>
-            <option value="User">User</option>
-          </select>
-        </label>
-        <label>
-          <select id="statusInput">
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
-        </label>
+      <div class="modal-content" style="max-width:900px;width:95vw;padding:2.5rem 2.5rem 2.5rem 2.5rem;">
+        <h2 id="userModalTitle" style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;font-weight:bold;text-align:center;">User Profile</h2>
+        <div style="color:#8d5fc5;font-size:1.2rem;margin-bottom:1.5rem;text-align:center;">Create and Update user information</div>
+        <form id="userForm" style="display:flex;flex-direction:column;gap:1.1rem;align-items:stretch;max-width:100%;">
+          <input type="text" id="nameInput" placeholder="Cosmo" style="font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
+          <input type="text" id="surnameInput" placeholder="Kramer" style="font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
+          <input type="text" id="universityNoInput" placeholder="12123434" style="font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
+          <input type="email" id="emailInput" placeholder="ckramer@mynwu.ac.za" style="font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
 
-        <div class="modal-actions">
-          <button id="confirmUser" class="action-book">Save</button>
-          <button id="cancelUser" class="cancel-btn">Cancel</button>
-        </div>
+          <div style="display:flex;gap:1.2rem;width:100%;">
+            <input type="text" id="cellInput" placeholder="Cellphone No" style="flex:1;font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
+            <input type="text" id="facultyInput" placeholder="Faculty" style="flex:1;font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
+          </div>
+          <div style="display:flex;gap:1.2rem;width:100%;">
+            <input type="text" id="departmentInput" placeholder="Department" style="flex:1;font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
+            <input type="password" id="passwordInput" placeholder="Password" style="flex:1;font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
+          </div>
+          <input type="password" id="repasswordInput" placeholder="Re-enter Password" style="font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;">
+
+          <button id="confirmUser" class="action-book" style="width:100%;background:#8d5fc5;color:#fff;font-size:1.2rem;padding:1rem 0;border-radius:8px;border:none;font-weight:bold;margin-top:0.7rem;">Save</button>
+          <button id="cancelUser" class="cancel-btn" style="width:100%;margin-top:0.7rem;">Cancel</button>
+        </form>
       </div>
     </div>
 

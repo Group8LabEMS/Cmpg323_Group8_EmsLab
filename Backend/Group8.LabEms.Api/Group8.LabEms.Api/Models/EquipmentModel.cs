@@ -19,16 +19,17 @@ namespace Group8.LabEms.Api.Models
         [Column("equipment_type_id")]
         [ForeignKey(nameof(EquipmentType))]
         public int EquipmentTypeId { get; set; }
-        public EquipmentTypeModel EquipmentType { get; set; } = null!;
+    public EquipmentTypeModel? EquipmentType { get; set; }
 
         [Column("equipment_status_id")]
         [ForeignKey(nameof(EquipmentStatus))]
         public int EquipmentStatusId { get; set; }
-        public EquipmentStatusModel EquipmentStatus { get; set; } = null!;
+    public EquipmentStatusModel? EquipmentStatus { get; set; }
 
         [Column("availability")]
         public string? Availability { get; set; }
 
+        [Required]
         [Column("created_date")]
         public DateTime CreatedDate { get; set; }
 
