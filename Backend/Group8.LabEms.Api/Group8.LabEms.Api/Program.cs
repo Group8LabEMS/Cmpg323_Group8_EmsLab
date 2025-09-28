@@ -100,6 +100,13 @@ builder.Services.AddControllers()
     });
 
 
+//READS THE JSON FILES
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("Configurations/appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("Configurations/database.json", optional: true, reloadOnChange: true) 
+    .AddEnvironmentVariables();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
         "server=localhost;port=3306;database=labems;user=root;password=root;",
@@ -108,6 +115,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         // "server=localhost;port=3306;database=labems;user=root;password=labems12345;",
         // new MySqlServerVersion(new Version(8, 0, 36)) // use your MySQL version
     ));
+
+// =======
+//         builder.Configuration.GetConnectionString("DefaultConnection"),
+//         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
+//     ));
+
+
+Console.WriteLine("Connection string = " + builder.Configuration.GetConnectionString("DefaultConnection"));
+
 
 
 builder.Services.AddEndpointsApiExplorer();
