@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Group8.LabEms.Api.Models
 {
@@ -20,23 +21,36 @@ namespace Group8.LabEms.Api.Models
         [Column("equipment_id")]
         [ForeignKey(nameof(Equipment))]
         public int EquipmentId { get; set; }
+        [JsonIgnore]
         public EquipmentModel Equipment { get; set; } = null!;
 
         [ForeignKey(nameof(BookingStatus))]
         [Column("booking_status_id")]
         public int BookingStatusId { get; set; }
+        [JsonIgnore]
         public BookingStatusModel BookingStatus { get; set; } = null!;
 
+        [Required]
         [Column("from_date")]
         public DateTime FromDate { get; set; }
 
+        [Required]
         [Column("to_date")]
         public DateTime ToDate { get; set; }
 
         [Column("notes")]
         public string? Notes { get; set; }
 
+        [Required]
         [Column("created_date")]
         public DateTime CreatedDate { get; set; }
+
+        public bool IsValid(out string err)
+        {
+            err = string.Empty;
+            if (ToDate <= FromDate) err = "End Date must be after start date";
+            if (BookingStatusId == 0) err = "Booking Status is required";
+            return string.IsNullOrEmpty(err);
+        }
     }
 }

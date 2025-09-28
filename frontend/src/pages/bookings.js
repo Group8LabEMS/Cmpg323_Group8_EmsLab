@@ -28,7 +28,7 @@ export let bookings = [
 
 /**
  * Opens the booking modal for the equipment with the specified ID.
- * @param {number} id - The ID of the equipment to book.
+ * @param {number} id 
  */
 export function openBooking(id) {
   selectedEquipment = equipmentList.find(eq => eq.id === id);
@@ -37,7 +37,7 @@ export function openBooking(id) {
 
 /**
  * Opens the update modal with pre-filled data for an existing booking.
- * @param {number} index - Index of the booking to update.
+ * @param {number} index 
  */
 export function openUpdate(index) {
   selectedBookingIndex = index;
@@ -52,7 +52,7 @@ export function openUpdate(index) {
 
 /**
  * Opens the delete confirmation modal for a selected booking.
- * @param {number} index - Index of the booking to delete.
+ * @param {number} index 
  */
 export function openDelete(index) {
   selectedBookingIndex = index;

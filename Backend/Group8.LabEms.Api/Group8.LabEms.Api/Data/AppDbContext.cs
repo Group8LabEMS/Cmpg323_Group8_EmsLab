@@ -9,6 +9,41 @@ namespace Group8.LabEms.Api.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            //composite key for user role model
+            modelBuilder.Entity<UserRoleModel>()
+                .HasKey(ur => new { ur.UserId, ur.RoleId });
+
+            modelBuilder.Entity<UserRoleModel>()
+                .HasOne(ur => ur.User)
+                .WithMany(u => u.UserRoles)
+                .HasForeignKey(ur => ur.UserId);
+
+            modelBuilder.Entity<UserRoleModel>()
+                .HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleId);
+
+            modelBuilder.Entity<BookingStatusModel>()
+            .HasIndex(b => b.Name)
+            .IsUnique();
+
+            modelBuilder.Entity<EquipmentStatusModel>()
+            .HasIndex(b => b.Name)
+            .IsUnique();
+
+            modelBuilder.Entity<EquipmentTypeModel>()
+            .HasIndex(b => b.Name)
+            .IsUnique();
+
+            modelBuilder.Entity<MaintenanceTypeModel>()
+            .HasIndex(b => b.Name)
+            .IsUnique();
+
+            modelBuilder.Entity<MaintenanceStatusModel>()
+            .HasIndex(b => b.Name)
+            .IsUnique();
 
         }
         public DbSet<UserModel> Users { get; set; }
