@@ -31,13 +31,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-
-
 Console.WriteLine("Connection string = " + builder.Configuration.GetConnectionString("DefaultConnection"));
-
-
-
-
 
 // Fix JSON serialization cycles for navigation properties
 builder.Services.AddControllers()
@@ -47,20 +41,22 @@ builder.Services.AddControllers()
     });
 
 
+//READS THE JSON FILES
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("Configurations/appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("Configurations/database.json", optional: true, reloadOnChange: true) 
+    .AddEnvironmentVariables();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
-        // "server=localhost;port=3306;database=labems;user=root;password=root;",
-        // new MySqlServerVersion(new Version(8, 4, 6)) // use your MySQL version
-
-        "server=localhost;port=3306;database=labems;user=root;password=labems12345;",
-        new MySqlServerVersion(new Version(8, 0, 36)) // use your MySQL version
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
     ));
 
-//builder.Services.AddDbContext<AppDbContext>(options =>
-  //  options.UseMySql(
-    //    builder.Configuration.GetConnectionString("DefaultConnection"),
-      //  ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
-   //));
+
+Console.WriteLine("Connection string = " + builder.Configuration.GetConnectionString("DefaultConnection"));
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
