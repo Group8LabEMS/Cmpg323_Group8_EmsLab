@@ -51,6 +51,15 @@ namespace Group8.LabEms.Api.Controllers
             var roles = user.UserRoles.Select(ur => ur.Role).ToList();
             var token = GenerateJwtToken(user, roles);
 
+            //save token in a cookie
+            Response.Cookies.Append("jwt", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes)
+            });
+
             return Ok(new { token });
 
         }
@@ -86,7 +95,7 @@ namespace Group8.LabEms.Api.Controllers
                 return BadRequest("Invalid email format.");
             }
 
-            string[] allowedRoles = { "Student", "Admin", "LabManager","LabTechnician" };
+            string[] allowedRoles = { "Student", "Admin", "LabManager", "LabTechnician" };
 
             if (!allowedRoles.Contains(request.Role))
                 return BadRequest($"Invalid role. Allowed roles are: {string.Join(", ", allowedRoles)}");
@@ -117,7 +126,7 @@ namespace Group8.LabEms.Api.Controllers
                     Name = request.Role
                 };
 
-            
+
                 _context.Roles.Add(role);
                 await _context.SaveChangesAsync();
             }
