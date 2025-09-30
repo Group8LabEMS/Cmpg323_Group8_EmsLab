@@ -92,27 +92,91 @@ export function renderBookings() {
 
 //---------- Event handlers ----------//
 
-//confirmation of booking, adds booking to bookings list
-confirmBooking.addEventListener("click", () => {
+//confirmation of booking, adds booking to backend and refreshes bookings list
+confirmBooking.addEventListener("click", async () => {
   let date = getInputById("bookingDate").value;
   let start = getInputById("startTime").value;
   let end = getInputById("endTime").value;
 
   if (selectedEquipment && date && start && end) {
-    //add new booking
-    bookings.push({
+    // Get logged-in user from localStorage
+    // Use static user and equipment values for backend validation
+    const staticUser = {
+      userId: 1,
+      displayName: "Static User",
+      email: "user@example.com",
+      ssoId: "user",
+      password: "user",
+      createdAt: new Date().toISOString(),
+      userRoles: [],
+      bookings: [],
+      auditLogs: []
+    };
+    const staticBookingStatus = {
+      bookingStatusId: 1,
+      name: "Active",
+      description: "Active booking",
+      bookings: []
+    };
+    const staticEquipment = {
+      equipmentId: selectedEquipment.id,
       name: selectedEquipment.name,
-      date,
-      start,
-      end,
-      status: "Active"
+      equipmentTypeId: selectedEquipment.equipmentTypeId || 1,
+      equipmentType: null,
+      equipmentStatusId: selectedEquipment.equipmentStatusId || 1,
+      equipmentStatus: null,
+      availability: String(selectedEquipment.availability ?? "true"),
+      createdDate: new Date().toISOString(),
+      bookings: [],
+      maintenances: []
+    };
+
+    // Build booking object for backend (send both IDs and full objects, all required fields)
+    const booking = {
+      userId: staticUser.userId,
+      equipmentId: staticEquipment.equipmentId,
+      bookingStatusId: staticBookingStatus.bookingStatusId,
+      fromDate: `${date}T${start}:00`,
+      toDate: `${date}T${end}:00`,
+      notes: "",
+      createdDate: new Date().toISOString()
+    };
+
+    // Send to backend
+    const response = await fetch("/api/Booking", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(booking)
     });
-    renderBookings();
-    bookingModal.classList.add("hidden");
+
+    if (response.ok) {
+      bookingModal.classList.add("hidden");
+      await fetchAndRenderBookings();
+    } else {
+      alert("Booking failed: " + await response.text());
+    }
   } else {
     alert("Please fill in all fields.");
   }
 });
+// Fetch bookings from backend and render
+async function fetchAndRenderBookings() {
+  const response = await fetch("/api/Booking");
+  if (response.ok) {
+    const data = await response.json();
+    bookings = data.map(b => ({
+      name: b.equipment?.name || "",
+      date: b.fromDate?.split("T")[0] || "",
+      start: b.fromDate?.split("T")[1]?.slice(0,5) || "",
+      end: b.toDate?.split("T")[1]?.slice(0,5) || "",
+      status: b.bookingStatus?.name || ""
+    }));
+    renderBookings();
+  }
+}
+
+// Initial fetch on page load
+fetchAndRenderBookings();
 
 cancelBooking.addEventListener("click", () => {
   bookingModal.classList.add("hidden");
