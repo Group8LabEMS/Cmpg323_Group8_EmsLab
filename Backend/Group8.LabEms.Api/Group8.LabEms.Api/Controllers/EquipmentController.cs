@@ -2,6 +2,7 @@
 using Group8.LabEms.Api.Data;
 using Group8.LabEms.Api.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Group8.LabEms.Api.Controllers
 {
@@ -13,7 +14,8 @@ namespace Group8.LabEms.Api.Controllers
 
         public EquipmentController(AppDbContext context) => _context = context;
 
-        [HttpGet]
+        [Authorize]         //all users must be logged in to see equipment
+        [HttpGet]      
         public async Task<ActionResult<IEnumerable<EquipmentModel>>> GetEquipments()
             => await _context.Equipments
                 .Include(e => e.EquipmentType)
@@ -22,7 +24,7 @@ namespace Group8.LabEms.Api.Controllers
                 .Include(e => e.Maintenances)
                 .ToListAsync();
 
-        
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<EquipmentModel>> GetEquipment(int id)
         {
@@ -40,6 +42,7 @@ namespace Group8.LabEms.Api.Controllers
         }
 
         
+        [Authorize(Roles ="Admin,LabManager,LabTechnician")] // can add new
         [HttpPost]
         public async Task<ActionResult<EquipmentModel>> CreateEquipment([FromBody] EquipmentModel equipment)
         {
@@ -54,7 +57,7 @@ namespace Group8.LabEms.Api.Controllers
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetEquipment), new { id = equipment.EquipmentId }, equipment);
         }
-
+        [Authorize(Roles = "Admin,LabManager,LabTechnician")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEquipment(int id, EquipmentModel equipment)
         {
@@ -78,7 +81,7 @@ namespace Group8.LabEms.Api.Controllers
             return NoContent();
         }
 
-        
+        [Authorize(Roles = "Admin,LabManager,LabTechnician")]
         [HttpDelete("{id}")] 
         public async Task<IActionResult> DeleteEquipment(int id)
         {
