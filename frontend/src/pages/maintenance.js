@@ -34,7 +34,7 @@ export function renderMaintenance() {
   litRender(html`${rows}`, maintenanceTableBody);
 }
 
-// ---------- Helpers ---------- //
+// ---------- Update Status ---------- //
 function updateStatus(id, newStatus) {
   const eq = maintenanceList.find(e => e.id === id);
   if (eq) {

@@ -1,4 +1,4 @@
-// Basic dashboard renderer for tab
+// Basic dashboard renderer
 import { html, render } from "lit";
 import { renderAdminDashboard as adminDash } from "./admin_dashboard.js";
 

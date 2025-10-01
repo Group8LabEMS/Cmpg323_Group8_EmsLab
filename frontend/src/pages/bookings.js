@@ -20,7 +20,7 @@ let selectedBookingIndex = null;
  * @type {Array<{name: string, date: string, start: string, end: string, status: string}>}
  */
 export let bookings = [
-  { name: "Spectrometer", date: "2025-09-23", start: "13:00", end: "16:00", status: "Active" }
+  //{ name: "Spectrometer", date: "2025-09-23", start: "13:00", end: "16:00", status: "Active" }
 ];
 
 
@@ -99,7 +99,7 @@ confirmBooking.addEventListener("click", async () => {
   let end = getInputById("endTime").value;
 
   if (selectedEquipment && date && start && end) {
-    // Get logged-in user from localStorage
+    // Get logged-in user
     // Use static user and equipment values for backend validation
     const staticUser = {
       userId: 1,
@@ -131,7 +131,7 @@ confirmBooking.addEventListener("click", async () => {
       maintenances: []
     };
 
-    // Build booking object for backend (send both IDs and full objects, all required fields)
+    // Build booking object for backend
     const booking = {
       userId: staticUser.userId,
       equipmentId: staticEquipment.equipmentId,
@@ -159,6 +159,7 @@ confirmBooking.addEventListener("click", async () => {
     alert("Please fill in all fields.");
   }
 });
+
 // Fetch bookings from backend and render
 async function fetchAndRenderBookings() {
   const response = await fetch("/api/Booking");

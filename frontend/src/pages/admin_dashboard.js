@@ -34,7 +34,8 @@ export function renderAdminDashboard() {
       </div>
     </div>
   `, dashboardSection);
-  // Only render charts after DOM is updated and canvases exist
+
+  // Only render charts after DOM is updated and charts exist
   setTimeout(() => {
     renderEquipmentUsageChart();
     renderBookingsBarChart();

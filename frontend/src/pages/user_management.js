@@ -19,11 +19,10 @@ const facultyInput = /** @type {HTMLInputElement} */ (document.getElementById("f
 const departmentInput = /** @type {HTMLInputElement} */ (document.getElementById("departmentInput"));
 const passwordInput = /** @type {HTMLInputElement} */ (document.getElementById("passwordInput"));
 const repasswordInput = /** @type {HTMLInputElement} */ (document.getElementById("repasswordInput"));
-// roleInput already exists for role
+
 
 const confirmUserBtn = document.getElementById("confirmUser");
 const cancelUserBtn = document.getElementById("cancelUser");
-//const addUserBtn = document.getElementById("addUserBtn");
 
 // User Delete Modal Refs
 const userDeleteModal = document.getElementById("userDeleteModal");
@@ -168,7 +167,7 @@ function openEditUser(index) {
   departmentInput.value = u.department || "";
   passwordInput.value = u.password || "";
   repasswordInput.value = u.password || "";
-  // roleInput is not present in modal, so skip
+  
   userModal.classList.remove("hidden");
 }
 

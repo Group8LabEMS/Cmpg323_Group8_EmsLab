@@ -43,7 +43,7 @@ let editEquipment = null;
 
 
 async function openAddModal() {
-	// Always fetch latest types and statuses before showing modal
+	// fetch latest types and statuses before showing modal
 	await fetchEquipmentTypesAndStatuses();
 	showAddModal = true;
 	renderEquipmentManagement();
