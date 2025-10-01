@@ -1,6 +1,7 @@
 // ---------- State ---------- //
 
 let users = [];
+let userRoles = [];
 
 let editingUserIndex = null;
 
@@ -17,8 +18,38 @@ const emailInput = /** @type {HTMLInputElement} */ (document.getElementById("ema
 const cellInput = /** @type {HTMLInputElement} */ (document.getElementById("cellInput"));
 const facultyInput = /** @type {HTMLInputElement} */ (document.getElementById("facultyInput"));
 const departmentInput = /** @type {HTMLInputElement} */ (document.getElementById("departmentInput"));
+
 const passwordInput = /** @type {HTMLInputElement} */ (document.getElementById("passwordInput"));
 const repasswordInput = /** @type {HTMLInputElement} */ (document.getElementById("repasswordInput"));
+const roleInput = /** @type {HTMLSelectElement} */ (document.getElementById("roleInput"));
+let availableRoles = ["Student", "Administrator"];
+let roleMap = {};
+
+async function fetchRoles() {
+  try {
+    const res = await fetch("/api/Role");
+    if (!res.ok) throw new Error("Failed to fetch roles");
+    const roles = await res.json();
+    if (Array.isArray(roles) && roles.length > 0) {
+      availableRoles = roles.map(r => r.name || r.roleName || r);
+      // Build a map of role name to role object for lookup
+      roleMap = {};
+      roles.forEach(r => {
+        const name = r.name || r.roleName || r;
+        roleMap[name] = r;
+      });
+    }
+  } catch (e) {
+    availableRoles = ["Student", "Admin"];
+  }
+  renderRoleDropdown();
+}
+
+function renderRoleDropdown() {
+  const roleInput = document.getElementById("roleInput");
+  if (!roleInput) return;
+  roleInput.innerHTML = availableRoles.map(role => `<option value="${role}">${role}</option>`).join("");
+}
 
 
 const confirmUserBtn = document.getElementById("confirmUser");
@@ -114,10 +145,10 @@ export function renderUsers() {
         <tbody>
           ${getFilteredSortedList().map((u, i) => u.displayName ? html`
             <tr style="background:${i%2===1?'#f7f6fb':'#fff'};">
-              <td><span style="font-weight:bold;color:#6d4eb0;">${u.displayName}</span></td>
+              <td>${u.displayName}</td>
               <td>${u.ssoId}</td>
               <td>${u.email}</td>
-              <td>${u.role || ''}</td>
+              <td style="font-weight:normal;">${u.role || ''}</td>
               <td>
                 <a href="#" style="color:#8d5fc5;font-weight:bold;cursor:pointer;" @click=${e => { e.preventDefault(); openEditUser(i); }}>Update</a>
                 |
@@ -145,6 +176,8 @@ function openAddUser() {
   departmentInput.value = "";
   passwordInput.value = "";
   repasswordInput.value = "";
+  renderRoleDropdown();
+  if (roleInput) roleInput.value = availableRoles[0] || "Student";
   userModal.classList.remove("hidden");
 }
 
@@ -168,6 +201,14 @@ function openEditUser(index) {
   passwordInput.value = u.password || "";
   repasswordInput.value = u.password || "";
   
+  renderRoleDropdown();
+  if (roleInput) {
+    if (availableRoles.includes(u.role)) {
+      roleInput.value = u.role;
+    } else {
+      roleInput.value = availableRoles[0] || "Student";
+    }
+  }
   userModal.classList.remove("hidden");
 }
 
@@ -244,10 +285,11 @@ confirmUserBtn.addEventListener("click", async () => {
     ssoId,
     email,
     password,
-    
+    // role is not sent directly, handled via UserRole
   };
 
   try {
+    let userId = null;
     if (editingUserIndex !== null) {
       // Update
       const user = users[editingUserIndex];
@@ -256,14 +298,29 @@ confirmUserBtn.addEventListener("click", async () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...user, ...userObj, userId: user.userId })
       });
+      userId = user.userId;
     } else {
       // Create
-      await fetch(`/api/User`, {
+      const res = await fetch(`/api/User`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userObj)
       });
+      if (!res.ok) throw new Error("Failed to create user");
+      const created = await res.json();
+      userId = created.userId || created.id || created.UserId;
     }
+
+    // Assign role to user via /api/UserRole
+    if (userId && roleInput && roleMap[roleInput.value]) {
+      const roleId = roleMap[roleInput.value].roleId;
+      await fetch(`/api/UserRole`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, roleId })
+      });
+    }
+
     await fetchUsers();
     closeUserModal();
   } catch (e) {
@@ -282,9 +339,22 @@ cancelUserDeleteBtn.addEventListener("click", closeUserDeleteModal);
 // --- API Integration --- //
 async function fetchUsers() {
   try {
+    // Fetch users
     const res = await fetch("/api/User");
     if (!res.ok) throw new Error("Failed to fetch users");
     users = await res.json();
+
+    // Fetch user roles
+    const roleRes = await fetch("/api/UserRole");
+    if (!roleRes.ok) throw new Error("Failed to fetch user roles");
+    userRoles = await roleRes.json();
+
+    // Join user roles to users (assume userId and role.name)
+    users.forEach(u => {
+      const ur = userRoles.find(r => r.userId === u.userId);
+      u.role = ur && ur.role && (ur.role.name || ur.role.roleName) ? (ur.role.name || ur.role.roleName) : '';
+    });
+
     renderUsers();
   } catch (e) {
     users = [];
@@ -294,4 +364,7 @@ async function fetchUsers() {
 }
 
 // Initial load
-window.addEventListener("DOMContentLoaded", fetchUsers);
+window.addEventListener("DOMContentLoaded", async () => {
+  await fetchRoles();
+  fetchUsers();
+});

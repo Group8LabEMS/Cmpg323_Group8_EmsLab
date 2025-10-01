@@ -118,13 +118,14 @@ if (bookNowBtn) {
 // Initialize on DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
   renderSidebar();
-  showAllowedTabs();
+
+  // Hide all tabs by default
+  document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
 
   function showSectionFromHash() {
-    const hash = window.location.hash.replace('#', '') || (TABS_BY_ROLE[currentRole] || [])[0]?.id;
     // Hide all tabs first
     document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
-
+    const hash = window.location.hash.replace('#', '') || (TABS_BY_ROLE[currentRole] || [])[0]?.id;
     const allowed = (TABS_BY_ROLE[currentRole] || []).map(t => t.id);
     if (allowed.includes(hash)) {
       const section = document.getElementById(hash);
@@ -133,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (tabRenderers[hash]) tabRenderers[hash]();
       }
     }
-
     document.querySelectorAll('.sidebar-btn').forEach(btn => {
       const target = btn instanceof HTMLElement ? btn.dataset.target : undefined;
       if (btn instanceof HTMLElement) btn.classList.toggle('active', target === hash);
