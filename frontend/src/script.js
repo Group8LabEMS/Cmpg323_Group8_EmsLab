@@ -12,7 +12,7 @@ const TABS_BY_ROLE = {
     { id: 'bookings', label: 'Bookings Management' },
     { id: 'equipment', label: 'Equipment Management' },
     { id: 'maintenance', label: 'Maintenance' },
-    { id: 'adminDashboard', label: 'Audit Trails' },
+  { id: 'adminAudit', label: 'Audit Trails' },
     { id: 'reports', label: 'Reports' },
     { id: 'settings', label: 'Settings' }
   ]
@@ -73,6 +73,7 @@ import { renderEquipmentManagement } from "./pages/admin_equipment.js";
 import { renderEquipment } from "./pages/equipent.js";
 import { renderUsers } from "./pages/user_management.js";
 import { renderAdminDashboard } from "./pages/admin_dashboard.js";
+import { renderAdminAudit } from "./pages/admin_audit.js";
 import { renderAdminBookings } from "./pages/admin_bookings.js";
 import { renderMaintenance } from "./pages/maintenance.js";
 
@@ -97,6 +98,7 @@ const tabRenderers = {
   equipment: currentRole === 'admin' ? renderEquipmentManagement : renderEquipment,
   userManagement: renderUsers,
   adminDashboard: renderAdminDashboard,
+  adminAudit: renderAdminAudit,
   maintenance: renderMaintenance,
 };
 
