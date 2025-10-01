@@ -32,6 +32,51 @@
 .no-bookings-message {
   text-align: center;
 }
+/* Booking Status Styles */
+.status-pending {
+  color: #fff;
+  background: #ff9800; /* Orange for pending */
+  border-radius: 6px;
+  padding: 4px 8px;
+  display: inline-block;
+  font-weight: 500;
+}
+
+.status-confirmed {
+  color: #fff;
+  background: #4caf50; /* Green for confirmed */
+  border-radius: 6px;
+  padding: 4px 8px;
+  display: inline-block;
+  font-weight: 500;
+}
+
+.status-cancelled {
+  color: #fff;
+  background: #f44336; /* Red for cancelled */
+  border-radius: 6px;
+  padding: 4px 8px;
+  display: inline-block;
+  font-weight: 500;
+}
+
+.status-completed {
+  color: #fff;
+  background: #2196f3; /* Blue for completed */
+  border-radius: 6px;
+  padding: 4px 8px;
+  display: inline-block;
+  font-weight: 500;
+}
+
+.status-in-progress {
+  color: #fff;
+  background: #9c27b0; /* Purple for in progress */
+  border-radius: 6px;
+  padding: 4px 8px;
+  display: inline-block;
+  font-weight: 500;
+}
 /* Maintenance Table Styles */
 .maintenance-table {
   width: 100%;

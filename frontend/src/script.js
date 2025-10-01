@@ -25,48 +25,47 @@ if (!roleFromStorage) {
 }
 let currentRole = roleFromStorage || 'user';
 
+// Render sidebar
 function renderSidebar() {
   const sidebar = document.querySelector('aside.sidebar');
   if (!sidebar) return;
-  // Keep the user name and logout button
+
   const userName = sidebar.querySelector('h3')?.outerHTML || '';
   const logoutBtn = sidebar.querySelector('.logout')?.outerHTML || '';
-  // Render allowed tabs
+
   const tabs = TABS_BY_ROLE[currentRole] || [];
   sidebar.innerHTML = userName +
     tabs.map(tab => `<button class="sidebar-btn" data-target="${tab.id}">${tab.label}</button>`).join('') +
     logoutBtn;
-  // Re-attach event listeners
+
+  // Attach click events for sidebar buttons
   sidebar.querySelectorAll('.sidebar-btn[data-target]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const target = (btn instanceof HTMLElement && btn.dataset) ? btn.dataset.target : undefined;
+      const target = btn instanceof HTMLElement ? btn.dataset.target : undefined;
       if (target) window.location.hash = `#${target}`;
     });
   });
-  // Logout event
+
+  // Logout button
   const logout = sidebar.querySelector('.logout');
   if (logout) logout.addEventListener('click', () => {
-    // Clear login and redirect to login page
     localStorage.removeItem('role');
     window.location.href = 'Login.html';
   });
 }
 
+// Show only allowed tabs
 function showAllowedTabs() {
-  // Hide all tabs
   document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
-  // Show only allowed tab sections
+
   const allowed = (TABS_BY_ROLE[currentRole] || []).map(t => t.id);
   allowed.forEach(id => {
     const el = document.getElementById(id);
-    if (el && el instanceof HTMLElement) el.style.display = '';
-  });
-  // Hide all others
-  document.querySelectorAll('.tab').forEach(tab => {
-    if (!allowed.includes(tab.id) && tab instanceof HTMLElement) tab.style.display = 'none';
+    if (el) el.classList.remove('hidden');
   });
 }
 
+// Import page renderers
 import { renderDashboard } from "./pages/dashboard.js";
 import { renderProfile } from "./pages/profile.js";
 import { renderBookings } from "./pages/bookings.js";
@@ -74,54 +73,56 @@ import { renderEquipmentManagement } from "./pages/admin_equipment.js";
 import { renderEquipment } from "./pages/equipent.js";
 import { renderUsers } from "./pages/user_management.js";
 import { renderAdminDashboard } from "./pages/admin_dashboard.js";
+import { renderAdminBookings } from "./pages/admin_bookings.js";
 import { renderMaintenance } from "./pages/maintenance.js";
 
-
-
-// Dynamically select equipment renderer based on role
+// Map tab to renderer
 const tabRenderers = {
   dashboard: renderDashboard,
   profile: renderProfile,
-  bookings: renderBookings,
+  bookings: function() {
+    // Hide both bookings tables first
+    const userBookingsSection = document.getElementById('bookings');
+    const adminBookingsSection = document.getElementById('admin-bookings');
+    if (userBookingsSection) userBookingsSection.classList.add('hidden');
+    if (adminBookingsSection) adminBookingsSection.classList.add('hidden');
+    if (currentRole === 'admin') {
+      if (adminBookingsSection) adminBookingsSection.classList.remove('hidden');
+      renderAdminBookings();
+    } else {
+      if (userBookingsSection) userBookingsSection.classList.remove('hidden');
+      renderBookings();
+    }
+  },
   equipment: currentRole === 'admin' ? renderEquipmentManagement : renderEquipment,
   userManagement: renderUsers,
   adminDashboard: renderAdminDashboard,
   maintenance: renderMaintenance,
 };
 
-document.querySelectorAll(".sidebar-btn[data-target]").forEach(btn => {
-  const button = /** @type {HTMLButtonElement} */ (btn);
-  button.addEventListener("click", () => {
-    const target = button.dataset.target;
-    if (target) {
-      window.location.hash = `#${target}`;
-    }
-  });
-});
-
-//---------- Book now ----------//
-// Book Now button in topbar redirects user to the equipment section
+// Book Now button
 const bookNowBtn = document.getElementById("bookNowBtn");
 if (bookNowBtn) {
-  bookNowBtn.addEventListener("click", (e) => {
+  bookNowBtn.addEventListener("click", e => {
     e.preventDefault();
     document.querySelectorAll(".tab").forEach(tab => tab.classList.add("hidden"));
     document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
     document.getElementById("equipment").classList.remove("hidden");
-    document.querySelector('.sidebar-btn[data-target="equipment"]').classList.add("active");
+    const btn = document.querySelector('.sidebar-btn[data-target="equipment"]');
+    if (btn) btn.classList.add("active");
   });
 }
 
+// Initialize on DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
-  // Simulate login: set currentRole to 'user' or 'admin' here
-  // currentRole = 'admin'; // Uncomment to test admin
   renderSidebar();
   showAllowedTabs();
 
   function showSectionFromHash() {
-    const hash = window.location.hash.replace('#', '') || TABS_BY_ROLE[currentRole][0].id;
-    showAllowedTabs();
-    // Show the section matching the hash (id) if allowed
+    const hash = window.location.hash.replace('#', '') || (TABS_BY_ROLE[currentRole] || [])[0]?.id;
+    // Hide all tabs first
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
+
     const allowed = (TABS_BY_ROLE[currentRole] || []).map(t => t.id);
     if (allowed.includes(hash)) {
       const section = document.getElementById(hash);
@@ -130,17 +131,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (tabRenderers[hash]) tabRenderers[hash]();
       }
     }
-    // Set active sidebar button
+
     document.querySelectorAll('.sidebar-btn').forEach(btn => {
-      const target = (btn instanceof HTMLElement && btn.dataset) ? btn.dataset.target : undefined;
-      btn.classList.toggle('active', target === hash);
+      const target = btn instanceof HTMLElement ? btn.dataset.target : undefined;
+      if (btn instanceof HTMLElement) btn.classList.toggle('active', target === hash);
     });
   }
 
   window.addEventListener('hashchange', showSectionFromHash);
   showSectionFromHash();
 
-  // Example: populate with data (replace later with real logic)
+  // Example dashboard counters
   const totalUsersEl = document.getElementById("total-users");
   const totalBookingsEl = document.getElementById("total-bookings");
   if (totalUsersEl) totalUsersEl.textContent = "123";
