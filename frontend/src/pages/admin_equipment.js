@@ -69,9 +69,9 @@ function handleInput(e, field) {
 	if (showEditModal && editEquipment) editEquipment[field] = e.target.value;
 }
 
-let addEquipmentForm = { name: "", type: "", status: "" };
+let addEquipmentForm = { name: "", type: "", status: "", location: "" };
 function resetAddForm() {
-	addEquipmentForm = { name: "", type: "", status: "" };
+	addEquipmentForm = { name: "", type: "", status: "", location: "" };
 }
 
 async function addEquipment() {
@@ -81,7 +81,7 @@ async function addEquipment() {
 		name: addEquipmentForm.name,
 		equipmentTypeId: typeObj?.equipmentTypeId || 1,
 		equipmentStatusId: statusObj?.equipmentStatusId || 1,
-		availability: statusObj?.name || 'Available',
+		availability: addEquipmentForm.location || statusObj?.name || 'Available',
 		createdDate: new Date().toISOString(),
 	};
 	try {
@@ -209,6 +209,7 @@ litRender(html`
 					   <tr style="background:#8d5fc5;color:#fff;">
 						   <th style="padding:1rem 0.5rem;">NAME</th>
 						   <th>DESCRIPTION</th>
+						   <th>LOCATION</th>
 						   <th>STATUS</th>
 						   <th>ACTION</th>
 					   </tr>
@@ -218,6 +219,7 @@ litRender(html`
 						<tr style="background:${(eq.equipmentId ?? 0)%2===0?'#f7f6fb':'#fff'};">
 							   <td>${eq.name || ''}</td>
 							   <td>${eq.equipmentType?.name || ''}</td>
+							   <td>${eq.availability || ''}</td>
 							   <td>
 								<span style="background:${eq.equipmentStatus?.name==='Available'?'#d9f2d9':'#6c757d'};color:${eq.equipmentStatus?.name==='Available'?'#2d7a2d':'#fff'};padding:4px 12px;border-radius:6px;font-weight:bold;">${eq.equipmentStatus?.name || ''}</span>
 							</td>
@@ -252,7 +254,8 @@ litRender(html`
 				<div class="modal-content" style="width:500px;max-width:95vw;">
 					<h2 style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;">Add Equipment</h2>
 					<div style="color:#8d5fc5;margin-bottom:1.2rem;">Add new equipment to the system</div>
-																		<input type="text" placeholder="Equipment Name" value="${addEquipmentForm.name}" @input=${e => handleInput(e, 'name')} style="margin-bottom:1rem;" />
+					<input type="text" placeholder="Equipment Name" value="${addEquipmentForm.name}" @input=${e => handleInput(e, 'name')} style="margin-bottom:1rem;" />
+					<input type="text" placeholder="Location" value="${addEquipmentForm.location}" @input=${e => handleInput(e, 'location')} style="margin-bottom:1rem;" />
 																		<select @change=${e => handleInput(e, 'type')} style="margin-bottom:1rem;width:100%;" .value=${addEquipmentForm.type}>
 																			<option value="">Select Type</option>
 																			${equipmentTypes.map(t => html`<option value="${t.name}">${t.name}</option>`) }
