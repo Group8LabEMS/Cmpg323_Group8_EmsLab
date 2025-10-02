@@ -25,12 +25,12 @@ namespace Group8.LabEms.Api.Models
         public string Email { get; set; } = null!;
 
 
-    [Required]
-    [Column("password")]
-    public string Password { get; set; } = null!;
+        [Required]
+        [Column("password")]
+        public string Password { get; set; } = null!;
 
-    [Column("created_at")]
-    public DateTime CreatedAt { get; set; }
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; }
 
         // Navigation collections
         public ICollection<UserRoleModel> UserRoles { get; set; } = new List<UserRoleModel>();
