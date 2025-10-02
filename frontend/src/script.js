@@ -12,7 +12,7 @@ const TABS_BY_ROLE = {
     { id: 'bookings', label: 'Bookings Management' },
     { id: 'equipment', label: 'Equipment Management' },
     { id: 'maintenance', label: 'Maintenance' },
-    { id: 'adminDashboard', label: 'Audit Trails' },
+  { id: 'adminAudit', label: 'Audit Trails' },
     { id: 'reports', label: 'Reports' },
     { id: 'settings', label: 'Settings' }
   ]
@@ -73,6 +73,7 @@ import { renderEquipmentManagement } from "./pages/admin_equipment.js";
 import { renderEquipment } from "./pages/equipent.js";
 import { renderUsers } from "./pages/user_management.js";
 import { renderAdminDashboard } from "./pages/admin_dashboard.js";
+import { renderAdminAudit } from "./pages/admin_audit.js";
 import { renderAdminBookings } from "./pages/admin_bookings.js";
 import { renderMaintenance } from "./pages/maintenance.js";
 
@@ -103,6 +104,7 @@ const tabRenderers = {
   },
   userManagement: renderUsers,
   adminDashboard: renderAdminDashboard,
+  adminAudit: renderAdminAudit,
   maintenance: renderMaintenance,
 };
 
@@ -122,13 +124,14 @@ if (bookNowBtn) {
 // Initialize on DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
   renderSidebar();
-  showAllowedTabs();
+
+  // Hide all tabs by default
+  document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
 
   function showSectionFromHash() {
-    const hash = window.location.hash.replace('#', '') || (TABS_BY_ROLE[currentRole] || [])[0]?.id;
     // Hide all tabs first
     document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
-
+    const hash = window.location.hash.replace('#', '') || (TABS_BY_ROLE[currentRole] || [])[0]?.id;
     const allowed = (TABS_BY_ROLE[currentRole] || []).map(t => t.id);
     if (allowed.includes(hash)) {
       const section = document.getElementById(hash);
@@ -137,7 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (tabRenderers[hash]) tabRenderers[hash]();
       }
     }
-
     document.querySelectorAll('.sidebar-btn').forEach(btn => {
       const target = btn instanceof HTMLElement ? btn.dataset.target : undefined;
       if (btn instanceof HTMLElement) btn.classList.toggle('active', target === hash);
