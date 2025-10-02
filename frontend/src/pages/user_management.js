@@ -15,8 +15,6 @@ const surnameInput = /** @type {HTMLInputElement} */ (document.getElementById("s
 const universityNoInput = /** @type {HTMLInputElement} */ (document.getElementById("universityNoInput"));
 const emailInput = /** @type {HTMLInputElement} */ (document.getElementById("emailInput"));
 const cellInput = /** @type {HTMLInputElement} */ (document.getElementById("cellInput"));
-const facultyInput = /** @type {HTMLInputElement} */ (document.getElementById("facultyInput"));
-const departmentInput = /** @type {HTMLInputElement} */ (document.getElementById("departmentInput"));
 const passwordInput = /** @type {HTMLInputElement} */ (document.getElementById("passwordInput"));
 const repasswordInput = /** @type {HTMLInputElement} */ (document.getElementById("repasswordInput"));
 
@@ -141,8 +139,6 @@ function openAddUser() {
   universityNoInput.value = "";
   emailInput.value = "";
   cellInput.value = "";
-  facultyInput.value = "";
-  departmentInput.value = "";
   passwordInput.value = "";
   repasswordInput.value = "";
   userModal.classList.remove("hidden");
@@ -163,8 +159,6 @@ function openEditUser(index) {
   universityNoInput.value = u.ssoId || "";
   emailInput.value = u.email || "";
   cellInput.value = u.cell || "";
-  facultyInput.value = u.faculty || "";
-  departmentInput.value = u.department || "";
   passwordInput.value = u.password || "";
   repasswordInput.value = u.password || "";
   
@@ -224,13 +218,12 @@ confirmUserBtn.addEventListener("click", async () => {
   const ssoId = universityNoInput.value.trim();
   const email = emailInput.value.trim();
   const cell = cellInput.value.trim();
-  const faculty = facultyInput.value.trim();
-  const department = departmentInput.value.trim();
+  // Faculty and Department removed from form
   const password = passwordInput.value;
   const repassword = repasswordInput.value;
   const role = document.getElementById("roleInput") ? /** @type {HTMLSelectElement} */ (document.getElementById("roleInput")).value : "";
 
-  if (!name || !surname || !ssoId || !email || !cell || !faculty || !department || !password || !repassword) {
+  if (!name || !surname || !ssoId || !email || !cell || !password || !repassword) {
     alert("All fields are required.");
     return;
   }
