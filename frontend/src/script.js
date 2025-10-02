@@ -1,12 +1,12 @@
 // Role-based tab config
 const TABS_BY_ROLE = {
-  user: [
+  Student: [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'profile', label: 'Profile' },
     { id: 'bookings', label: 'Bookings' },
     { id: 'equipment', label: 'Equipment' }
   ],
-  admin: [
+  Admin: [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'userManagement', label: 'User Management' },
     { id: 'bookings', label: 'Bookings Management' },
@@ -23,7 +23,7 @@ const roleFromStorage = localStorage.getItem('role');
 if (!roleFromStorage) {
   window.location.href = 'Login.html';
 }
-let currentRole = roleFromStorage || 'user';
+let currentRole = roleFromStorage === 'Admin' ? 'Admin' : (roleFromStorage === 'Student' ? 'Student' : 'Student');
 
 // Render sidebar
 function renderSidebar() {

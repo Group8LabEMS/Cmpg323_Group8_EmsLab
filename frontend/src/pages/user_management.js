@@ -216,12 +216,11 @@ confirmUserBtn.addEventListener("click", async () => {
   const name = nameInput.value.trim();
   const surname = surnameInput.value.trim();
   const ssoId = universityNoInput.value.trim();
-  const email = emailInput.value.trim();
-  const cell = cellInput.value.trim();
-  // Faculty and Department removed from form
-  const password = passwordInput.value;
-  const repassword = repasswordInput.value;
-  const role = document.getElementById("roleInput") ? /** @type {HTMLSelectElement} */ (document.getElementById("roleInput")).value : "";
+    const email = emailInput.value.trim();
+    const cell = cellInput.value.trim();
+    const password = passwordInput.value;
+    const repassword = repasswordInput.value;
+    const role = document.getElementById("roleInput") ? /** @type {HTMLSelectElement} */ (document.getElementById("roleInput")).value : "";
 
   if (!name || !surname || !ssoId || !email || !cell || !password || !repassword) {
     alert("All fields are required.");
@@ -251,7 +250,7 @@ confirmUserBtn.addEventListener("click", async () => {
       });
     } else {
       // Create
-      await fetch(`/api/User`, {
+        await fetch(`/api/User?role=${role}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userObj)
