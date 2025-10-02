@@ -86,7 +86,7 @@ const tabRenderers = {
     const adminBookingsSection = document.getElementById('admin-bookings');
     if (userBookingsSection) userBookingsSection.classList.add('hidden');
     if (adminBookingsSection) adminBookingsSection.classList.add('hidden');
-    if (currentRole === 'admin') {
+  if (currentRole === 'Admin') {
       if (adminBookingsSection) adminBookingsSection.classList.remove('hidden');
       renderAdminBookings();
     } else {
