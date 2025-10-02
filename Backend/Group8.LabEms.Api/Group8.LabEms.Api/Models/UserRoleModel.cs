@@ -17,8 +17,6 @@ namespace Group8.LabEms.Api.Models
         public int RoleId { get; set; }
         public RoleModel Role { get; set; } = null!;
 
-        public ICollection<UserModel> Users { get; set; } = null!;
-
-        public ICollection<RoleModel> Roles { get; set; } = null!; 
+    // ...existing code...
     }
 }
