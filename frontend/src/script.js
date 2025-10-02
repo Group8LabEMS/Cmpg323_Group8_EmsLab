@@ -94,7 +94,13 @@ const tabRenderers = {
       renderBookings();
     }
   },
-  equipment: currentRole === 'admin' ? renderEquipmentManagement : renderEquipment,
+  equipment: function() {
+    if (currentRole === 'Admin') {
+      renderEquipmentManagement();
+    } else {
+      renderEquipment();
+    }
+  },
   userManagement: renderUsers,
   adminDashboard: renderAdminDashboard,
   maintenance: renderMaintenance,
