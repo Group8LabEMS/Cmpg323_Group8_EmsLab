@@ -4,7 +4,8 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- Drop tables with foreign key dependencies first
-DROP TABLE IF EXISTS `auditlog`;
+DROP TABLE IF EXISTS `audit_log`;
+DROP TABLE IF EXISTS `auditlog`; 
 DROP TABLE IF EXISTS `maintenance`;
 DROP TABLE IF EXISTS `booking`;
 DROP TABLE IF EXISTS `equipment`;
@@ -61,6 +62,7 @@ CREATE TABLE `user` (
     `sso_id` VARCHAR(255) NOT NULL,
     `display_name` VARCHAR(255) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
+    `password` VARCHAR(255) NOT NULL,
     `created_at` TIMESTAMP NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -121,7 +123,7 @@ CREATE TABLE `maintenance` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- AuditLog Table (unchanged)
-CREATE TABLE `auditlog` (
+CREATE TABLE `audit_log` (
     `auditlog_id` INT AUTO_INCREMENT PRIMARY KEY,
     `timestamp` TIMESTAMP NOT NULL,
     `user_id` INT,
@@ -132,40 +134,4 @@ CREATE TABLE `auditlog` (
     FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Initial data for lookup tables
 
--- Equipment Status initial values
-INSERT INTO `equipment_status` (`name`, `description`) VALUES 
-('Available', 'Equipment is available for booking'),
-('In Use', 'Equipment is currently in use'),
-('Under Maintenance', 'Equipment is currently under maintenance'),
-('Out of Order', 'Equipment is not functional'),
-('Reserved', 'Equipment is reserved for future use');
-
--- Equipment Type initial values
-INSERT INTO `equipment_type` (`name`, `description`) VALUES 
-('Lab Equipment', 'Specialized laboratory equipment');
-
--- Booking Status initial values
-INSERT INTO `booking_status` (`name`, `description`) VALUES 
-('Pending', 'Booking request is pending approval'),
-('Approved', 'Booking has been approved'),
-('Rejected', 'Booking request has been rejected'),
-('Cancelled', 'Booking was cancelled'),
-('Completed', 'Booking period has completed');
-
--- Maintenance Type initial values
-INSERT INTO `maintenance_type` (`name`, `description`) VALUES 
-('Routine', 'Regular scheduled maintenance'),
-('Repair', 'Equipment repair'),
-('Inspection', 'Safety or quality inspection'),
-('Upgrade', 'Hardware or software upgrade'),
-('Calibration', 'Equipment calibration');
-
--- Maintenance Status initial values
-INSERT INTO `maintenance_status` (`name`, `description`) VALUES 
-('Scheduled', 'Maintenance is scheduled for the future'),
-('In Progress', 'Maintenance is currently in progress'),
-('Completed', 'Maintenance has been completed'),
-('Cancelled', 'Maintenance was cancelled'),
-('Delayed', 'Maintenance has been delayed');

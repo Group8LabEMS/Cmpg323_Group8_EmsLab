@@ -4,8 +4,20 @@ using Group8.LabEms.Api.Data;
 //using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+string? _connectionString = string.Empty;
+
+
+IConfiguration configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory() + "/Configurations")
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
+
+
+
 
 // CONFIG SERILOG
 Log.Logger = new LoggerConfiguration()
@@ -32,11 +44,17 @@ builder.Services.AddCors(options =>
 });
 
 
-
-Console.WriteLine("Connection string = " + builder.Configuration.GetConnectionString("DefaultConnection"));
-
-
-
+if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+{
+    _connectionString = configuration.GetConnectionString("DefaultConnection");
+    Console.WriteLine("connection string = " + _connectionString);
+    Console.WriteLine("In Development environment");
+}
+else
+{
+    _connectionString = configuration.GetConnectionString("ProductionConnection");
+    Console.WriteLine("In Production environment");
+}
 
 
 // Fix JSON serialization cycles for navigation properties
@@ -49,18 +67,10 @@ builder.Services.AddControllers()
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
-        // "server=localhost;port=3306;database=labems;user=root;password=root;",
-        // new MySqlServerVersion(new Version(8, 4, 6)) // use your MySQL version
-
-        "server=localhost;port=3306;database=labems;user=root;password=labems12345;",
+        _connectionString,
         new MySqlServerVersion(new Version(8, 0, 36)) // use your MySQL version
     ));
 
-//builder.Services.AddDbContext<AppDbContext>(options =>
-  //  options.UseMySql(
-    //    builder.Configuration.GetConnectionString("DefaultConnection"),
-      //  ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
-   //));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -68,6 +78,8 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Middleware
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
