@@ -32,6 +32,53 @@
         <h2 style="color: #7A4EB0; font-size: 2rem; margin-bottom: 1.5rem;">Dashboard</h2>
       </section>
 
+      <!-- Reports Section -->
+      <section id="reports" class="tab hidden">
+        <h2 style="color: #7A4EB0; font-size: 2rem; margin-bottom: 1.5rem;">Reports</h2>
+        <p style="margin-bottom: 1.5rem;">View and download reports from various management sections.</p>
+        <div class="report-controls">
+          <select id="reportTypeSelect">
+            <option value="user">Users Report</option>
+            <option value="booking">Bookings Report</option>
+            <option value="equipment">Equipment Report</option>
+          </select>
+          <select id="reportSortSelect">
+            <option value="">Sort by</option>
+          </select>
+          <input type="text" id="reportSearchInput" placeholder="Search All Columns (Type to filter)">
+              
+          <button id="reportFilterBtn" class="action-book" style="min-width: 120px; background-color: var(--secondary-color);">
+            Filter <span id="filterActiveIndicator" class="hidden" style="margin-left: 5px; color: #ffeb3b; font-weight: bold;">(Active)</span>
+          </button>
+        </div>
+        <div class="report-table-container">
+          <table class="report-table">
+            <thead>
+              <tr id="reportTableHeader">
+                </tr>
+            </thead>
+            <tbody id="reportTableBody">
+              </tbody>
+          </table>
+        </div>
+        <div class="report-actions">
+          <button id="reportClearFilterBtn" class="cancel-btn">Clear Form</button>
+          <button id="downloadReportBtn" class="action-book">Download CSV</button>
+        </div>
+      </section>
+      
+      <div id="filterModal" class="modal hidden">
+        <div class="modal-content">
+          <h2 id="filterModalTitle" style="color: #7A4EB0; margin-bottom: 20px;">Apply Filters</h2>
+          <div id="filterFormContent">
+            </div>
+          <div class="modal-actions" style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;">
+            <button id="modalClearFiltersBtn" class="cancel-btn">Clear Filters</button>
+            <button id="modalApplyFiltersBtn" class="action-book">Apply Filters</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Profile -->
       <section id="profile" class="tab hidden">
         <h2>Profile</h2>

@@ -76,6 +76,8 @@ import { renderUsers } from "./pages/user_management.js";
 import { renderAdminDashboard } from "./pages/admin_dashboard.js";
 import { renderMaintenance } from "./pages/maintenance.js";
 
+import { renderReports } from "./pages/admin_reports.js";
+
 
 
 // Dynamically select equipment renderer based on role
@@ -87,6 +89,7 @@ const tabRenderers = {
   userManagement: renderUsers,
   adminDashboard: renderAdminDashboard,
   maintenance: renderMaintenance,
+   reports: renderReports,
 };
 
 document.querySelectorAll(".sidebar-btn[data-target]").forEach(btn => {

@@ -38,6 +38,168 @@
   border-collapse: collapse;
   background: #fff;
   border-radius: 12px;
+
+  /* Reports styling */
+
+  #reports {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+    padding: 30px 30px 20px 30px;
+  }
+
+  .report-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 25px;
+    background: #faf8fd;
+    padding: 18px 22px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px #e0d3f3;
+  }
+
+  .report-controls select,
+  .report-controls input[type="text"],
+  .report-controls button {
+    padding: 10px 15px;
+    border: 2px solid #C3B5E2;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fff;
+    color: #7A4EB0;
+    outline: none;
+    min-width: 100px;
+    box-sizing: border-box;
+  }
+
+  .report-controls select {
+    cursor: pointer;
+    min-width: 150px;
+  }
+
+  .report-controls input[type="text"]:first-of-type {
+    flex-grow: 1;
+  }
+
+  .report-controls input[type="text"]::placeholder {
+    color: #a0a0a0;
+  }
+
+  @media (max-width: 768px) {
+    .report-controls {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .report-controls select,
+    .report-controls input[type="text"],
+    .report-controls button {
+      width: 100%;
+      min-width: unset;
+    }
+  }
+
+  .report-table-container {
+    overflow-x: auto;
+    margin-bottom: 20px;
+  }
+
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px #e0d3f3;
+  }
+
+  .report-table th {
+    background: #8d5fc5;
+    color: #fff;
+    padding: 13px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 1.08rem;
+    letter-spacing: 0.02em;
+  }
+
+  .report-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid #e5d6f7;
+    color: #7A4EB0;
+    font-size: 1.05rem;
+  }
+
+  .report-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .report-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+
+/* --- Filter Modal Styles --- */
+.modal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-content {
+  background-color: var(--light-bg);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  width: 90%;
+  max-width: 550px;
+  animation: fadeIn 0.3s;
+}
+.form-group {
+  margin-bottom: 15px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: var(--secondary-color);
+  font-size: 0.95rem;
+}
+.modal-content select,
+.modal-content input[type="date"],
+.modal-content input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #C3B5E2;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #333;
+  outline: none;
+}
+.date-range-group {
+  display: flex;
+  gap: 15px;
+}
+.date-range-group > div {
+  flex: 1;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
   box-shadow: 0 2px 8px rgba(122, 78, 176, 0.08);
   margin-bottom: 2rem;
   overflow: hidden;
