@@ -44,11 +44,20 @@ namespace Group8.LabEms.Api.Controllers
 
        
         [HttpPost]
-        public async Task<ActionResult<UserModel>> CreateUser(UserModel user)
+        public async Task<ActionResult<UserModel>> CreateUser(UserModel user, [FromQuery] string role)
         {
             user.CreatedAt = DateTime.UtcNow;
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+
+            // Assign role
+            var roleEntity = await _context.Roles.FirstOrDefaultAsync(r => r.Name == role);
+            if (roleEntity != null)
+            {
+                var userRole = new UserRoleModel { UserId = user.UserId, RoleId = roleEntity.RoleId };
+                _context.UserRoles.Add(userRole);
+                await _context.SaveChangesAsync();
+            }
 
             return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
         }

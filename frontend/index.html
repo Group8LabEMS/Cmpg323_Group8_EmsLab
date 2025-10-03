@@ -210,24 +210,22 @@
     
     <!-- User Management Modal -->
     <div id="userModal" class="modal hidden">
-      <div class="modal-content" style="max-width:900px;width:95vw;padding:2.5rem 2.5rem 2.5rem 2.5rem;">
+  <div class="modal-content" style="max-width:420px;width:96vw;padding:2rem 2rem 2rem 2rem;margin:0 auto;">
         <h2 id="userModalTitle" style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;font-weight:bold;text-align:center;">User Profile</h2>
         <div style="color:#8d5fc5;font-size:1.2rem;margin-bottom:1.5rem;text-align:center;">Create and Update user information</div>
         <form id="userForm" style="display:flex;flex-direction:column;gap:1.1rem;align-items:stretch;max-width:100%;">
-          <input type="text" id="nameInput" placeholder="Cosmo" style="font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
-          <input type="text" id="surnameInput" placeholder="Kramer" style="font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
-          <input type="text" id="universityNoInput" placeholder="12123434" style="font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
-          <input type="email" id="emailInput" placeholder="ckramer@mynwu.ac.za" style="font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
-
-          <div style="display:flex;gap:1.2rem;width:100%;">
-            <input type="text" id="cellInput" placeholder="Cellphone No" style="flex:1;font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
-            <input type="text" id="facultyInput" placeholder="Faculty" style="flex:1;font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
-          </div>
-          <div style="display:flex;gap:1.2rem;width:100%;">
-            <input type="text" id="departmentInput" placeholder="Department" style="flex:1;font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
-            <input type="password" id="passwordInput" placeholder="Password" style="flex:1;font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
-          </div>
-          <input type="password" id="repasswordInput" placeholder="Re-enter Password" style="font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;">
+          <input type="text" id="nameInput" placeholder="Cosmo" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+          <input type="text" id="surnameInput" placeholder="Kramer" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+          <input type="text" id="universityNoInput" placeholder="12123434" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+          <input type="email" id="emailInput" placeholder="ckramer@mynwu.ac.za" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+          <input type="text" id="cellInput" placeholder="Cellphone No" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+          <input type="password" id="passwordInput" placeholder="Password" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+          <input type="password" id="repasswordInput" placeholder="Re-enter Password" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+          <label for="roleInput" style="font-size:1.1rem;margin-top:0.5rem;">Role</label>
+          <select id="roleInput" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+            <option value="Student">Student</option>
+            <option value="Admin">Admin</option>
+          </select>
 
           <label for="roleInput" style="font-size:1.1rem;margin-top:0.5rem;">Role</label>
           <select id="roleInput" style="font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
@@ -236,7 +234,7 @@
           </select>
 
           <button id="confirmUser" class="action-book" style="width:100%;background:#8d5fc5;color:#fff;font-size:1.2rem;padding:1rem 0;border-radius:8px;border:none;font-weight:bold;margin-top:0.7rem;">Save</button>
-          <button id="cancelUser" class="cancel-btn" style="width:100%;margin-top:0.7rem;">Cancel</button>
+          <button id="cancelUser" class="cancel-btn" style="width:100%;margin-top:0.7rem;background:#fff;color:#8d5fc5;font-size:1.1rem;padding:0.7rem 0;border-radius:8px;border:2px solid #8d5fc5;box-sizing:border-box;">Cancel</button>
         </form>
       </div>
     </div>

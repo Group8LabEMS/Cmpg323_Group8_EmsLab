@@ -8,13 +8,15 @@ namespace Group8.LabEms.Api.Models
     [Table("user_role")]
     public class UserRoleModel
     {
-        
-        [Column("user_id")] 
+
+        [Column("user_id")]
         public int UserId { get; set; }
         public UserModel User { get; set; } = null!;
 
-        [Column("role_id")] 
+        [Column("role_id")]
         public int RoleId { get; set; }
         public RoleModel Role { get; set; } = null!;
+
+    // ...existing code...
     }
 }

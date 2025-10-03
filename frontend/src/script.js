@@ -1,12 +1,12 @@
 // Role-based tab config
 const TABS_BY_ROLE = {
-  user: [
+  Student: [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'profile', label: 'Profile' },
     { id: 'bookings', label: 'Bookings' },
     { id: 'equipment', label: 'Equipment' }
   ],
-  admin: [
+  Admin: [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'userManagement', label: 'User Management' },
     { id: 'bookings', label: 'Bookings Management' },
@@ -23,7 +23,7 @@ const roleFromStorage = localStorage.getItem('role');
 if (!roleFromStorage) {
   window.location.href = 'Login.html';
 }
-let currentRole = roleFromStorage || 'user';
+let currentRole = roleFromStorage === 'Admin' ? 'Admin' : (roleFromStorage === 'Student' ? 'Student' : 'Student');
 
 // Render sidebar
 function renderSidebar() {
@@ -87,7 +87,7 @@ const tabRenderers = {
     const adminBookingsSection = document.getElementById('admin-bookings');
     if (userBookingsSection) userBookingsSection.classList.add('hidden');
     if (adminBookingsSection) adminBookingsSection.classList.add('hidden');
-    if (currentRole === 'admin') {
+  if (currentRole === 'Admin') {
       if (adminBookingsSection) adminBookingsSection.classList.remove('hidden');
       renderAdminBookings();
     } else {
@@ -95,7 +95,13 @@ const tabRenderers = {
       renderBookings();
     }
   },
-  equipment: currentRole === 'admin' ? renderEquipmentManagement : renderEquipment,
+  equipment: function() {
+    if (currentRole === 'Admin') {
+      renderEquipmentManagement();
+    } else {
+      renderEquipment();
+    }
+  },
   userManagement: renderUsers,
   adminDashboard: renderAdminDashboard,
   adminAudit: renderAdminAudit,
