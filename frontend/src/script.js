@@ -78,7 +78,14 @@ import { renderMaintenance } from "./pages/maintenance.js";
 
 // Map tab to renderer
 const tabRenderers = {
-  dashboard: renderDashboard,
+  dashboard: function() {
+    const role = localStorage.getItem('role');
+    if (role && role.toLowerCase() === 'admin') {
+      renderAdminDashboard();
+    } else {
+      renderDashboard();
+    }
+  },
   profile: renderProfile,
   bookings: function() {
     // Hide both bookings tables first
