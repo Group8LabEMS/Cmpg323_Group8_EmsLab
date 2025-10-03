@@ -5,11 +5,29 @@ const maintenanceTableBody = document.getElementById("maintenanceTableBody");
 
 // ---------- State ---------- //
 
-export let maintenanceList = [
-  { id: 1, name: "Centrifuge", desc: "CF-900", loc: "Lab B", status: "Needs Repair" },
-  { id: 2, name: "Oscilloscope", desc: "OSC-500", loc: "Lab C", status: "Repair In Progress" },
-  { id: 3, name: "Balance", desc: "BAL-42", loc: "Lab D", status: "Repair Completed" }
-];
+export let maintenanceList = [];
+
+// --- API Integration --- //
+export async function fetchMaintenance() {
+  try {
+    const res = await fetch('/api/Maintenance');
+    if (!res.ok) throw new Error('Failed to fetch maintenance');
+    const data = await res.json();
+    maintenanceList = data.map(m => ({
+      id: m.maintenanceId,
+      name: m.equipment?.name || '',
+      desc: m.description,
+      loc: m.location,
+      status: m.maintenanceStatus?.name || '',
+      // add other fields as needed
+    }));
+    renderMaintenance();
+  } catch (e) {
+    maintenanceList = [];
+    renderMaintenance();
+    alert('Could not load maintenance data from server.');
+  }
+}
 
 // ---------- Render ---------- //
 export function renderMaintenance() {
@@ -34,13 +52,28 @@ export function renderMaintenance() {
   litRender(html`${rows}`, maintenanceTableBody);
 }
 
-// ---------- Helpers ---------- //
-function updateStatus(id, newStatus) {
+// ---------- Update Status ---------- //
+async function updateStatus(id, newStatus) {
+  // Find the maintenance item
   const eq = maintenanceList.find(e => e.id === id);
-  if (eq) {
-    eq.status = newStatus;
-    renderMaintenance();
+  if (!eq) return;
+  try {
+    // Call backend to update status
+    await fetch(`/api/Maintenance/${id}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus })
+    });
+    await fetchMaintenance();
+  } catch (e) {
+    alert('Failed to update maintenance status.');
   }
+}
+// Fetch maintenance data on page load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', fetchMaintenance);
+} else {
+  fetchMaintenance();
 }
 
 function statusClass(status) {

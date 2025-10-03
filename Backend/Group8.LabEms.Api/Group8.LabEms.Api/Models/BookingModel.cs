@@ -13,22 +13,20 @@ namespace Group8.LabEms.Api.Models
         [Column("booking_id")]
         public int BookingId { get; set; }
 
-        [Column("user_id")]
-        [ForeignKey(nameof(User))]
-        public int UserId { get; set; }
-        public UserModel User { get; set; } = null!;
+    [Column("user_id")]
+    [ForeignKey(nameof(User))]
+    public int UserId { get; set; }
+    public UserModel? User { get; set; }
 
-        [Column("equipment_id")]
-        [ForeignKey(nameof(Equipment))]
-        public int EquipmentId { get; set; }
-        [JsonIgnore]
-        public EquipmentModel Equipment { get; set; } = null!;
+    [Column("equipment_id")]
+    [ForeignKey(nameof(Equipment))]
+    public int EquipmentId { get; set; }
+    public EquipmentModel? Equipment { get; set; }
 
-        [ForeignKey(nameof(BookingStatus))]
-        [Column("booking_status_id")]
-        public int BookingStatusId { get; set; }
-        [JsonIgnore]
-        public BookingStatusModel BookingStatus { get; set; } = null!;
+    [ForeignKey(nameof(BookingStatus))]
+    [Column("booking_status_id")]
+    public int BookingStatusId { get; set; }
+    public BookingStatusModel? BookingStatus { get; set; }
 
         [Required]
         [Column("from_date")]

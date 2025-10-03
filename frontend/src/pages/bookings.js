@@ -10,35 +10,35 @@ const bookingModal = document.getElementById("bookingModal");
 const confirmBooking = document.getElementById("confirmBooking");
 const cancelBooking = document.getElementById("cancelBooking");
 
-
 //---------- State ----------//
 let selectedEquipment = null;
 let selectedBookingIndex = null;
 
 /**
- * List of current equipment bookings.
- * @type {Array<{name: string, date: string, start: string, end: string, status: string}>}
+ * Map booking status to CSS class
  */
-export let bookings = [
-  { name: "Spectrometer", date: "2025-09-23", start: "13:00", end: "16:00", status: "Active" }
-];
-
-
-//---------- Utils ----------//
+function getStatusClass(status) {
+  switch ((status || '').toLowerCase()) {
+    case 'pending': return 'pending';
+    case 'approved': return 'approved';
+    case 'rejected': return 'rejected';
+    case 'cancelled': return 'cancelled';
+    case 'completed': return 'completed';
+    default: return '';
+  }
+}
 
 /**
- * Opens the booking modal for the equipment with the specified ID.
- * @param {number} id 
+ * List of current equipment bookings.
  */
+export let bookings = [];
+
+//---------- Utils ----------//
 export function openBooking(id) {
   selectedEquipment = equipmentList.find(eq => eq.id === id);
   bookingModal.classList.remove("hidden");
 }
 
-/**
- * Opens the update modal with pre-filled data for an existing booking.
- * @param {number} index 
- */
 export function openUpdate(index) {
   selectedBookingIndex = index;
   const booking = bookings[index];
@@ -50,10 +50,6 @@ export function openUpdate(index) {
   updateModal.classList.remove("hidden");
 }
 
-/**
- * Opens the delete confirmation modal for a selected booking.
- * @param {number} index 
- */
 export function openDelete(index) {
   selectedBookingIndex = index;
   const booking = bookings[index];
@@ -67,19 +63,14 @@ export function openDelete(index) {
   deleteModal.classList.remove("hidden");
 }
 
-
 //---------- Renderers ----------//
-
-/**
- * Renders the list of bookings into the bookings table.
- */
 export function renderBookings() {
   const tableRows = bookings.map((b, i) => html`
     <tr>
       <td>${b.name}</td>
       <td>${b.date}</td>
       <td>${b.start} - ${b.end}</td>
-      <td>${b.status}</td>
+      <td><span class="status ${getStatusClass(b.status)}">${b.status}</span></td>
       <td>
         <button class="action-book" @click=${() => openUpdate(i)}>Update</button>
         <button class="action-delete" title="Delete booking" @click=${() => openDelete(i)}>Delete</button>
@@ -89,36 +80,67 @@ export function renderBookings() {
   litRender(html`${tableRows}`, bookingTableBody);
 }
 
-
 //---------- Event handlers ----------//
-
-//confirmation of booking, adds booking to bookings list
-confirmBooking.addEventListener("click", () => {
+confirmBooking.addEventListener("click", async () => {
   let date = getInputById("bookingDate").value;
   let start = getInputById("startTime").value;
   let end = getInputById("endTime").value;
 
   if (selectedEquipment && date && start && end) {
-    //add new booking
-    bookings.push({
-      name: selectedEquipment.name,
-      date,
-      start,
-      end,
-      status: "Active"
+    const booking = {
+      userId: 1, // Replace with actual logged-in user ID
+      equipmentId: selectedEquipment.id,
+      bookingStatusId: 1, // Pending
+      fromDate: `${date}T${start}:00`,
+      toDate: `${date}T${end}:00`,
+      notes: "",
+      createdDate: new Date().toISOString()
+    };
+
+    const response = await fetch("/api/Booking", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(booking)
     });
-    renderBookings();
-    bookingModal.classList.add("hidden");
+
+    if (response.ok) {
+      bookingModal.classList.add("hidden");
+      await fetchAndRenderBookings();
+    } else {
+      alert("Booking failed: " + await response.text());
+    }
   } else {
     alert("Please fill in all fields.");
   }
 });
 
+async function fetchAndRenderBookings() {
+  try {
+    const response = await fetch("/api/Booking");
+    if (!response.ok) throw new Error("Failed to fetch bookings");
+    const data = await response.json();
+    bookings = data.map(b => ({
+      name: b.equipment?.name || "",
+      date: b.fromDate?.split("T")[0] || "",
+      start: b.fromDate?.split("T")[1]?.slice(0,5) || "",
+      end: b.toDate?.split("T")[1]?.slice(0,5) || "",
+      status: b.bookingStatus?.name || "Pending"
+    }));
+    renderBookings();
+  } catch (err) {
+    console.error("Error fetching bookings:", err);
+    bookings = [];
+    renderBookings();
+  }
+}
+
+// Initial fetch on page load
+fetchAndRenderBookings();
+
 cancelBooking.addEventListener("click", () => {
   bookingModal.classList.add("hidden");
 });
 
-//confirm booking update
 document.getElementById("confirmUpdate").addEventListener("click", () => {
   let date = getInputById("updateDate").value;
   let start = getInputById("updateStartTime").value;
@@ -135,19 +157,16 @@ document.getElementById("confirmUpdate").addEventListener("click", () => {
   }
 });
 
-//cancel booking
 document.getElementById("cancelUpdate").addEventListener("click", () => {
   updateModal.classList.add("hidden");
 });
 
-//confirm the deletion of the booking and update the booking list
 document.getElementById("confirmDelete").addEventListener("click", () => {
   bookings.splice(selectedBookingIndex, 1);
   renderBookings();
   deleteModal.classList.add("hidden");
 });
 
-//cancel the delete of booking
 document.getElementById("cancelDelete").addEventListener("click", () => {
   deleteModal.classList.add("hidden");
 });

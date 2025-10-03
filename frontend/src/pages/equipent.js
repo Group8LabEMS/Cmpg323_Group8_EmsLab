@@ -17,7 +17,8 @@ async function fetchEquipment() {
     const res = await fetch('/api/Equipment');
     if (!res.ok) throw new Error('Failed to fetch equipment');
     const data = await res.json();
-    // Map backend fields to table columns
+
+    // Map the backend fields to table columns
     equipmentList = data.map(eq => ({
       id: eq.equipmentId,
       name: eq.name,
