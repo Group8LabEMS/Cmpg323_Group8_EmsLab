@@ -88,7 +88,7 @@ confirmBooking.addEventListener("click", async () => {
 
   if (selectedEquipment && date && start && end) {
     const booking = {
-      userId: 1, // Replace with actual logged-in user ID
+      userId: Number(localStorage.getItem("userId")), // Use logged-in user ID
       equipmentId: selectedEquipment.id,
       bookingStatusId: 1, // Pending
       fromDate: `${date}T${start}:00`,
@@ -97,17 +97,22 @@ confirmBooking.addEventListener("click", async () => {
       createdDate: new Date().toISOString()
     };
 
-    const response = await fetch("/api/Booking", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(booking)
-    });
-
-    if (response.ok) {
-      bookingModal.classList.add("hidden");
-      await fetchAndRenderBookings();
-    } else {
-      alert("Booking failed: " + await response.text());
+    try {
+      const response = await fetch("/api/Booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(booking)
+      });
+      if (response.ok) {
+        bookingModal.classList.add("hidden");
+        await fetchAndRenderBookings();
+      } else {
+        const text = await response.text();
+        console.error('Booking error:', text);
+        alert(text); // Show backend error to user
+      }
+    } catch (err) {
+      console.error('Booking error:', err);
     }
   } else {
     alert("Please fill in all fields.");
