@@ -71,11 +71,11 @@ export function renderUsers() {
   const section = document.getElementById("userManagement");
   if (!section) return;
   litRender(html`
-    <h2 style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;">User Management</h2>
-    <div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;">View, add, update and delete users.</div>
-    <button style="float:right;margin-bottom:1.5rem;background:#8d5fc5;color:#fff;font-size:1.2rem;padding:0.7rem 2.5rem;border-radius:8px;border:none;box-shadow:0 2px 8px #bdbdbd;" @click=${openAddUser}>Create User</button>
+    <h2 style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;margin: 1rem -7%">User Management</h2>
+    <div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin: 1rem -7%">View, add, update and delete users.</div>
+    <button style="float:right;margin-bottom:1.5rem;background:#8d5fc5;color:#fff;font-size:1.2rem;padding:0.7rem 2.5rem;border-radius:8px;border:none;box-shadow:0 2px 8px #bdbdbd;margin-right:4rem" @click=${openAddUser}>Create User</button>
     <div style="clear:both"></div>
-    <div style="background:#fff;border-radius:20px;box-shadow:0 4px 15px #e0d3f3;padding:2rem 1.5rem 1.5rem 1.5rem;">
+    <div style="background:#fff;border-radius:20px;box-shadow:0 4px 15px #e0d3f3;padding:2rem 1.5rem 1.5rem 1.5rem;margin-left:-6.2rem;margin-right:4rem">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
         <div style="display:flex;align-items:center;gap:0.5rem;">
           <select @change=${handleSort} style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">

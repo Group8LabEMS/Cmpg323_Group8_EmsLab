@@ -756,6 +756,7 @@ table {
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  
 }
 th {
   background: #7A4EB0;
@@ -763,6 +764,7 @@ th {
   padding: 12px;
   font-weight: 600;
   text-align: left;
+  
 }
 td {
   padding: 12px;
@@ -795,6 +797,7 @@ td:nth-child(4) {
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;
+
 }
 .action-book:hover {
   background: #5D4685;
@@ -891,6 +894,7 @@ td:nth-child(4) {
   display: flex;
   justify-content: center;
   gap: 15px;
+  
 }
 .modal-actions button {
   padding: 10px 18px;
@@ -1119,4 +1123,56 @@ body.login-page {
 }
 .forgot-password:hover {
   text-decoration: underline;
+}
+#bookings table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin: 1rem -7%;
+}
+
+#bookings h2{
+  color: #7A4EB0;
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+  margin: 1rem -7%;
+}
+
+
+#admin-bookings h2{
+  color: #7A4EB0;
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+  margin: 1rem -7%;
+}
+#admin-bookings table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin: 1rem -7%;
+}
+
+#profile h2{
+  color: #7A4EB0;
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+  margin: 1rem 17%;
+}
+#reports table{
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin: 1rem -7%;
 }
