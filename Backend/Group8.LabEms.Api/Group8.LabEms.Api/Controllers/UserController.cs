@@ -4,6 +4,7 @@ using Group8.LabEms.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Group8.LabEms.Api.Services.Interfaces;
 
 namespace Group8.LabEms.Api.Controllers
 {
@@ -12,8 +13,13 @@ namespace Group8.LabEms.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly INotificationService _notificationService;
 
-        public UserController(AppDbContext context) => _context = context;
+        public UserController(AppDbContext context, INotificationService notificationService)
+        {
+            _context = context;
+            _notificationService = notificationService;
+        }
 
        
         [HttpGet]
@@ -57,6 +63,21 @@ namespace Group8.LabEms.Api.Controllers
                 var userRole = new UserRoleModel { UserId = user.UserId, RoleId = roleEntity.RoleId };
                 _context.UserRoles.Add(userRole);
                 await _context.SaveChangesAsync();
+            }
+
+            // Send welcome email notification
+            try
+            {
+                await _notificationService.SendWelcomeEmailAsync(
+                    user.Email,
+                    user.DisplayName,
+                    roleEntity?.Name ?? "User"
+                );
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Warning(ex, "Failed to send welcome email for user {UserId}", user.UserId);
+                // Don't fail user creation if email fails
             }
 
             return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
