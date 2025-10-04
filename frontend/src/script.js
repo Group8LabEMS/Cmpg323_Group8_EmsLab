@@ -76,6 +76,7 @@ import { renderAdminDashboard } from "./pages/admin_dashboard.js";
 import { renderAdminAudit } from "./pages/admin_audit.js";
 import { renderAdminBookings } from "./pages/admin_bookings.js";
 import { renderMaintenance } from "./pages/maintenance.js";
+import { renderAdminReports } from "./pages/admin_reports.js";
 
 // Map tab to renderer
 const tabRenderers = {
@@ -106,6 +107,7 @@ const tabRenderers = {
   adminDashboard: renderAdminDashboard,
   adminAudit: renderAdminAudit,
   maintenance: renderMaintenance,
+  reports: renderAdminReports,
 };
 
 // Book Now button

@@ -105,7 +105,16 @@
         </table>
       </section>
 
-      <section id="adminAudit" class="tab hidden"></section>
+      <section id="adminDashboard" class="tab hidden">
+        <div id="adminStats" class="stats-container"></div>
+        <canvas id="myChart" width="400" height="200"></canvas>
+      </section>
+
+      <section id="adminAudit" class="tab hidden>"></section>
+  <section id="reports" class="tab hidden>"></section>
+
+
+  
 
       <!-- About Us -->
       <section id="about" class="tab hidden">
@@ -225,12 +234,6 @@
           <select id="roleInput" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
             <option value="Student">Student</option>
             <option value="Admin">Admin</option>
-          </select>
-
-          <label for="roleInput" style="font-size:1.1rem;margin-top:0.5rem;">Role</label>
-          <select id="roleInput" style="font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
-            <option value="Student">Student</option>
-            <option value="Administrator">Administrator</option>
           </select>
 
           <button id="confirmUser" class="action-book" style="width:100%;background:#8d5fc5;color:#fff;font-size:1.2rem;padding:1rem 0;border-radius:8px;border:none;font-weight:bold;margin-top:0.7rem;">Save</button>
