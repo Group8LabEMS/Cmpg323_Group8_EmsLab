@@ -1,6 +1,6 @@
 using System;
 using Group8.LabEms.Api.Data;
-//using Group8.LabEms.Api.Services;
+using Group8.LabEms.Api.Services;
 //using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -16,7 +16,11 @@ IConfiguration configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .Build();
 
+// Replace the default configuration with your custom one
+builder.Configuration.AddConfiguration(configuration);
 
+// Or register your configuration as a singleton
+builder.Services.AddSingleton<IConfiguration>(configuration);
 
 
 // CONFIG SERILOG
@@ -72,8 +76,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     ));
 
 
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddBusinessServices();
 
 var app = builder.Build();
 

@@ -525,9 +525,13 @@ function setupEventListeners() {
     if (typeSelect && !typeSelect.hasAttribute('data-initialized')) {
         typeSelect.addEventListener('change', (e) => {
             const target = e.target;
-            currentReportType = target && 'value' in target ? target.value : 'user';
+            if (target instanceof HTMLSelectElement) {
+                currentReportType = target.value;
+            } else {
+                currentReportType = 'user';
+            }
             loadAndRefreshData();
-        });
+            });
         typeSelect.setAttribute('data-initialized', 'true');
     }
     
