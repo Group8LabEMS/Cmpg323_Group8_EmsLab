@@ -469,10 +469,9 @@ function setupEventListeners() {
 // --- Main Export Function ---
 
 export function renderAdminAudit() {
-    const auditSection = document.getElementById('adminAudit');
+const auditSection = document.getElementById('adminAudit');
     if (!auditSection) return;
     
     setupEventListeners();
     loadAndRefreshData();
 }
-

@@ -34,34 +34,34 @@
 
       <!-- Reports Section -->
       <section id="reports" class="tab hidden">
-        <h2 style="color: #7A4EB0; font-size: 2rem; margin-bottom: 1.5rem; margin: 1rem -7%;">Reports</h2>
-        <p style="margin-bottom: 1.5rem; margin: 1rem -7%;">View and download reports from various management sections.</p>
-        <div class="report-controls" style="margin: 1rem -7%;">
-          <select id="reportTypeSelect">
+        <div class="admin-bookings-heading">
+          <h2 style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;margin: 1rem -7%">Reports Management</h2>
+          <div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin: 1rem -7%">View, filter, and download reports from various management sections.</div>
+          <div style="clear:both"></div>
+        </div>
+        <div class="report-controls" style="margin: 1rem -7%;display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem;">
+          <select id="reportTypeSelect" style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
             <option value="user">Users Report</option>
             <option value="booking">Bookings Report</option>
             <option value="equipment">Equipment Report</option>
           </select>
-          <select id="reportSortSelect">
+          <select id="reportSortSelect" style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
             <option value="">Sort by</option>
           </select>
-          <input type="text" id="reportSearchInput" placeholder="Search All Columns (Type to filter)">
-              
-          <button id="reportFilterBtn" class="action-book" style="min-width: 120px; background-color: var(--secondary-color);">
+          <input type="text" id="reportSearchInput" placeholder="Search All Columns (Type to filter)" style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:180px;" />
+          <button id="reportFilterBtn" class="action-book" style="min-width: 120px; background-color: var(--secondary-color);background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
             Filter <span id="filterActiveIndicator" class="hidden" style="margin-left: 5px; color: #ffeb3b; font-weight: bold;">(Active)</span>
           </button>
         </div>
         <div class="report-table-container">
-          <table class="report-table">
+          <table class="report-table" style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
             <thead>
-              <tr id="reportTableHeader">
-                </tr>
+              <tr id="reportTableHeader"></tr>
             </thead>
-            <tbody id="reportTableBody">
-              </tbody>
+            <tbody id="reportTableBody"></tbody>
           </table>
         </div>
-        <div class="report-actions" style="margin:1rem -7%;">
+        <div class="report-actions" style="margin:1rem -7%;display:flex;gap:1rem;">
           <button id="reportClearFilterBtn" class="cancel-btn">Clear Form</button>
           <button id="downloadReportBtn" class="action-book">Download CSV</button>
         </div>
@@ -172,7 +172,6 @@
 
       <!-- Admin Bookings Management -->
       <section id="admin-bookings" class="tab hidden">
-        <h2 style="color:#7A4EB0;font-size:2rem;margin-bottom:1.5rem;">Bookings</h2>
         <table class="admin-bookings-table" style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
           <thead>
             <tr style="background:#8d5fc5;color:#fff;">
@@ -191,16 +190,33 @@
         </table>
       </section>
 
-      <section id="adminDashboard" class="tab hidden">
-        <div id="adminStats" class="stats-container"></div>
-        <canvas id="myChart" width="400" height="200"></canvas>
+      <section id="adminAudit" class="tab hidden">
+        <div class="admin-bookings-heading">
+          <h2 style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;margin: 1rem -7%">Audit Trails</h2>
+          <div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin: 1rem -7%">View audit logs for all system actions.</div>
+          <div style="clear:both"></div>
+        </div>
+        <div class="report-controls" style="margin: 1rem -7%;display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem;">
+          <select id="auditSortSelect" style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
+            <option value="">Sort by</option>
+            <option value="date">Date</option>
+            <option value="user">User</option>
+            <option value="action">Action</option>
+          </select>
+          <input type="text" id="auditSearchInput" placeholder="Search All Columns (Type to filter)" style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:180px;" />
+          <button id="auditFilterBtn" class="action-book" style="min-width: 120px; background-color: var(--secondary-color);background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
+            Filter <span id="auditFilterActiveIndicator" class="hidden" style="margin-left: 5px; color: #ffeb3b; font-weight: bold;">(Active)</span>
+          </button>
+        </div>
+        <div class="report-table-container" style="margin: 1rem -7%;">
+          <table class="report-table" style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
+            <thead>
+              <tr id="auditTableHeader"></tr>
+            </thead>
+            <tbody id="auditTableBody"></tbody>
+          </table>
+        </div>
       </section>
-
-      
-  <section id="reports" class="tab hidden>"></section>
-
-
-  
 
       <!-- About Us -->
       <section id="about" class="tab hidden">
