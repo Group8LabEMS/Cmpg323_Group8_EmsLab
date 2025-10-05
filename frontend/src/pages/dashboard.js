@@ -16,6 +16,11 @@ export function renderDashboard() {
   const year = today.getFullYear();
   const month = today.getMonth(); 
   const day = today.getDate();
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  const currentMonth = monthNames[month];
   const firstDay = new Date(year, month, 1);
   let startDay = firstDay.getDay();
   startDay = startDay === 0 ? 6 : startDay - 1;
@@ -43,7 +48,7 @@ export function renderDashboard() {
   render(html`
     <div class="dashboard-flex" style="gap:3.5rem;">
       <div class="dashboard-calendar-card" style="min-width:420px;max-width:520px;padding:2.5rem 2.5rem 2.5rem 2.5rem;">
-        <div class="dashboard-calendar-title" style="font-size:1.6rem;margin-bottom:1.2rem;">Calendar</div>
+        <div class="dashboard-calendar-title" style="font-size:1.6rem;margin-bottom:1.2rem;"> ${currentMonth} ${year}</div>
         <table class="dashboard-calendar-table" style="font-size:1.25rem;">
           <thead>
             <tr>

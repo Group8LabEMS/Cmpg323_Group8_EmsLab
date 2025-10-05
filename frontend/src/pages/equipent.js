@@ -66,9 +66,9 @@ export async function renderEquipment() {
   await fetchEquipment();
   
   litRender(html`
-    <h2 style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;">Equipment</h2>
-    <div style="color:#8d5fc5;font-size:1.1rem;margin-bottom:0.7rem;">View, add and update equipment</div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
+    <h2 style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;margin:1rem -7%;">Equipment</h2>
+    <div style="color:#8d5fc5;font-size:1.1rem;margin-bottom:1.2 rem ;margin:1rem -7%;">View, add and update equipment</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.7rem;margin:1rem -7%;">
       <div style="display:flex;align-items:center;gap:0.5rem;">
         <select @change=${handleSort} style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
           <option value="name">Sort by</option>
@@ -81,16 +81,16 @@ export async function renderEquipment() {
         </button>
       </div>
       <div style="display:flex;align-items:center;gap:0.5rem;">
-        <input type="text" placeholder="Search ..." @input=${handleSearch} value=${searchTerm} style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;" />
-        <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
+        <input type="text" placeholder="Search ..." @input=${handleSearch} value=${searchTerm} style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;margin:1rem -55%;" />
+        <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;margin:1rem 55%;">
           <span style="font-size:1.2rem;">&#128269;</span>
         </button>
-        <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
+        <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;margin:1rem -45%;">
           <span style="font-size:1.2rem;">&#128465;</span> FILTER
         </button>
       </div>
     </div>
-    <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
+    <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;margin: 1rem -7%;">
       <thead>
         <tr style="background:#8d5fc5;color:#fff;">
           <th style="padding:1rem 0.5rem;">Name</th>

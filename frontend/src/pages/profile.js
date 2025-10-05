@@ -4,7 +4,7 @@ import { html, render } from "lit";
 export function renderProfile() {
   const profileSection = document.getElementById("profile");
   render(html`
-    <div class="profile-desc">View and Update your personal information</div>
+    <div class="profile-desc" style="margin: 1rem 17%;">View and Update your personal information</div>
     <div class="profile-card">
       <form class="profile-form">
   <input class="profile-input" type="text" value="John" placeholder="First Name" readonly>

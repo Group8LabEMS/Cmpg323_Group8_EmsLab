@@ -16,15 +16,27 @@ namespace Group8.LabEms.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest req)
         {
-            var user = await _context.Users
-                .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
-                .FirstOrDefaultAsync(u => u.Email == req.Username && u.Password == req.Password);
+            try
+            {
+                var user = await _context.Users
+                    .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
+                    .FirstOrDefaultAsync(u => u.Email == req.Username && u.Password == req.Password);
 
-            if (user == null)
-                return Unauthorized();
+                if (user == null)
+                {
+                    Serilog.Log.Warning($"Login failed for username: {req.Username}");
+                    return Unauthorized();
+                }
 
-            var role = user.UserRoles.FirstOrDefault()?.Role.Name ?? "Student";
-            return Ok(new { userId = user.UserId, role });
+                var role = user.UserRoles.FirstOrDefault()?.Role.Name ?? "Student";
+                Serilog.Log.Information($"Login successful for userId: {user.UserId}, role: {role}");
+                return Ok(new { userId = user.UserId, role });
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(ex, $"Exception during login for username: {req?.Username}");
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
         }
     }
 
