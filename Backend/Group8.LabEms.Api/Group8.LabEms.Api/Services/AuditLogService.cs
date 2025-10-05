@@ -1,0 +1,1 @@
+//When the oAUTH is set up we will pull the auditlogs from the claims  
