@@ -1,3 +1,7 @@
+#admin-bookings .report-controls {
+  margin-left: -7%;
+  margin-right: -7%;
+}
 
 /* Admin Bookings Page Styles */
 .tab-title {
@@ -105,6 +109,8 @@
     padding: 18px 22px;
     border-radius: 16px;
     box-shadow: 0 2px 8px #e0d3f3;
+  margin-left: 0;
+  margin-right: 0;
   }
 
   .report-controls select,

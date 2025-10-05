@@ -74,7 +74,7 @@ import { renderEquipment } from "./pages/equipent.js";
 import { renderUsers } from "./pages/user_management.js";
 import { renderAdminDashboard } from "./pages/admin_dashboard.js";
 import { renderAdminAudit } from "./pages/admin_audit.js";
-import { renderAdminBookings } from "./pages/admin_bookings.js";
+import { renderAdminBookings, fetchBookings } from "./pages/admin_bookings.js";
 import { renderMaintenance } from "./pages/maintenance.js";
 
 import { renderReports } from "./pages/admin_reports.js";
@@ -99,9 +99,10 @@ const tabRenderers = {
     const adminBookingsSection = document.getElementById('admin-bookings');
     if (userBookingsSection) userBookingsSection.classList.add('hidden');
     if (adminBookingsSection) adminBookingsSection.classList.add('hidden');
-  if (currentRole === 'Admin') {
+    if (currentRole === 'Admin') {
       if (adminBookingsSection) adminBookingsSection.classList.remove('hidden');
-      renderAdminBookings();
+      // Always fetch fresh bookings when switching to admin tab
+      fetchBookings();
     } else {
       if (userBookingsSection) userBookingsSection.classList.remove('hidden');
       renderBookings();

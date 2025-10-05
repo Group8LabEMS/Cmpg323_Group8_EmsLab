@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem('role', data.role);
+        if (data.userId) {
+          localStorage.setItem('userId', data.userId);
+        }
         window.location.href = 'index.html';
       } else {
         alert('Invalid username or password.');
