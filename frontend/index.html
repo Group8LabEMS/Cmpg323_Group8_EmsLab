@@ -79,6 +79,45 @@
         </div>
       </div>
 
+      <!-- Audit Section -->
+      <section id="adminAudit" class="tab hidden">
+        <h2 style="color: #7A4EB0; font-size: 2rem; margin-bottom: 1.5rem; margin: 1rem -7%;">System Audit</h2>
+        <p style="margin-bottom: 1.5rem; margin: 1rem -7%;">View and search for system logs for all user actions.</p>
+        
+        <div class="audit-controls" style="margin: 1rem -7%;">
+          <select id="auditSortSelect">
+            <option value="">Sort by</option>
+          </select>
+          <input type="text" id="auditSearchInput" placeholder="Search All Columns (Type to filter)">
+              
+          <button id="auditFilterBtn" class="action-book" style="min-width: 120px; background-color: var(--secondary-color);">
+            Filter <span id="filterActiveIndicator" class="hidden" style="margin-left: 5px; color: #ffeb3b; font-weight: bold;">(Active)</span>
+          </button>
+        </div>
+        <div class="audit-table-container">
+          <table class="audit-table">
+            <thead>
+              <tr id="auditTableHeader">
+                </tr>
+            </thead>
+            <tbody id="auditTableBody">
+              </tbody>
+          </table>
+        </div>
+      </section>
+      
+      <div id="filterModal" class="modal hidden">
+        <div class="modal-content">
+          <h2 id="filterModalTitle" style="color: #7A4EB0; margin-bottom: 20px;">Apply Filters</h2>
+          <div id="filterFormContent">
+            </div>
+          <div class="modal-actions" style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;">
+            <button id="modalClearFiltersBtn" class="cancel-btn">Clear Filters</button>
+            <button id="modalApplyFiltersBtn" class="action-book">Apply Filters</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Profile -->
       <section id="profile" class="tab hidden">
         <h2>Profile</h2>
@@ -157,7 +196,7 @@
         <canvas id="myChart" width="400" height="200"></canvas>
       </section>
 
-      <section id="adminAudit" class="tab hidden>"></section>
+      
   <section id="reports" class="tab hidden>"></section>
 
 
