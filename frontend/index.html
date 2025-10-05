@@ -81,43 +81,33 @@
 
       <!-- Audit Section -->
       <section id="adminAudit" class="tab hidden">
-        <h2 style="color: #7A4EB0; font-size: 2rem; margin-bottom: 1.5rem; margin: 1rem -7%;">System Audit</h2>
-        <p style="margin-bottom: 1.5rem; margin: 1rem -7%;">View and search for system logs for all user actions.</p>
-        
-        <div class="audit-controls" style="margin: 1rem -7%;">
-          <select id="auditSortSelect">
+        <div class="admin-bookings-heading">
+          <h2 style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;margin: 1rem -7%">System Audits</h2>
+          <div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin: 1rem -7%">View and search for system logs for all user actions.</div>
+          <div style="clear:both"></div>
+        </div>
+        <div class="audit-controls" style="margin: 1rem -7%;display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem;">
+          
+          <select id="auditSortSelect" style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
             <option value="">Sort by</option>
           </select>
-          <input type="text" id="auditSearchInput" placeholder="Search All Columns (Type to filter)">
-              
-          <button id="auditFilterBtn" class="action-book" style="min-width: 120px; background-color: var(--secondary-color);">
-            Filter <span id="filterActiveIndicator" class="hidden" style="margin-left: 5px; color: #ffeb3b; font-weight: bold;">(Active)</span>
-          </button>
+          <input type="text" id="auditSearchInput" placeholder="Search All Columns (Type to filter)" style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:180px;" />
+          
         </div>
         <div class="audit-table-container">
-          <table class="audit-table">
+          <table class="audit-table" style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
             <thead>
-              <tr id="auditTableHeader">
-                </tr>
+              <tr id="auditTableHeader"></tr>
             </thead>
-            <tbody id="auditTableBody">
-              </tbody>
+            <tbody id="auditTableBody"></tbody>
           </table>
         </div>
+        
       </section>
       
-      <div id="filterModal" class="modal hidden">
-        <div class="modal-content">
-          <h2 id="filterModalTitle" style="color: #7A4EB0; margin-bottom: 20px;">Apply Filters</h2>
-          <div id="filterFormContent">
-            </div>
-          <div class="modal-actions" style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;">
-            <button id="modalClearFiltersBtn" class="cancel-btn">Clear Filters</button>
-            <button id="modalApplyFiltersBtn" class="action-book">Apply Filters</button>
-          </div>
-        </div>
-      </div>
+      
 
+     
       <!-- Profile -->
       <section id="profile" class="tab hidden">
         <h2>Profile</h2>
