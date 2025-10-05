@@ -14,6 +14,27 @@ namespace Group8.LabEms.Api.Controllers
 
         public BookingController(AppDbContext context) => _context = context;
 
+        //Filter Bookings by Dates
+        [HttpGet("date-filter")]
+        public async Task<IActionResult> FilterByDates([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+        {
+            var query = _context.Bookings.AsQueryable();
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                query = query.Where(d => d.FromDate >= startDate && d.ToDate <= endDate);
+            }
+            if (startDate.HasValue)
+            {
+                query = query.Where(d => d.FromDate >= startDate);
+            }
+            if (endDate.HasValue)
+            {
+                query = query.Where(d => d.ToDate <= endDate);
+            }
+            return Ok(await query.ToListAsync());
+        }
+
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookingModel>>> GetBookingStatus()
             => await _context.Bookings
@@ -47,10 +68,10 @@ namespace Group8.LabEms.Api.Controllers
         {
             booking.CreatedDate = DateTime.UtcNow;
 
-                // Fetch and assign navigation properties from DB using IDs, allow nulls
-                booking.User = booking.UserId != 0 ? await _context.Users.FindAsync(booking.UserId) : null;
-                booking.Equipment = booking.EquipmentId != 0 ? await _context.Equipments.FindAsync(booking.EquipmentId) : null;
-                booking.BookingStatus = booking.BookingStatusId != 0 ? await _context.BookingsStatus.FindAsync(booking.BookingStatusId) : null;
+            // Fetch and assign navigation properties from DB using IDs, allow nulls
+            booking.User = booking.UserId != 0 ? await _context.Users.FindAsync(booking.UserId) : null;
+            booking.Equipment = booking.EquipmentId != 0 ? await _context.Equipments.FindAsync(booking.EquipmentId) : null;
+            booking.BookingStatus = booking.BookingStatusId != 0 ? await _context.BookingsStatus.FindAsync(booking.BookingStatusId) : null;
 
             if (booking.User == null || booking.Equipment == null || booking.BookingStatus == null)
             {

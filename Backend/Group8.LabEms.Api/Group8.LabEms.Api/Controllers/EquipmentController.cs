@@ -13,6 +13,25 @@ namespace Group8.LabEms.Api.Controllers
 
         public EquipmentController(AppDbContext context) => _context = context;
 
+        //ADD FILTERING 
+        //Filter equipment by name
+        [HttpGet("filter")]
+        public async Task<IActionResult> FilterByName([FromQuery] string name)
+        {
+            var query = _context.Equipments.AsQueryable();
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(e => e.Name.ToLower() == name.ToLower());
+            }
+
+            return Ok(await query.ToListAsync());
+        }
+
+
+
+
+
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EquipmentModel>>> GetEquipments()
             => await _context.Equipments
@@ -22,7 +41,7 @@ namespace Group8.LabEms.Api.Controllers
                 .Include(e => e.Maintenances)
                 .ToListAsync();
 
-        
+
         [HttpGet("{id}")]
         public async Task<ActionResult<EquipmentModel>> GetEquipment(int id)
         {
@@ -39,7 +58,7 @@ namespace Group8.LabEms.Api.Controllers
             return equipment;
         }
 
-        
+
         [HttpPost]
         public async Task<ActionResult<EquipmentModel>> CreateEquipment([FromBody] EquipmentModel equipment)
         {
@@ -49,7 +68,7 @@ namespace Group8.LabEms.Api.Controllers
                 var errors = string.Join("; ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
                 return BadRequest(new { message = "Validation failed", errors });
             }
-            equipment.CreatedDate = DateTime.UtcNow; 
+            equipment.CreatedDate = DateTime.UtcNow;
             _context.Equipments.Add(equipment);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetEquipment), new { id = equipment.EquipmentId }, equipment);
@@ -78,8 +97,8 @@ namespace Group8.LabEms.Api.Controllers
             return NoContent();
         }
 
-        
-        [HttpDelete("{id}")] 
+
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEquipment(int id)
         {
             var equipment = await _context.Equipments.FindAsync(id);

@@ -13,7 +13,31 @@ namespace Group8.LabEms.Api.Controllers
 
         public MaintenanceController(AppDbContext context) => _context = context;
 
-       
+        //Filter Maintenances based on dates
+        [HttpGet("date-filter")]
+        public async Task<IActionResult> FilterByDates([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+        {
+            var query = _context.Maintenances.AsQueryable();
+
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                query = query.Where(m => m.StartedAt >= startDate && m.CompletedAt <= endDate);
+            }
+
+            if (startDate.HasValue)
+            {
+                query = query.Where(m => m.StartedAt >= startDate);
+            }
+
+            if (endDate.HasValue)
+            {
+                query = query.Where(m => m.CompletedAt <= endDate);
+            }
+
+            return Ok(await query.ToListAsync());
+
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MaintenanceModel>>> GetMaintenances()
             => await _context.Maintenances
@@ -22,7 +46,7 @@ namespace Group8.LabEms.Api.Controllers
                 .Include(m => m.MaintenanceStatus)
                 .ToListAsync();
 
-        
+
         [HttpGet("{id}")]
         public async Task<ActionResult<MaintenanceModel>> GetMaintenance(int id)
         {
@@ -38,7 +62,7 @@ namespace Group8.LabEms.Api.Controllers
             return maintenance;
         }
 
-       
+
         [HttpPost]
         public async Task<ActionResult<MaintenanceModel>> CreateMaintenance(MaintenanceModel maintenance)
         {
@@ -48,7 +72,7 @@ namespace Group8.LabEms.Api.Controllers
             return CreatedAtAction(nameof(GetMaintenance), new { id = maintenance.MaintenanceId }, maintenance);
         }
 
-        
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMaintenance(int id, MaintenanceModel maintenance)
         {
@@ -72,7 +96,7 @@ namespace Group8.LabEms.Api.Controllers
             return NoContent();
         }
 
-        
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMaintenance(int id)
         {
