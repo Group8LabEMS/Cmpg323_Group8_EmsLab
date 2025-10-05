@@ -30,7 +30,7 @@ namespace Group8.LabEms.Api.Controllers
 
                 var role = user.UserRoles.FirstOrDefault()?.Role.Name ?? "Student";
                 Serilog.Log.Information($"Login successful for userId: {user.UserId}, role: {role}");
-                return Ok(new { userId = user.UserId, role });
+                return Ok(new { userId = user.UserId, role , email = user.Email, name = user.DisplayName});
             }
             catch (Exception ex)
             {

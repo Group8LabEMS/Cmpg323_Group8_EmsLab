@@ -1,3 +1,13 @@
+// Import user data helper functions
+import { 
+  loadUserData, 
+  checkAuthentication, 
+  handleLogout, 
+  getCurrentUser, 
+  hasRole, 
+  isAdmin 
+} from './helpers/userDataHelper.js';
+
 // Role-based tab config
 const TABS_BY_ROLE = {
   Student: [
@@ -18,11 +28,15 @@ const TABS_BY_ROLE = {
   ]
 };
 
-// Redirect to login if not logged in
-const roleFromStorage = localStorage.getItem('role');
-if (!roleFromStorage) {
-  window.location.href = 'Login.html';
+
+
+// Initialize authentication and get current role
+const authCheck = checkAuthentication();
+if (!authCheck) {
+  // This will redirect to login, so we don't need to continue
 }
+
+const roleFromStorage = localStorage.getItem('role');
 let currentRole = roleFromStorage === 'Admin' ? 'Admin' : (roleFromStorage === 'Student' ? 'Student' : 'Student');
 
 // Render sidebar
@@ -46,12 +60,9 @@ function renderSidebar() {
     });
   });
 
-  // Logout button
+  // Logout button - use the new handleLogout function
   const logout = sidebar.querySelector('.logout');
-  if (logout) logout.addEventListener('click', () => {
-    localStorage.removeItem('role');
-    window.location.href = 'Login.html';
-  });
+  if (logout) logout.addEventListener('click', handleLogout);
 }
 
 // Show only allowed tabs
@@ -137,6 +148,9 @@ if (bookNowBtn) {
 
 // Initialize on DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
+  // Load user data first
+  loadUserData();
+  
   renderSidebar();
 
   // Hide all tabs by default
