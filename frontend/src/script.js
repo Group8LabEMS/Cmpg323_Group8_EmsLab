@@ -76,11 +76,21 @@ import { renderAdminDashboard } from "./pages/admin_dashboard.js";
 import { renderAdminAudit } from "./pages/admin_audit.js";
 import { renderAdminBookings } from "./pages/admin_bookings.js";
 import { renderMaintenance } from "./pages/maintenance.js";
-import { renderAdminReports } from "./pages/admin_reports.js";
+import { renderReports } from "./pages/admin_reports.js";
 
+
+
+// Dynamically select equipment renderer based on role
 // Map tab to renderer
 const tabRenderers = {
-  dashboard: renderDashboard,
+  dashboard: function() {
+    const role = localStorage.getItem('role');
+    if (role && role.toLowerCase() === 'admin') {
+      renderAdminDashboard();
+    } else {
+      renderDashboard();
+    }
+  },
   profile: renderProfile,
   bookings: function() {
     // Hide both bookings tables first
@@ -107,7 +117,7 @@ const tabRenderers = {
   adminDashboard: renderAdminDashboard,
   adminAudit: renderAdminAudit,
   maintenance: renderMaintenance,
-  reports: renderAdminReports,
+   reports: renderReports,
 };
 
 // Book Now button

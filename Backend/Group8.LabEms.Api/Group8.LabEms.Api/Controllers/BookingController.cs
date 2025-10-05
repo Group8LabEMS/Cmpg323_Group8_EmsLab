@@ -47,14 +47,16 @@ namespace Group8.LabEms.Api.Controllers
         {
             booking.CreatedDate = DateTime.UtcNow;
 
-                // Fetch and assign navigation properties from DB using IDs, allow nulls
-                booking.User = booking.UserId != 0 ? await _context.Users.FindAsync(booking.UserId) : null;
-                booking.Equipment = booking.EquipmentId != 0 ? await _context.Equipments.FindAsync(booking.EquipmentId) : null;
-                booking.BookingStatus = booking.BookingStatusId != 0 ? await _context.BookingsStatus.FindAsync(booking.BookingStatusId) : null;
+            // Fetch and assign navigation properties from DB using IDs, allow nulls
+            booking.User = booking.UserId != 0 ? await _context.Users.FindAsync(booking.UserId) : null;
+            booking.Equipment = booking.EquipmentId != 0 ? await _context.Equipments.FindAsync(booking.EquipmentId) : null;
+            booking.BookingStatus = booking.BookingStatusId != 0 ? await _context.BookingsStatus.FindAsync(booking.BookingStatusId) : null;
 
             if (booking.User == null || booking.Equipment == null || booking.BookingStatus == null)
             {
-                return BadRequest("Invalid User, Equipment, or BookingStatus ID.");
+                var debugMsg = $"Booking debug: userId={booking.UserId} (found={booking.User != null}), equipmentId={booking.EquipmentId} (found={booking.Equipment != null}), bookingStatusId={booking.BookingStatusId} (found={booking.BookingStatus != null})";
+                Serilog.Log.Error(debugMsg);
+                return BadRequest("Invalid User, Equipment, or BookingStatus ID. " + debugMsg);
             }
 
             _context.Bookings.Add(booking);
