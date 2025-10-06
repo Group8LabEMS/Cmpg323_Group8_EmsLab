@@ -6,9 +6,9 @@
     UPDATE
 */
 export async function getData() {
-  alert("apI EQUIPMENT FETCH FROM BACKEND RAN");
+  alert("API EQUIPMENT FETCH FROM BACKEND RAN");
   try {
-    const res = await fetch("http://localhost:5237/api/equipment");
+    const res = await fetch("http://localhost:8000/api/equipment");
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }

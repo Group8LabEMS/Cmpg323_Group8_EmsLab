@@ -24,16 +24,16 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build Backend/Group8.LabEms.Api/Group8.LabEms.Api/Group8.LabEms.Api.csproj --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish Backend/Group8.LabEms.Api/Group8.LabEms.Api/Group8.LabEms.Api.csproj -c Release -o ${{env.DOTNET_ROOT}}/labems-build
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ${{env.DOTNET_ROOT}}/labems-build
 
   deploy:
     runs-on: ubuntu-latest

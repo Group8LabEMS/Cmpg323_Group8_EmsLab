@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const username = form.username.value.trim();
     const password = form.password.value.trim();
     try {
-  const res = await fetch('http://localhost:5237/api/Auth/login', {
+  const res = await fetch('http://localhost:8000/api/Auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
