@@ -4,7 +4,7 @@ using Group8.LabEms.Api.Services;
 //using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,8 +42,9 @@ builder.Services.AddCors(options =>
             policy
                 .WithOrigins("http://localhost:5173") // frontend URL
                 .AllowAnyHeader()
-                .AllowAnyMethod();
-                
+                .AllowAnyMethod()
+                .SetIsOriginAllowed(origin => true) // Allow same-origin requests
+                .AllowCredentials();
         });
 });
 
@@ -83,6 +84,17 @@ builder.Services.AddBusinessServices();
 
 var app = builder.Build();
 
+// Configure static file serving for frontend
+// var frontendDistPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "frontend", "dist");
+// app.UseStaticFiles(new StaticFileOptions
+// {
+//     FileProvider = new PhysicalFileProvider(frontendDistPath),
+//     RequestPath = ""
+// });
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 // Middleware
 
 
@@ -95,8 +107,12 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
+
 app.UseAuthorization();
 app.MapControllers();
+
+// SPA fallback routing - serve index.html for non-API routes
+app.MapFallbackToFile("index.html");
 
 app.Run();
 
