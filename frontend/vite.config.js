@@ -9,7 +9,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        login: resolve(__dirname, 'Login.html'),
+        login: resolve(__dirname, 'login.html'),
         register: resolve(__dirname, 'register.html'),
         about: resolve(__dirname, 'about_us.html'),
         contact: resolve(__dirname, 'contact_us.html'),
@@ -18,7 +18,7 @@ export default defineConfig({
     },
   },
   server: {
-    open: '/Login.html', // Open the login page by default
+    open: '/login.html', // Open the login page by default
     proxy: {
       '/api': {
   target: 'http://localhost:8000', // Updated to match backend port

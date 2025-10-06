@@ -21,7 +21,7 @@ const TABS_BY_ROLE = {
 // Redirect to login if not logged in
 const roleFromStorage = localStorage.getItem('role');
 if (!roleFromStorage) {
-  window.location.href = 'Login.html';
+  window.location.href = 'login.html';
 }
 let currentRole = roleFromStorage === 'Admin' ? 'Admin' : (roleFromStorage === 'Student' ? 'Student' : 'Student');
 
@@ -50,7 +50,7 @@ function renderSidebar() {
   const logout = sidebar.querySelector('.logout');
   if (logout) logout.addEventListener('click', () => {
     localStorage.removeItem('role');
-    window.location.href = 'Login.html';
+    window.location.href = 'login.html';
   });
 }
 
