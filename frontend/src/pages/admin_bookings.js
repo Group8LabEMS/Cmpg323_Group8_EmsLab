@@ -281,4 +281,4 @@ async function deleteBooking(idx) {
 // -------------------------
 // Initialize on page load (for direct navigation)
 // -------------------------
-window.addEventListener('DOMContentLoaded', fetchBookings);
+//window.addEventListener('DOMContentLoaded', fetchBookings);
