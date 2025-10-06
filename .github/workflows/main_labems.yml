@@ -29,6 +29,12 @@ jobs:
       - name: dotnet publish
         run: dotnet publish Backend/Group8.LabEms.Api/Group8.LabEms.Api/Group8.LabEms.Api.csproj -c Release -o ${{env.DOTNET_ROOT}}/labems-build
 
+      - name: Copy config files for deployment
+        run: |
+          mkdir -p ${{env.DOTNET_ROOT}}/labems-build/Configurations
+          cp Backend/Group8.LabEms.Api/Group8.LabEms.Api/Configurations/appsettings.example.json ${{env.DOTNET_ROOT}}/labems-build/Configurations/appsettings.json
+          cp Backend/Group8.LabEms.Api/Group8.LabEms.Api/Configurations/database.example.json ${{env.DOTNET_ROOT}}/labems-build/Configurations/database.json
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
