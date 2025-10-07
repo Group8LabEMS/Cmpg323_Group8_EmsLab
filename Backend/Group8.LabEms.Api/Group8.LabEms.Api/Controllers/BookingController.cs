@@ -15,30 +15,59 @@ namespace Group8.LabEms.Api.Controllers
         public BookingController(AppDbContext context) => _context = context;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BookingModel>>> GetBookingStatus()
-            => await _context.Bookings
-
-                .Include(x => x.Equipment)
-                .Include(u => u.User)
+        public async Task<ActionResult<IEnumerable<object>>> GetBookings()
+        {
+            var bookings = await _context.Bookings
+                .Include(b => b.User)
+                .Include(b => b.Equipment)
                 .Include(b => b.BookingStatus)
+                .Select(b => new {
+                    b.BookingId,
+                    b.UserId,
+                    User = new { b.User.UserId, b.User.DisplayName, b.User.Email },
+                    b.EquipmentId,
+                    Equipment = new { b.Equipment.EquipmentId, b.Equipment.Name },
+                    b.BookingStatusId,
+                    BookingStatus = new { b.BookingStatus.BookingStatusId, b.BookingStatus.Name, b.BookingStatus.Description },
+                    b.FromDate,
+                    b.ToDate,
+                    b.Notes,
+                    b.CreatedDate
+                })
                 .ToListAsync();
+            return Ok(bookings);
+        }
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<BookingModel>> GetBooking(int id)
+        public async Task<ActionResult<object>> GetBooking(int id)
         {
             var booking = await _context.Bookings
                 .Include(b => b.User)
                 .Include(b => b.Equipment)
                 .Include(b => b.BookingStatus)
-                .FirstOrDefaultAsync(b => b.BookingId == id);
+                .Where(b => b.BookingId == id)
+                .Select(b => new {
+                    b.BookingId,
+                    b.UserId,
+                    User = new { b.User.UserId, b.User.DisplayName, b.User.Email },
+                    b.EquipmentId,
+                    Equipment = new { b.Equipment.EquipmentId, b.Equipment.Name },
+                    b.BookingStatusId,
+                    BookingStatus = new { b.BookingStatus.BookingStatusId, b.BookingStatus.Name, b.BookingStatus.Description },
+                    b.FromDate,
+                    b.ToDate,
+                    b.Notes,
+                    b.CreatedDate
+                })
+                .FirstOrDefaultAsync();
 
             if (booking == null)
             {
                 return NotFound();
             }
 
-            return booking;
+            return Ok(booking);
         }
 
 

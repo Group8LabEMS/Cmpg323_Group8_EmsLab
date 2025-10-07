@@ -14,29 +14,49 @@ namespace Group8.LabEms.Api.Controllers
         public EquipmentController(AppDbContext context) => _context = context;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EquipmentModel>>> GetEquipments()
-            => await _context.Equipments
+        public async Task<ActionResult<IEnumerable<object>>> GetEquipments()
+        {
+            var equipments = await _context.Equipments
                 .Include(e => e.EquipmentType)
                 .Include(e => e.EquipmentStatus)
-                .Include(e => e.Bookings)
-                .Include(e => e.Maintenances)
+                .Select(e => new {
+                    e.EquipmentId,
+                    e.Name,
+                    e.EquipmentTypeId,
+                    EquipmentType = new { e.EquipmentType.EquipmentTypeId, e.EquipmentType.Name, e.EquipmentType.Description },
+                    e.EquipmentStatusId,
+                    EquipmentStatus = new { e.EquipmentStatus.EquipmentStatusId, e.EquipmentStatus.Name, e.EquipmentStatus.Description },
+                    e.Availability,
+                    e.CreatedDate
+                })
                 .ToListAsync();
+            return Ok(equipments);
+        }
 
         
         [HttpGet("{id}")]
-        public async Task<ActionResult<EquipmentModel>> GetEquipment(int id)
+        public async Task<ActionResult<object>> GetEquipment(int id)
         {
             var equipment = await _context.Equipments
                 .Include(e => e.EquipmentType)
                 .Include(e => e.EquipmentStatus)
-                .Include(e => e.Bookings)
-                .Include(e => e.Maintenances)
-                .FirstOrDefaultAsync(e => e.EquipmentId == id);
+                .Where(e => e.EquipmentId == id)
+                .Select(e => new {
+                    e.EquipmentId,
+                    e.Name,
+                    e.EquipmentTypeId,
+                    EquipmentType = new { e.EquipmentType.EquipmentTypeId, e.EquipmentType.Name, e.EquipmentType.Description },
+                    e.EquipmentStatusId,
+                    EquipmentStatus = new { e.EquipmentStatus.EquipmentStatusId, e.EquipmentStatus.Name, e.EquipmentStatus.Description },
+                    e.Availability,
+                    e.CreatedDate
+                })
+                .FirstOrDefaultAsync();
 
             if (equipment == null)
                 return NotFound();
 
-            return equipment;
+            return Ok(equipment);
         }
 
         

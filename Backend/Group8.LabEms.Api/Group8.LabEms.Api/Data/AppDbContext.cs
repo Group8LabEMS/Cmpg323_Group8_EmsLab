@@ -45,6 +45,12 @@ namespace Group8.LabEms.Api.Data
             .HasIndex(b => b.Name)
             .IsUnique();
 
+            modelBuilder.Entity<AuditLogModel>()
+                .HasOne(a => a.User)
+                .WithMany(u => u.AuditLogs)
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
         }
         public DbSet<UserModel> Users { get; set; }
         public DbSet<BookingStatusModel> BookingsStatus { get; set; }
