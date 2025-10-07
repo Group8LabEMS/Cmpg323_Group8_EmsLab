@@ -11,6 +11,11 @@ namespace Group8.LabEms.Api.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Email is unique in UserModel
+            modelBuilder.Entity<UserModel>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
             //composite key for user role model
             modelBuilder.Entity<UserRoleModel>()
                 .HasKey(ur => new { ur.UserId, ur.RoleId });

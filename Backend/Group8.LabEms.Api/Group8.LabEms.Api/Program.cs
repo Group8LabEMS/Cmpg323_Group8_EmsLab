@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // CONFIG SERILOG
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug() // set default log level
+    .MinimumLevel.Debug() 
     .WriteTo.Console()
     .WriteTo.File("Logs/labems_log.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
