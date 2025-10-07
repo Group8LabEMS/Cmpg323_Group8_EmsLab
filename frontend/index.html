@@ -90,6 +90,35 @@
       </div>
     </div>
 
+      <!-- Audit Section -->
+      <section id="adminAudit" class="tab hidden">
+        <div class="admin-bookings-heading">
+          <h2 style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;margin: 1rem -7%">System Audits</h2>
+          <div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin: 1rem -7%">View and search for system logs for all user actions.</div>
+          <div style="clear:both"></div>
+        </div>
+        <div class="audit-controls" style="margin: 1rem -7%;display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem;">
+          
+          <select id="auditSortSelect" style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
+            <option value="">Sort by</option>
+          </select>
+          <input type="text" id="auditSearchInput" placeholder="Search All Columns (Type to filter)" style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:180px;" />
+          
+        </div>
+        <div class="audit-table-container">
+          <table class="audit-table" style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
+            <thead>
+              <tr id="auditTableHeader"></tr>
+            </thead>
+            <tbody id="auditTableBody"></tbody>
+          </table>
+        </div>
+        
+      </section>
+      
+      
+
+     
     <!-- Profile -->
     <section id="profile" class="tab hidden">
       <h2>Profile</h2>
@@ -296,54 +325,36 @@
     </div>
   </div>
 
-  <!-- User Delete Modal -->
-  <div id="userDeleteModal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Delete User</h3>
-      <p id="userDeleteMessage">Are you sure you want to delete this user?</p>
-      <div class="modal-actions">
-        <button id="confirmUserDelete" class="action-delete">Delete</button>
-        <button id="cancelUserDelete" class="cancel-btn">Cancel</button>
+    <!-- User Delete Modal -->
+    <div id="userDeleteModal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Delete User</h3>
+        <p id="userDeleteMessage">Are you sure you want to delete this user?</p>
+        <div class="modal-actions">
+          <button id="confirmUserDelete" class="action-delete">Delete</button>
+          <button id="cancelUserDelete" class="cancel-btn">Cancel</button>
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- User Management Modal -->
-  <div id="userModal" class="modal hidden">
-    <div class="modal-content" style="max-width:420px;width:96vw;padding:2rem 2rem 2rem 2rem;margin:0 auto;">
-      <h2 id="userModalTitle"
-        style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;font-weight:bold;text-align:center;">User Profile
-      </h2>
-      <div style="color:#8d5fc5;font-size:1.2rem;margin-bottom:1.5rem;text-align:center;">Create and Update user
-        information</div>
-      <form id="userForm" style="display:flex;flex-direction:column;gap:1.1rem;align-items:stretch;max-width:100%;">
-        <input type="text" id="nameInput" placeholder="Cosmo"
-          style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-        <input type="text" id="surnameInput" placeholder="Kramer"
-          style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-        <input type="text" id="universityNoInput" placeholder="12123434"
-          style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-        <input type="email" id="emailInput" placeholder="ckramer@mynwu.ac.za"
-          style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-        <input type="text" id="cellInput" placeholder="Cellphone No"
-          style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-        <input type="password" id="passwordInput" placeholder="Password"
-          style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-        <input type="password" id="repasswordInput" placeholder="Re-enter Password"
-          style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-        <label for="roleInput" style="font-size:1.1rem;margin-top:0.5rem;">Role</label>
-        <select id="roleInput"
-          style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-          <option value="Student">Student</option>
-          <option value="Admin">Admin</option>
-        </select>
-
-        <label for="roleInput" style="font-size:1.1rem;margin-top:0.5rem;">Role</label>
-        <select id="roleInput"
-          style="font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
-          <option value="Student">Student</option>
-          <option value="Administrator">Administrator</option>
-        </select>
+    
+    <!-- User Management Modal -->
+    <div id="userModal" class="modal hidden">
+  <div class="modal-content" style="max-width:420px;width:96vw;padding:2rem 2rem 2rem 2rem;margin:0 auto;">
+        <h2 id="userModalTitle" style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;font-weight:bold;text-align:center;">User Profile</h2>
+        <div style="color:#8d5fc5;font-size:1.2rem;margin-bottom:1.5rem;text-align:center;">Create and Update user information</div>
+        <form id="userForm" style="display:flex;flex-direction:column;gap:1.1rem;align-items:stretch;max-width:100%;">
+          <input type="text" id="nameInput" placeholder="Cosmo" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+          <input type="text" id="surnameInput" placeholder="Kramer" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+          <input type="text" id="universityNoInput" placeholder="12123434" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+          <input type="email" id="emailInput" placeholder="ckramer@mynwu.ac.za" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+          <input type="text" id="cellInput" placeholder="Cellphone No" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+          <input type="password" id="passwordInput" placeholder="Password" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+          <input type="password" id="repasswordInput" placeholder="Re-enter Password" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+          <label for="roleInput" style="font-size:1.1rem;margin-top:0.5rem;">Role</label>
+          <select id="roleInput" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+            <option value="Student">Student</option>
+            <option value="Admin">Admin</option>
+          </select>
 
         <button id="confirmUser" class="action-book"
           style="width:100%;background:#8d5fc5;color:#fff;font-size:1.2rem;padding:1rem 0;border-radius:8px;border:none;font-weight:bold;margin-top:0.7rem;">Save</button>
