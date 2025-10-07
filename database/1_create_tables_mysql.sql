@@ -1,3 +1,12 @@
+-- Drop the database if it already exists 
+DROP DATABASE IF EXISTS `labems`;
+
+-- Create the new database
+CREATE DATABASE `labems`;
+
+-- Select the new database to make it the active context
+USE `labems`;
+
 -- First, drop all existing tables in the correct order to avoid foreign key constraint violations
 
 -- Set foreign key checks off temporarily to facilitate clean drops
