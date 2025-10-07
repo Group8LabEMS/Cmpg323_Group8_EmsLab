@@ -22,7 +22,7 @@ namespace Group8.LabEms.Api.Controllers
                 .Include(e => e.Maintenances)
                 .ToListAsync();
 
-        
+
         [HttpGet("{id}")]
         public async Task<ActionResult<EquipmentModel>> GetEquipment(int id)
         {
@@ -39,7 +39,7 @@ namespace Group8.LabEms.Api.Controllers
             return equipment;
         }
 
-        
+
         [HttpPost]
         public async Task<ActionResult<EquipmentModel>> CreateEquipment([FromBody] EquipmentModel equipment)
         {
@@ -49,7 +49,7 @@ namespace Group8.LabEms.Api.Controllers
                 var errors = string.Join("; ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
                 return BadRequest(new { message = "Validation failed", errors });
             }
-            equipment.CreatedDate = DateTime.UtcNow; 
+            equipment.CreatedDate = DateTime.UtcNow;
             _context.Equipments.Add(equipment);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetEquipment), new { id = equipment.EquipmentId }, equipment);
@@ -78,8 +78,8 @@ namespace Group8.LabEms.Api.Controllers
             return NoContent();
         }
 
-        
-        [HttpDelete("{id}")] 
+
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEquipment(int id)
         {
             var equipment = await _context.Equipments.FindAsync(id);
@@ -96,5 +96,30 @@ namespace Group8.LabEms.Api.Controllers
         {
             return _context.Equipments.Any(e => e.EquipmentId == id);
         }
+
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateEquipmentStatus(int id, [FromBody] StatusUpdateDto dto)
+        {
+            var equipment = await _context.Equipments.FindAsync(id);
+            if (equipment == null)
+                return NotFound();
+
+            // Lookup the status ID by status name
+            var status = await _context.EquipmentStatuses.FirstOrDefaultAsync(s => s.Name == dto.Status);
+            if (status == null)
+                return BadRequest("Invalid status");
+
+            equipment.EquipmentStatusId = status.EquipmentStatusId;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+       
+        public class StatusUpdateDto
+        {
+            public required string Status { get; set; }
+        }
+
     }
 }
