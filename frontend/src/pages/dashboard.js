@@ -25,9 +25,12 @@ export async function renderDashboard() {
     equipmentName: b.equipment?.name || 'Unknown Equipment',
     userName: b.user?.displayName || 'Unknown User',
     bookingStatus: b.bookingStatus?.name || 'Unknown Status'
-  }));
+  }
+  ));
 
   console.log('Flattened bookings:', flattenedBookings);
+
+  
 
   //get booking status for dot colors
   const bookingDates = flattenedBookings.map(b => {
@@ -56,6 +59,15 @@ export async function renderDashboard() {
   const prevMonthDays = new Date(year, month, 0).getDate();
   let rows = [];
   let week = [];
+  
+  //filter for only bookings made in this month
+  const currentMonthBookings = flattenedBookings.filter(b => {
+  const start = new Date(b.fromDate);
+  return (
+    start.getMonth() === month &&
+    start.getFullYear() === year
+  );
+  });
 
   for (let i = 0; i < startDay; i++) {
     week.push(html`<td style="color:#bbb">${prevMonthDays - startDay + i + 1}</td>`);
@@ -94,7 +106,7 @@ export async function renderDashboard() {
   rows.push(html`<tr>${week}</tr>`);
 
   //Map bookings to HTML list items
-  const bookingItems = flattenedBookings.map(b => {
+  const bookingItems = currentMonthBookings.map(b => {
   const start = new Date(b.fromDate);
   const end = new Date(b.toDate);
 
