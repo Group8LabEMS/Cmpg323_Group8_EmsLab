@@ -68,6 +68,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: write # Required for updating repo description
     
     steps:
       - name: Download artifact from build job
@@ -83,3 +85,18 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_47AE3AB3E36B4E448726C7B3495461A2 }}
+
+      - name: Update repository description with deployed URL
+        if: success()
+        run: |
+          # Extract deployed URL from deployment output
+          DEPLOYED_URL="${{ steps.deploy-to-webapp.outputs.webapp-url }}"
+          
+          echo "Updating repository description with URL: $DEPLOYED_URL"
+          
+          curl -X PATCH \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }} \
+            -d "{\"homepage\":\"$DEPLOYED_URL\"}"
