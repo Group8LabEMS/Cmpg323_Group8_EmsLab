@@ -1,3 +1,13 @@
+// Import user data helper functions
+import { 
+  loadUserData, 
+  checkAuthentication, 
+  handleLogout, 
+  getCurrentUser, 
+  hasRole, 
+  isAdmin 
+} from './helpers/userDataHelper.js';
+
 // Role-based tab config
 const TABS_BY_ROLE = {
   Student: [
@@ -12,17 +22,21 @@ const TABS_BY_ROLE = {
     { id: 'bookings', label: 'Bookings Management' },
     { id: 'equipment', label: 'Equipment Management' },
     { id: 'maintenance', label: 'Maintenance' },
-    { id: 'adminDashboard', label: 'Audit Trails' },
+  { id: 'adminAudit', label: 'Audit Trails' },
     { id: 'reports', label: 'Reports' },
     { id: 'settings', label: 'Settings' }
   ]
 };
 
-// Redirect to login if not logged in
-const roleFromStorage = localStorage.getItem('role');
-if (!roleFromStorage) {
-  window.location.href = 'Login.html';
+
+
+// Initialize authentication and get current role
+const authCheck = checkAuthentication();
+if (!authCheck) {
+  // This will redirect to login, so we don't need to continue
 }
+
+const roleFromStorage = localStorage.getItem('role');
 let currentRole = roleFromStorage === 'Admin' ? 'Admin' : (roleFromStorage === 'Student' ? 'Student' : 'Student');
 
 // Render sidebar
@@ -46,12 +60,9 @@ function renderSidebar() {
     });
   });
 
-  // Logout button
+  // Logout button - use the new handleLogout function
   const logout = sidebar.querySelector('.logout');
-  if (logout) logout.addEventListener('click', () => {
-    localStorage.removeItem('role');
-    window.location.href = 'Login.html';
-  });
+  if (logout) logout.addEventListener('click', handleLogout);
 }
 
 // Show only allowed tabs
@@ -73,9 +84,9 @@ import { renderEquipmentManagement } from "./pages/admin_equipment.js";
 import { renderEquipment } from "./pages/equipent.js";
 import { renderUsers } from "./pages/user_management.js";
 import { renderAdminDashboard } from "./pages/admin_dashboard.js";
-import { renderAdminBookings } from "./pages/admin_bookings.js";
+import { renderAdminAudit } from "./pages/admin_audit.js";
+import { renderAdminBookings, fetchBookings } from "./pages/admin_bookings.js";
 import { renderMaintenance } from "./pages/maintenance.js";
-
 import { renderReports } from "./pages/admin_reports.js";
 
 
@@ -98,9 +109,10 @@ const tabRenderers = {
     const adminBookingsSection = document.getElementById('admin-bookings');
     if (userBookingsSection) userBookingsSection.classList.add('hidden');
     if (adminBookingsSection) adminBookingsSection.classList.add('hidden');
-  if (currentRole === 'Admin') {
+    if (currentRole === 'Admin') {
       if (adminBookingsSection) adminBookingsSection.classList.remove('hidden');
-      renderAdminBookings();
+      // Always fetch fresh bookings when switching to admin tab
+      fetchBookings();
     } else {
       if (userBookingsSection) userBookingsSection.classList.remove('hidden');
       renderBookings();
@@ -115,6 +127,7 @@ const tabRenderers = {
   },
   userManagement: renderUsers,
   adminDashboard: renderAdminDashboard,
+  adminAudit: renderAdminAudit,
   maintenance: renderMaintenance,
    reports: renderReports,
 };
@@ -134,14 +147,18 @@ if (bookNowBtn) {
 
 // Initialize on DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
+  // Load user data first
+  loadUserData();
+  
   renderSidebar();
-  showAllowedTabs();
+
+  // Hide all tabs by default
+  document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
 
   function showSectionFromHash() {
-    const hash = window.location.hash.replace('#', '') || (TABS_BY_ROLE[currentRole] || [])[0]?.id;
     // Hide all tabs first
     document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
-
+    const hash = window.location.hash.replace('#', '') || (TABS_BY_ROLE[currentRole] || [])[0]?.id;
     const allowed = (TABS_BY_ROLE[currentRole] || []).map(t => t.id);
     if (allowed.includes(hash)) {
       const section = document.getElementById(hash);
@@ -150,7 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (tabRenderers[hash]) tabRenderers[hash]();
       }
     }
-
     document.querySelectorAll('.sidebar-btn').forEach(btn => {
       const target = btn instanceof HTMLElement ? btn.dataset.target : undefined;
       if (btn instanceof HTMLElement) btn.classList.toggle('active', target === hash);
