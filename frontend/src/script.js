@@ -108,8 +108,11 @@ const tabRenderers = {
     // Hide both bookings tables first
     const userBookingsSection = document.getElementById('bookings');
     const adminBookingsSection = document.getElementById('admin-bookings');
+
+
     if (userBookingsSection) userBookingsSection.classList.add('hidden');
     if (adminBookingsSection) adminBookingsSection.classList.add('hidden');
+    
     if (currentRole === 'Admin') {
       if (adminBookingsSection) adminBookingsSection.classList.remove('hidden');
       // Always fetch fresh bookings when switching to admin tab
