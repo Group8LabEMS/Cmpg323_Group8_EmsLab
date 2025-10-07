@@ -79,6 +79,35 @@
         </div>
       </div>
 
+      <!-- Audit Section -->
+      <section id="adminAudit" class="tab hidden">
+        <div class="admin-bookings-heading">
+          <h2 style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;margin: 1rem -7%">System Audits</h2>
+          <div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin: 1rem -7%">View and search for system logs for all user actions.</div>
+          <div style="clear:both"></div>
+        </div>
+        <div class="audit-controls" style="margin: 1rem -7%;display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem;">
+          
+          <select id="auditSortSelect" style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
+            <option value="">Sort by</option>
+          </select>
+          <input type="text" id="auditSearchInput" placeholder="Search All Columns (Type to filter)" style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:180px;" />
+          
+        </div>
+        <div class="audit-table-container">
+          <table class="audit-table" style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
+            <thead>
+              <tr id="auditTableHeader"></tr>
+            </thead>
+            <tbody id="auditTableBody"></tbody>
+          </table>
+        </div>
+        
+      </section>
+      
+      
+
+     
       <!-- Profile -->
       <section id="profile" class="tab hidden">
         <h2>Profile</h2>
@@ -297,12 +326,6 @@
           <select id="roleInput" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
             <option value="Student">Student</option>
             <option value="Admin">Admin</option>
-          </select>
-
-          <label for="roleInput" style="font-size:1.1rem;margin-top:0.5rem;">Role</label>
-          <select id="roleInput" style="font-size:1.15rem;padding:1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;">
-            <option value="Student">Student</option>
-            <option value="Administrator">Administrator</option>
           </select>
 
           <button id="confirmUser" class="action-book" style="width:100%;background:#8d5fc5;color:#fff;font-size:1.2rem;padding:1rem 0;border-radius:8px;border:none;font-weight:bold;margin-top:0.7rem;">Save</button>

@@ -87,7 +87,6 @@ import { renderAdminDashboard } from "./pages/admin_dashboard.js";
 import { renderAdminAudit } from "./pages/admin_audit.js";
 import { renderAdminBookings, fetchBookings } from "./pages/admin_bookings.js";
 import { renderMaintenance } from "./pages/maintenance.js";
-
 import { renderReports } from "./pages/admin_reports.js";
 
 
