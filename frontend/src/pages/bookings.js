@@ -88,7 +88,7 @@ confirmBooking.addEventListener("click", async () => {
 
   if (selectedEquipment && date && start && end) {
     const booking = {
-      userId: Number(localStorage.getItem("userId")), // Use logged-in user ID
+      userId: window.currentUser?.userId || 1, // Use logged-in user ID
       equipmentId: selectedEquipment.id,
       bookingStatusId: 1, // Pending
       fromDate: `${date}T${start}:00`,
@@ -101,6 +101,7 @@ confirmBooking.addEventListener("click", async () => {
       const response = await fetch("/api/Booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',
         body: JSON.stringify(booking)
       });
       if (response.ok) {
@@ -121,7 +122,9 @@ confirmBooking.addEventListener("click", async () => {
 
 async function fetchAndRenderBookings() {
   try {
-    const response = await fetch("/api/Booking");
+    const response = await fetch("/api/Booking", {
+      credentials: 'include'
+    });
     if (!response.ok) throw new Error("Failed to fetch bookings");
     const data = await response.json();
     bookings = data.map(b => ({

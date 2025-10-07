@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Group8.LabEms.Api.Data;
 using Group8.LabEms.Api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ namespace Group8.LabEms.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EquipmentController : ControllerBase
     {
         private readonly AppDbContext _context;

@@ -1,10 +1,12 @@
 using System;
 using Group8.LabEms.Api.Data;
 using Group8.LabEms.Api.Services;
-//using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Microsoft.Extensions.FileProviders;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,6 +80,35 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 
 
+// JWT Configuration
+var jwtKey = configuration["Jwt:SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
+var key = Encoding.UTF8.GetBytes(jwtKey);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = configuration["Jwt:Issuer"],
+            ValidAudience = configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(key)
+        };
+        
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["jwt"];
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+builder.Services.AddScoped<JwtService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddBusinessServices();
@@ -108,6 +139,7 @@ app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

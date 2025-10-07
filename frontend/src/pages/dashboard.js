@@ -5,8 +5,8 @@ import { renderAdminDashboard as adminDash } from "./admin_dashboard.js";
 export function renderDashboard() {
   const dashboardSection = document.getElementById("dashboard");
   if (!dashboardSection) return;
-  const role = localStorage.getItem('role');
-  if (role === 'admin') {
+  const role = window.currentRole;
+  if (role === 'Admin') {
     adminDash();
     return;
   }

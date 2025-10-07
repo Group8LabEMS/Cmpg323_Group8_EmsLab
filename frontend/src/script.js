@@ -1,3 +1,5 @@
+import { logout as doLogout } from "./util/auth.js";
+
 // Role-based tab config
 const TABS_BY_ROLE = {
   Student: [
@@ -18,12 +20,28 @@ const TABS_BY_ROLE = {
   ]
 };
 
-// Redirect to login if not logged in
-const roleFromStorage = localStorage.getItem('role');
-if (!roleFromStorage) {
-  window.location.href = 'login.html';
+// Check authentication and get user info
+let currentUser = null;
+let currentRole = 'Student';
+
+async function initAuth() {
+  try {
+    const res = await fetch('http://localhost:8000/api/Auth/me', { credentials: 'include' });
+    if (res.ok) {
+      currentUser = await res.json();
+      currentRole = currentUser.role || 'Student';
+      // Expose globally for other modules
+      window.currentUser = currentUser;
+      window.currentRole = currentRole;
+    } else {
+      window.location.href = 'login.html';
+      return;
+    }
+  } catch (err) {
+    window.location.href = 'login.html';
+    return;
+  }
 }
-let currentRole = roleFromStorage === 'Admin' ? 'Admin' : (roleFromStorage === 'Student' ? 'Student' : 'Student');
 
 // Render sidebar
 function renderSidebar() {
@@ -48,8 +66,12 @@ function renderSidebar() {
 
   // Logout button
   const logout = sidebar.querySelector('.logout');
-  if (logout) logout.addEventListener('click', () => {
-    localStorage.removeItem('role');
+  if (logout) logout.addEventListener('click', async () => {
+    try {
+      // await fetch('http://localhost:8000/api/Auth/logout', { method: 'POST', credentials: 'include' });
+      await doLogout();
+    }
+    catch (err) { console.error('Logout error:', err); }
     window.location.href = 'login.html';
   });
 }
@@ -85,8 +107,7 @@ import { renderReports } from "./pages/admin_reports.js";
 // Map tab to renderer
 const tabRenderers = {
   dashboard: function() {
-    const role = localStorage.getItem('role');
-    if (role && role.toLowerCase() === 'admin') {
+    if (currentRole && currentRole.toLowerCase() === 'admin') {
       renderAdminDashboard();
     } else {
       renderDashboard();
@@ -136,7 +157,8 @@ if (bookNowBtn) {
 }
 
 // Initialize on DOMContentLoaded
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await initAuth();
   renderSidebar();
 
   // Hide all tabs by default
