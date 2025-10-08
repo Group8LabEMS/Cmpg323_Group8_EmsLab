@@ -10,9 +10,6 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         login: resolve(__dirname, 'login.html'),
-        register: resolve(__dirname, 'register.html'),
-        about: resolve(__dirname, 'about_us.html'),
-        contact: resolve(__dirname, 'contact_us.html'),
         forgot: resolve(__dirname, 'forgot_password.html'),
       },
     },

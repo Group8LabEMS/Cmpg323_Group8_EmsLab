@@ -1,57 +1,81 @@
 import { html, render as litRender } from "lit";
 import Chart from 'chart.js/auto';
+import { getAdminAggregateStats, getBookingsPerMonth, getEquipmentUsage } from '../api/api.js';
 
+let statsData = { totalUsers: 0, activeBookings: 0, maintenanceEquipment: 0 };
+let bookingsData = [];
+let equipmentData = [];
+let charts = {};
 
-
-export function renderAdminDashboard() {
+export async function renderAdminDashboard() {
   const dashboardSection = document.getElementById("dashboard");
   if (!dashboardSection) return;
+  
+  // Destroy existing charts
+  Object.values(charts).forEach(chart => chart?.destroy());
+  charts = {};
+  
+  try {
+    [statsData, bookingsData, equipmentData] = await Promise.all([
+      getAdminAggregateStats(),
+      getBookingsPerMonth(),
+      getEquipmentUsage()
+    ]);
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error);
+    // Use fallback data on error
+    statsData = { totalUsers: 5, activeBookings: 12, maintenanceEquipment: 2 };
+    bookingsData = [{ month: 5, count: 10 }, { month: 6, count: 25 }, { month: 7, count: 20 }, { month: 8, count: 5 }];
+    equipmentData = [{ name: 'Spectrometer', count: 12 }, { name: 'Microscope', count: 19 }, { name: 'Centrifuge', count: 7 }, { name: 'Laser Cutter', count: 5 }];
+  }
+
   litRender(html`
     <div class="admin-dashboard-grid">
-      <div class="admin-stats-row">
-        <div class="admin-stat-card">
-          <div class="admin-stat-value">5</div>
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="admin-stat-value">${statsData.totalUsers}</div>
           <div class="admin-stat-label">Total Users</div>
         </div>
-        <div class="admin-stat-card">
-          <div class="admin-stat-value">12</div>
+        <div class="stat-card">
+          <div class="admin-stat-value">${statsData.activeBookings}</div>
           <div class="admin-stat-label">Active Bookings</div>
         </div>
-        <div class="admin-stat-card">
-          <div class="admin-stat-value">2</div>
+        <div class="stat-card">
+          <div class="admin-stat-value">${statsData.maintenanceEquipment}</div>
           <div class="admin-stat-label">Equipment in maintenance</div>
         </div>
       </div>
-      <div class="admin-charts-row">
-        <div class="admin-chart-card">
-          <div class="admin-chart-title">Bookings Per Month</div>
-          <canvas id="bookingsBarChart" width="420" height="270" style="max-width:420px;max-height:270px;"></canvas>
+      <div class="dashboard-row">
+        <div class="card dashboard-card chart-card">
+          <div class="card-title">Bookings Per Month</div>
+          <div class="chart-container">
+            <canvas id="bookingsBarChart"></canvas>
+          </div>
         </div>
-        <div class="admin-chart-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <div class="admin-chart-title">Equipment Usage</div>
-          <canvas id="equipmentUsageChart" width="320" height="320" style="max-width:320px;max-height:320px;"></canvas>
+        <div class="card dashboard-card chart-card">
+          <div class="card-title">Equipment Usage</div>
+          <div class="chart-container">
+            <canvas id="equipmentUsageChart"></canvas>
+          </div>
         </div>
       </div>
     </div>
   `, dashboardSection);
 
-  // Only render charts after DOM is updated and charts exist
   setTimeout(() => {
     renderEquipmentUsageChart();
     renderBookingsBarChart();
   }, 0);
 }
 
-
-
 function renderEquipmentUsageChart() {
   const ctx = document.getElementById('equipmentUsageChart');
   if (!(ctx instanceof HTMLCanvasElement)) return;
   const data = {
-    labels: ['Spectrometer', 'Microscope', 'Centrifuge', 'Laser Cutter'],
+    labels: equipmentData.map(item => item.name),
     datasets: [{
       label: 'Equipment Usage',
-      data: [12, 19, 7, 5],
+      data: equipmentData.map(item => item.count),
       backgroundColor: [
         '#7A4EB0',
         '#999',
@@ -61,11 +85,13 @@ function renderEquipmentUsageChart() {
       hoverOffset: 4
     }]
   };
+  /** @type {import("chart.js").ChartConfiguration} */
   const config = {
     type: 'doughnut',
     data: data,
     options: {
-      cutout: '45%',
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: {
           display: true,
@@ -78,17 +104,18 @@ function renderEquipmentUsageChart() {
       }
     }
   };
-  new Chart(ctx, config);
+  charts.equipment = new Chart(ctx, config);
 }
 
 function renderBookingsBarChart() {
   const ctx = document.getElementById('bookingsBarChart');
   if (!(ctx instanceof HTMLCanvasElement)) return;
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const data = {
-    labels: ['May', 'June', 'July', 'August'],
+    labels: bookingsData.map(item => monthNames[item.month - 1]),
     datasets: [{
       label: 'Bookings',
-      data: [10, 25, 20, 5],
+      data: bookingsData.map(item => item.count),
       backgroundColor: '#7A4EB0',
       borderRadius: 8,
       barPercentage: 0.7,
@@ -99,7 +126,8 @@ function renderBookingsBarChart() {
     type: 'bar',
     data: data,
     options: {
-      responsive: false,
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
         title: { display: false }
@@ -112,5 +140,5 @@ function renderBookingsBarChart() {
       }
     }
   };
-  new Chart(ctx, config);
+  charts.bookings = new Chart(ctx, config);
 }

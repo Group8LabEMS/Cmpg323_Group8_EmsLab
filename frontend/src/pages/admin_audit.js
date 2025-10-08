@@ -1,5 +1,5 @@
 
-import { html, render as litRender } from "lit";
+import { html, render } from "lit";
 
 let auditLogs = [];
 let searchTerm = "";
@@ -51,39 +51,54 @@ export function renderAdminAudit() {
 	const section = document.getElementById("adminAudit");
 	if (!section) return;
 	section.classList.remove("hidden");
-	   litRender(html`
-		   <div style="background:#fff;border-radius:20px;box-shadow:0 4px 15px #e0d3f3;padding:2rem 1.5rem 1.5rem 1.5rem;">
-			   <h2 style="margin-top:0;margin-bottom:1.5rem;font-size:2rem;font-weight:700;color:#8d5fc5;letter-spacing:0.5px;">Audit Trails</h2>
-			   <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
-				   <thead>
-					   <tr style="background:#8d5fc5;color:#fff;">
-						   <th>ID</th>
-						   <th>Timestamp</th>
-						   <th>User</th>
-						   <th>Action</th>
-						   <th>Entity Type</th>
-						   <th>Entity ID</th>
-						   <th>Details</th>
-					   </tr>
-				   </thead>
-				   <tbody>
-					   ${getFilteredSortedLogs().length === 0 ? html`
-						   <tr><td colspan="7" class="no-audit-message">No audit logs found.</td></tr>
-					   ` : getFilteredSortedLogs().map(log => html`
-						   <tr>
-							   <td>${log.auditLogId}</td>
-							   <td>${log.timeStamp ? new Date(log.timeStamp).toLocaleString() : ''}</td>
-							   <td>${log.user || log.userId || ''}</td>
-							   <td>${log.action}</td>
-							   <td>${log.entityType}</td>
-							   <td>${log.entityId}</td>
-							   <td>${log.details || ''}</td>
-						   </tr>
-					   `)}
-				   </tbody>
-			   </table>
-		   </div>
-	   `, section);
+	
+	// Update table header and body only
+	const headerRow = document.getElementById('auditTableHeader');
+	const tableBody = document.getElementById('auditTableBody');
+	
+	if (headerRow) {
+		render(html`
+			<th>ID</th>
+			<th>Timestamp</th>
+			<th>User</th>
+			<th>Action</th>
+			<th>Entity Type</th>
+			<th>Entity ID</th>
+			<th>Details</th>
+		`, headerRow);
+	}
+	
+	if (tableBody) {
+		if (getFilteredSortedLogs().length === 0) {
+			render(html`<tr><td colspan="7" style="text-align:center;">No audit logs found.</td></tr>`, tableBody);
+		} else {
+			render(html`${getFilteredSortedLogs().map(log => html`
+				<tr>
+					<td>${log.auditLogId}</td>
+					<td>${log.timeStamp ? new Date(log.timeStamp).toLocaleString() : ''}</td>
+					<td>${log.user || log.userId || ''}</td>
+					<td>${log.action}</td>
+					<td>${log.entityType}</td>
+					<td>${log.entityId}</td>
+					<td>${log.details || ''}</td>
+				</tr>
+			`)}`, tableBody);
+		}
+	}
+	
+	// Setup event listeners for controls
+	const searchInput = document.getElementById('auditSearchInput');
+	const sortSelect = document.getElementById('auditSortSelect');
+	
+	if (searchInput && !searchInput.hasAttribute('data-initialized')) {
+		searchInput.addEventListener('input', handleSearch);
+		searchInput.setAttribute('data-initialized', 'true');
+	}
+	
+	if (sortSelect && !sortSelect.hasAttribute('data-initialized')) {
+		sortSelect.addEventListener('change', handleSort);
+		sortSelect.setAttribute('data-initialized', 'true');
+	}
 }
 
 // Initial fetch on tab open

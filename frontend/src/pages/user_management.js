@@ -1,35 +1,13 @@
-// ---------- State ---------- //
+import { html, render as litRender } from "lit-html";
 
+// Global state
 let users = [];
-
 let editingUserIndex = null;
-
-// ---------- DOM Refs ---------- //
-import { html, render as litRender } from "lit";
-const userTableBody = document.getElementById("userTableBody");
-const userModal = document.getElementById("userModal");
-const userModalTitle = document.getElementById("userModalTitle");
-
-const nameInput = /** @type {HTMLInputElement} */ (document.getElementById("nameInput"));
-const surnameInput = /** @type {HTMLInputElement} */ (document.getElementById("surnameInput"));
-const universityNoInput = /** @type {HTMLInputElement} */ (document.getElementById("universityNoInput"));
-const emailInput = /** @type {HTMLInputElement} */ (document.getElementById("emailInput"));
-const cellInput = /** @type {HTMLInputElement} */ (document.getElementById("cellInput"));
-const facultyInput = /** @type {HTMLInputElement} */ (document.getElementById("facultyInput"));
-const departmentInput = /** @type {HTMLInputElement} */ (document.getElementById("departmentInput"));
-const passwordInput = /** @type {HTMLInputElement} */ (document.getElementById("passwordInput"));
-const repasswordInput = /** @type {HTMLInputElement} */ (document.getElementById("repasswordInput"));
-
-
-const confirmUserBtn = document.getElementById("confirmUser");
-const cancelUserBtn = document.getElementById("cancelUser");
-
-// User Delete Modal Refs
-const userDeleteModal = document.getElementById("userDeleteModal");
-const userDeleteMessage = document.getElementById("userDeleteMessage");
-const confirmUserDeleteBtn = document.getElementById("confirmUserDelete");
-const cancelUserDeleteBtn = document.getElementById("cancelUserDelete");
 let pendingDeleteUserIndex = null;
+
+// DOM element references
+let userModal, userModalTitle, nameInput, surnameInput, universityNoInput, emailInput, cellInput, passwordInput, repasswordInput;
+let confirmUserBtn, cancelUserBtn, userDeleteModal, userDeleteMessage, confirmUserDeleteBtn, cancelUserDeleteBtn;
 
 // ---------- Render ---------- //
 // --- UI State ---
@@ -37,18 +15,9 @@ let searchTerm = "";
 let sortKey = "name";
 let sortAsc = true;
 
-function handleSearch(e) {
-  searchTerm = e.target.value;
-  renderUsers();
-}
-function handleSort(e) {
-  sortKey = e.target.value;
-  renderUsers();
-}
-function toggleSortDir() {
-  sortAsc = !sortAsc;
-  renderUsers();
-}
+function handleSearch(e) { searchTerm = e.target.value; renderUsers(); }
+function handleSort(e)   { sortKey = e.target.value;    renderUsers(); }
+function toggleSortDir() { sortAsc = !sortAsc;          renderUsers(); }
 
 function getFilteredSortedList() {
   let list = [...users];
@@ -73,38 +42,40 @@ export function renderUsers() {
   const section = document.getElementById("userManagement");
   if (!section) return;
   litRender(html`
-    <h2 style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;margin: 1rem -7%">User Management</h2>
-    <div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin: 1rem -7%">View, add, update and delete users.</div>
-    <button style="float:right;margin-bottom:1.5rem;background:#8d5fc5;color:#fff;font-size:1.2rem;padding:0.7rem 2.5rem;border-radius:8px;border:none;box-shadow:0 2px 8px #bdbdbd;margin-right:4rem" @click=${openAddUser}>Create User</button>
-    <div style="clear:both"></div>
-    <div style="background:#fff;border-radius:20px;box-shadow:0 4px 15px #e0d3f3;padding:2rem 1.5rem 1.5rem 1.5rem;margin-left:-6.2rem;margin-right:4rem">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
-        <div style="display:flex;align-items:center;gap:0.5rem;">
-          <select @change=${handleSort} style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
+    <div class="card-header">
+      <h2 class="card-title">User Management</h2>
+      <div class="card-subtitle">View, add, update and delete users.</div>
+    </div>
+    <div class="card">
+      <div class="controls-container">
+        <div class="controls-left">
+          <button class="btn btn-primary" @click=${openAddUser}>Create User</button>
+        </div>
+        <div class="controls-right">
+          <select @change=${handleSort} class="form-select">
             <option value="displayName">Sort by</option>
             <option value="displayName">Name</option>
             <option value="ssoId">University No</option>
             <option value="email">Email</option>
             <option value="role">Role</option>
           </select>
-          <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;margin-left:0.5rem;display:flex;align-items:center;gap:0.3rem;" @click=${toggleSortDir}>
-            <span style="font-size:1.2rem;">${sortAsc ? "\u25B2" : "\u25BC"}</span>
+          <button class="btn btn-primary" @click=${toggleSortDir}>
+            <span>${sortAsc ? "\u25B2" : "\u25BC"}</span>
           </button>
-        </div>
-        <div style="display:flex;align-items:center;gap:0.5rem;">
-          <input type="text" placeholder="Search ..." @input=${handleSearch} value=${searchTerm} style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;" />
-          <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
-            <span style="font-size:1.2rem;">&#128269;</span>
+          <input type="text" placeholder="Search ..." @input=${handleSearch} value=${searchTerm} class="form-input" />
+          <button class="btn btn-primary">
+            <span>&#128269;</span>
           </button>
-          <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
-            <span style="font-size:1.2rem;">&#128465;</span> FILTER
+          <button class="btn btn-primary filter-btn">
+            <span>&#128465;</span> FILTER
           </button>
         </div>
       </div>
-      <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
+      <div class="table-container">
+        <table class="table">
         <thead>
-          <tr style="background:#8d5fc5;color:#fff;">
-            <th style="padding:1rem 0.5rem;">NAME</th>
+          <tr>
+            <th>NAME</th>
             <th>UNIVERSITY NO</th>
             <th>EMAIL</th>
             <th>ROLE</th>
@@ -113,20 +84,20 @@ export function renderUsers() {
         </thead>
         <tbody>
           ${getFilteredSortedList().map((u, i) => u.displayName ? html`
-            <tr style="background:${i%2===1?'#f7f6fb':'#fff'};">
-              <td><span style="font-weight:bold;color:#6d4eb0;">${u.displayName}</span></td>
+            <tr>
+              <td><strong>${u.displayName}</strong></td>
               <td>${u.ssoId}</td>
               <td>${u.email}</td>
               <td>${u.role || ''}</td>
               <td>
-                <a href="#" style="color:#8d5fc5;font-weight:bold;cursor:pointer;" @click=${e => { e.preventDefault(); openEditUser(i); }}>Update</a>
-                |
-                <a href="#" style="color:#8d5fc5;font-weight:bold;cursor:pointer;" @click=${e => { e.preventDefault(); openUserDeleteModal(i); }}>Delete</a>
+                <button class="btn btn-sm btn-secondary" @click=${() => openEditUser(i)}>Update</button>
+                <button class="btn btn-sm btn-danger" @click=${() => openUserDeleteModal(i)}>Delete</button>
               </td>
             </tr>
           ` : html`<tr><td></td><td></td><td></td><td></td><td></td></tr>`)}
         </tbody>
-      </table>
+        </table>
+      </div>
     </div>
   `, section);
 }
@@ -141,8 +112,7 @@ function openAddUser() {
   universityNoInput.value = "";
   emailInput.value = "";
   cellInput.value = "";
-  facultyInput.value = "";
-  departmentInput.value = "";
+
   passwordInput.value = "";
   repasswordInput.value = "";
   userModal.classList.remove("hidden");
@@ -163,8 +133,7 @@ function openEditUser(index) {
   universityNoInput.value = u.ssoId || "";
   emailInput.value = u.email || "";
   cellInput.value = u.cell || "";
-  facultyInput.value = u.faculty || "";
-  departmentInput.value = u.department || "";
+
   passwordInput.value = u.password || "";
   repasswordInput.value = u.password || "";
   
@@ -218,66 +187,63 @@ async function confirmUserDelete() {
 // ---------- Actions ---------- //
 
 
-confirmUserBtn.addEventListener("click", async () => {
-  const name = nameInput.value.trim();
-  const surname = surnameInput.value.trim();
-  const ssoId = universityNoInput.value.trim();
-  const email = emailInput.value.trim();
-  const cell = cellInput.value.trim();
-  const faculty = facultyInput.value.trim();
-  const department = departmentInput.value.trim();
-  const password = passwordInput.value;
-  const repassword = repasswordInput.value;
-  const role = document.getElementById("roleInput") ? /** @type {HTMLSelectElement} */ (document.getElementById("roleInput")).value : "";
+// Setup event listeners after DOM is loaded
+function setupEventListeners() {
+  confirmUserBtn.addEventListener("click", async () => {
+    const name = nameInput.value.trim();
+    const surname = surnameInput.value.trim();
+    const ssoId = universityNoInput.value.trim();
+    const email = emailInput.value.trim();
+    const cell = cellInput.value.trim();
 
-  if (!name || !surname || !ssoId || !email || !cell || !faculty || !department || !password || !repassword) {
-    alert("All fields are required.");
-    return;
-  }
-  if (password !== repassword) {
-    alert("Passwords do not match.");
-    return;
-  }
+    const password = passwordInput.value;
+    const repassword = repasswordInput.value;
+    const role = document.getElementById("roleInput") ? /** @type {HTMLSelectElement} */ (document.getElementById("roleInput")).value : "";
 
-  const userObj = {
-    displayName: name + " " + surname,
-    ssoId,
-    email,
-    password,
-    
-  };
-
-  try {
-    if (editingUserIndex !== null) {
-      // Update
-      const user = users[editingUserIndex];
-      await fetch(`/api/User/${user.userId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...user, ...userObj, userId: user.userId })
-      });
-    } else {
-      // Create
-      await fetch(`/api/User`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userObj)
-      });
+    if (!name || !surname || !ssoId || !email || !cell || !password || !repassword) {
+      alert("All fields are required.");
+      return;
     }
-    await fetchUsers();
-    closeUserModal();
-  } catch (e) {
-    alert("Failed to save user.");
-  }
-});
+    if (password !== repassword) {
+      alert("Passwords do not match.");
+      return;
+    }
 
+    const userObj = {
+      displayName: name + " " + surname,
+      ssoId,
+      email,
+      password,
+    };
 
-cancelUserBtn.addEventListener("click", closeUserModal);
+    try {
+      if (editingUserIndex !== null) {
+        // Update
+        const user = users[editingUserIndex];
+        await fetch(`/api/User/${user.userId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...user, ...userObj, userId: user.userId })
+        });
+      } else {
+        // Create
+        await fetch(`/api/User`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userObj)
+        });
+      }
+      await fetchUsers();
+      closeUserModal();
+    } catch (e) {
+      alert("Failed to save user.");
+    }
+  });
 
-
-// User delete modal actions
-confirmUserDeleteBtn.addEventListener("click", confirmUserDelete);
-cancelUserDeleteBtn.addEventListener("click", closeUserDeleteModal);
+  cancelUserBtn.addEventListener("click", closeUserModal);
+  confirmUserDeleteBtn.addEventListener("click", confirmUserDelete);
+  cancelUserDeleteBtn.addEventListener("click", closeUserDeleteModal);
+}
 
 // --- API Integration --- //
 async function fetchUsers() {
@@ -294,4 +260,25 @@ async function fetchUsers() {
 }
 
 // Initial load
-window.addEventListener("DOMContentLoaded", fetchUsers);
+window.addEventListener("DOMContentLoaded", () => {
+  // Initialize DOM element references
+  userModal            = document.getElementById("userModal");
+  userModalTitle       = document.getElementById("userModalTitle");
+  nameInput            = document.getElementById("nameInput");
+  surnameInput         = document.getElementById("surnameInput");
+  universityNoInput    = document.getElementById("universityNoInput");
+  emailInput           = document.getElementById("emailInput");
+  cellInput            = document.getElementById("cellInput");
+
+  passwordInput        = document.getElementById("passwordInput");
+  repasswordInput      = document.getElementById("repasswordInput");
+  confirmUserBtn       = document.getElementById("confirmUser");
+  cancelUserBtn        = document.getElementById("cancelUser");
+  userDeleteModal      = document.getElementById("userDeleteModal");
+  userDeleteMessage    = document.getElementById("userDeleteMessage");
+  confirmUserDeleteBtn = document.getElementById("confirmUserDelete");
+  cancelUserDeleteBtn  = document.getElementById("cancelUserDelete");
+  
+  setupEventListeners();
+  fetchUsers();
+});

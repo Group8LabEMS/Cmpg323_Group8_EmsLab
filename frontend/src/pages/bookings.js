@@ -72,8 +72,8 @@ export function renderBookings() {
       <td>${b.start} - ${b.end}</td>
       <td><span class="status ${getStatusClass(b.status)}">${b.status}</span></td>
       <td>
-        <button class="action-book" @click=${() => openUpdate(i)}>Update</button>
-        <button class="action-delete" title="Delete booking" @click=${() => openDelete(i)}>Delete</button>
+        <button class="btn btn-primary" @click=${() => openUpdate(i)}>Update</button>
+        <button class="btn btn-danger" title="Delete booking" @click=${() => openDelete(i)}>Delete</button>
       </td>
     </tr>
   `);

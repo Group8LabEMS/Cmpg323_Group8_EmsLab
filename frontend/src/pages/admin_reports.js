@@ -1,6 +1,8 @@
 // pages/admin_reports.js
 // API-integrated logic for the Admin Reports section.
 
+import { html, render } from "lit";
+
 // --- Global State ---
 let currentReportData = [];
 let currentReportType = 'user'; 
@@ -273,7 +275,7 @@ function renderReportTable(data, config) {
     const tbody = document.getElementById('reportTableBody');
     if (!tbody) return;
 
-    tbody.innerHTML = '';
+    render(html``, tbody);
     
     if (data.length === 0) {
         const row = document.createElement('tr');
@@ -315,7 +317,7 @@ function populateSortOptions(config) {
     const select = document.getElementById('reportSortSelect');
     if (!select) return;
 
-    select.innerHTML = '<option value="">Sort by</option>'; 
+    render(html`<option value="">Sort by</option>`, select); 
 
     config.sortOptions.forEach(option => {
         const opt = document.createElement('option');
@@ -329,7 +331,7 @@ function renderTableHeader(config) {
     const headerRow = document.getElementById('reportTableHeader');
     if (!headerRow) return;
 
-    headerRow.innerHTML = '';
+    render(html``, headerRow);
     config.headers.forEach((header, index) => {
         const th = document.createElement('th');
         th.textContent = header;
@@ -397,7 +399,7 @@ function showFilterModal() {
     if (!modal || !formContent) return;
 
     modalTitle.textContent = `Filter ${config.headers[0].split(' ')[0]} Report`;
-    formContent.innerHTML = '';
+    render(html``, formContent);
 
     config.filterFields.forEach(field => {
         const group = document.createElement('div');
@@ -410,7 +412,7 @@ function showFilterModal() {
         if (field.type === 'select') {
             const select = document.createElement('select');
             select.id = `modalFilter-${field.key}`;
-            select.innerHTML = '<option value="">Any</option>';
+            render(html`<option value="">Any</option>`, select);
             UNIQUE_OPTIONS[field.optionsKey].forEach(option => {
                 const opt = document.createElement('option');
                 opt.value = option;

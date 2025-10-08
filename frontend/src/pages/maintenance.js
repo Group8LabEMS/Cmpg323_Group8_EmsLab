@@ -39,11 +39,11 @@ export function renderMaintenance() {
       <td><span class="${statusClass(eq.status)}">${eq.status}</span></td>
       <td>
         ${eq.status === "Needs Repair" ? html`
-          <button class="action-book" @click=${() => updateStatus(eq.id, "Repair In Progress")}>Start Repair</button>
+          <button class="btn btn-primary" @click=${() => updateStatus(eq.id, "Repair In Progress")}>Start Repair</button>
         ` : eq.status === "Repair In Progress" ? html`
-          <button class="action-book" @click=${() => updateStatus(eq.id, "Repair Completed")}>Mark Completed</button>
+          <button class="btn btn-primary" @click=${() => updateStatus(eq.id, "Repair Completed")}>Mark Completed</button>
         ` : html`
-          <button class="action-disabled" disabled>Done</button>
+          <button class="btn btn-secondary" disabled>Done</button>
         `}
       </td>
     </tr>

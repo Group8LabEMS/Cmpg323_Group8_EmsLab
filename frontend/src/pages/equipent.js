@@ -66,34 +66,36 @@ export async function renderEquipment() {
   await fetchEquipment();
   
   litRender(html`
-    <h2 style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;margin:1rem -7%;">Equipment</h2>
-    <div style="color:#8d5fc5;font-size:1.1rem;margin-bottom:1.2 rem ;margin:1rem -7%;">View, add and update equipment</div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.7rem;margin:1rem -7%;">
-      <div style="display:flex;align-items:center;gap:0.5rem;">
-        <select @change=${handleSort} style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
+    <div class="card-header">
+      <h2 class="card-title">Equipment</h2>
+      <div class="card-subtitle">View, add and update equipment</div>
+    </div>
+    <div class="controls-container">
+      <div class="controls-left"></div>
+      <div class="controls-right">
+        <select @change=${handleSort} class="form-select">
           <option value="name">Sort by</option>
           <option value="name">Name</option>
           <option value="status">Status</option>
           <option value="loc">Location</option>
         </select>
-        <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;margin-left:0.5rem;display:flex;align-items:center;gap:0.3rem;" @click=${toggleSortDir}>
-          <span style="font-size:1.2rem;">${sortAsc ? "\u25B2" : "\u25BC"}</span>
+        <button class="btn btn-primary" @click=${toggleSortDir}>
+          <span>${sortAsc ? "\u25B2" : "\u25BC"}</span>
         </button>
-      </div>
-      <div style="display:flex;align-items:center;gap:0.5rem;">
-        <input type="text" placeholder="Search ..." @input=${handleSearch} value=${searchTerm} style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;margin:1rem -55%;" />
-        <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;margin:1rem 55%;">
-          <span style="font-size:1.2rem;">&#128269;</span>
+        <input type="text" placeholder="Search ..." @input=${handleSearch} value=${searchTerm} class="form-input" />
+        <button class="btn btn-primary">
+          <span>&#128269;</span>
         </button>
-        <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;margin:1rem -45%;">
-          <span style="font-size:1.2rem;">&#128465;</span> FILTER
+        <button class="btn btn-primary filter-btn">
+          <span>&#128465;</span> FILTER
         </button>
       </div>
     </div>
-    <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;margin: 1rem -7%;">
+    <div class="table-container">
+      <table class="table">
       <thead>
-        <tr style="background:#8d5fc5;color:#fff;">
-          <th style="padding:1rem 0.5rem;">Name</th>
+        <tr>
+          <th>Name</th>
           <th>Description</th>
           <th>Location</th>
           <th>Status</th>
@@ -102,20 +104,21 @@ export async function renderEquipment() {
       </thead>
       <tbody>
         ${getFilteredSortedList().map(eq => html`
-          <tr style="background:${eq.id%2===0?'#f7f6fb':'#fff'};">
+          <tr>
             <td>${eq.name}</td>
             <td>${eq.desc}</td>
             <td>${eq.loc}</td>
             <td>
-              <span style="background:${eq.status==='Available'?'#d9f2d9':'#6c757d'};color:${eq.status==='Available'?'#2d7a2d':'#fff'};padding:4px 12px;border-radius:6px;font-weight:bold;">${eq.status}</span>
+              <span class="badge ${eq.status==='Available'?'badge-success':'badge-secondary'}">${eq.status}</span>
             </td>
             <td>
-              ${eq.status==='Available'?html`<a href="#" style="color:#8d5fc5;font-weight:bold;cursor:pointer;" @click=${e => { e.preventDefault(); openBooking(eq.id); }}>Book</a>`:''}
+              ${eq.status==='Available'?html`<button class="btn btn-sm btn-primary" @click=${() => openBooking(eq.id)}>Book</button>`:''}
             </td>
           </tr>
         `)}
       </tbody>
-    </table>
+      </table>
+    </div>
   `, section);
 }
 

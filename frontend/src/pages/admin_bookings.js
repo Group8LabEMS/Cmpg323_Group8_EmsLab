@@ -1,283 +1,299 @@
-let bookings = [];
+import { html, render as litRender } from "lit";
 
-// -------------------------
-// Status helper function
-// -------------------------
-function getStatusClass(status) {
-    switch (status?.toLowerCase()) {
-        case 'available': return 'status-available';
-        case 'maintenance': return 'status-maintenance';
-        case 'confirmed': return 'status-confirmed';
-        case 'approved': return 'status-confirmed';
-        case 'rejected': return 'status-cancelled';
-        case 'cancelled': return 'status-cancelled';
-        case 'completed': return 'status-completed';
-        case 'in-progress': return 'status-in-progress';
-        case 'pending': return 'status-pending';
-        default: return 'status-pending';
-    }
-}
+let bookingsList = [];
+let bookingStatuses = [];
+let searchTerm = '';
+let sortKey = 'bookingId';
+let sortAsc = true;
+let statusFilter = '';
+let fromDateFilter = '';
+let toDateFilter = '';
 
-// -------------------------
-// Fetch bookings from backend API
-// -------------------------
+// Modal states
+let showEditModal = false;
+let editBooking = null;
+let showDeleteModal = false;
+let deleteBookingObj = null;
+
+// Fetch data
 export async function fetchBookings() {
     try {
-        const res = await fetch('/api/Booking'); // <-- your API endpoint
+        const res = await fetch('/api/Booking');
         if (!res.ok) throw new Error('Failed to fetch bookings');
         const data = await res.json();
         console.log('Raw bookings response:', data);
-        bookings = data;
-        renderAdminBookings();
+        bookingsList = data;
     } catch (err) {
         console.error('Error fetching bookings:', err);
-        bookings = [];
-        renderAdminBookings();
+        bookingsList = [];
     }
 }
 
-// -------------------------
-// Render bookings table
-// -------------------------
-
-
-export function renderAdminBookings() {
-    const tbody = document.getElementById("adminBookingsTableBody");
-    const section = document.getElementById("admin-bookings");
-    if (!tbody || !section) return;
-
-
-    // --- Heading style to match user management ---
-    section.classList.remove('hidden');
-    // Remove any existing heading
-    let heading = section.querySelector('.admin-bookings-heading');
-    if (heading) heading.remove();
-    // Insert new heading at the top
-    const headingDiv = document.createElement('div');
-    headingDiv.className = 'admin-bookings-heading';
-    headingDiv.innerHTML = `
-        <h2 style=\"color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;margin: 1rem -7%\">Bookings Management</h2>
-        <div style=\"color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin: 1rem -7%\">View, approve, reject, and manage bookings.</div>
-        <div style=\"clear:both\"></div>
-    `;
-    section.insertBefore(headingDiv, section.firstChild);
-
-    // --- No background container: render directly in section ---
-
-    // --- Filter/Search UI ---
-    let filterBar = document.getElementById('adminBookingsFilterBar');
-    if (filterBar) filterBar.remove();
-    filterBar = document.createElement('div');
-    filterBar.id = 'adminBookingsFilterBar';
-    filterBar.className = 'report-controls';
-    filterBar.innerHTML = `
-        <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem;">
-            <input id="adminBookingsSearch" type="text" placeholder="Search by user or equipment..." style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:180px;" />
-            <select id="adminBookingsStatusFilter" style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:150px;">
-                <option value="">All Statuses</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-                <option value="Confirmed">Confirmed</option>
-                <option value="Cancelled">Cancelled</option>
-                <option value="Completed">Completed</option>
-                <option value="In-Progress">In-Progress</option>
-            </select>
-            <span style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin-left:8px;">Start date:</span>
-            <input id="adminBookingsFromDateFrom" type="date" title="Booking Start Date From" style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:120px;" />
-            <span style="margin:0 6px 0 6px;">to</span>
-            <input id="adminBookingsFromDateTo" type="date" title="Booking Start Date To" style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:120px;" />
-            <span style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin-left:16px;">End date:</span>
-            <input id="adminBookingsToDateFrom" type="date" title="Booking End Date From" style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:120px;" />
-            <span style="margin:0 6px 0 6px;">to</span>
-            <input id="adminBookingsToDateTo" type="date" title="Booking End Date To" style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:120px;" />
-        </div>
-    `;
-    // Add event listeners to trigger re-render
-    filterBar.querySelector('#adminBookingsSearch').addEventListener('input', renderAdminBookings);
-    filterBar.querySelector('#adminBookingsStatusFilter').addEventListener('change', renderAdminBookings);
-    filterBar.querySelector('#adminBookingsFromDateFrom').addEventListener('change', renderAdminBookings);
-    filterBar.querySelector('#adminBookingsFromDateTo').addEventListener('change', renderAdminBookings);
-    filterBar.querySelector('#adminBookingsToDateFrom').addEventListener('change', renderAdminBookings);
-    filterBar.querySelector('#adminBookingsToDateTo').addEventListener('change', renderAdminBookings);
-
-    // --- Table ---
-    tbody.innerHTML = '';
-    const table = tbody.closest('table');
-    // Remove table from DOM if present
-    if (table && table.parentNode) table.parentNode.removeChild(table);
-
-    // Append filterBar and table directly to section
-    section.insertBefore(filterBar, headingDiv.nextSibling);
-    if (table) {
-        table.style.width = '100%';
-        section.insertBefore(table, filterBar.nextSibling);
-    }
-
-    // Get filter values
-    const searchInput = document.getElementById('adminBookingsSearch');
-    const statusSelect = document.getElementById('adminBookingsStatusFilter');
-    const fromDateFrom = document.getElementById('adminBookingsFromDateFrom');
-    const fromDateTo = document.getElementById('adminBookingsFromDateTo');
-    const toDateFrom = document.getElementById('adminBookingsToDateFrom');
-    const toDateTo = document.getElementById('adminBookingsToDateTo');
-
-    const searchVal = (searchInput && 'value' in searchInput ? String(searchInput.value) : '').toLowerCase();
-    const statusVal = (statusSelect && 'value' in statusSelect ? String(statusSelect.value) : '').toLowerCase();
-    // Helper to get date part only (YYYY-MM-DD as number)
-    function dateOnlyNum(d) {
-        if (!d) return null;
-        return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
-    }
-    const fromDateFromVal = fromDateFrom && (fromDateFrom instanceof HTMLInputElement) && fromDateFrom.value ? new Date(fromDateFrom.value) : null;
-    const fromDateToVal = fromDateTo && (fromDateTo instanceof HTMLInputElement) && fromDateTo.value ? new Date(fromDateTo.value) : null;
-    const toDateFromVal = toDateFrom && (toDateFrom instanceof HTMLInputElement) && toDateFrom.value ? new Date(toDateFrom.value) : null;
-    const toDateToVal = toDateTo && (toDateTo instanceof HTMLInputElement) && toDateTo.value ? new Date(toDateTo.value) : null;
-
-    // Debug: log filter values
-    console.log('Filter values:', {
-        fromDateFromVal,
-        fromDateToVal,
-        toDateFromVal,
-        toDateToVal
-    });
-
-    // Filter bookings
-    let filtered = bookings.filter(b => {
-        const user = (b.user?.displayName || b.user?.name || b.user?.username || b.userId || '').toString().toLowerCase();
-        const equip = (b.equipment?.name || b.equipmentId || '').toString().toLowerCase();
-        const status = (b.bookingStatus?.name || b.bookingStatusId || 'Pending').toString().toLowerCase();
-        const fromDate = b.fromDate ? new Date(b.fromDate) : null;
-        const toDate = b.toDate ? new Date(b.toDate) : null;
-        // Compare only date part (ignore time)
-        const fromDateNum = dateOnlyNum(fromDate);
-        const fromDateFromNum = dateOnlyNum(fromDateFromVal);
-        const fromDateToNum = dateOnlyNum(fromDateToVal);
-        const toDateNum = dateOnlyNum(toDate);
-        const toDateFromNum = dateOnlyNum(toDateFromVal);
-        const toDateToNum = dateOnlyNum(toDateToVal);
-        const matchesSearch = !searchVal || user.includes(searchVal) || equip.includes(searchVal);
-        const matchesStatus = !statusVal || status === statusVal;
-        const matchesFromDateFrom = !fromDateFromNum || (fromDateNum && fromDateNum >= fromDateFromNum);
-        const matchesFromDateTo = !fromDateToNum || (fromDateNum && fromDateNum <= fromDateToNum);
-        const matchesToDateFrom = !toDateFromNum || (toDateNum && toDateNum >= toDateFromNum);
-        const matchesToDateTo = !toDateToNum || (toDateNum && toDateNum <= toDateToNum);
-        return matchesSearch && matchesStatus && matchesFromDateFrom && matchesFromDateTo && matchesToDateFrom && matchesToDateTo;
-    });
-
-    // Debug: log bookings array
-    console.log('Admin bookings to render:', filtered);
-
-    if (filtered.length === 0) {
-        const row = document.createElement('tr');
-        const cell = document.createElement('td');
-        cell.colSpan = 8;
-        cell.className = 'no-bookings-message';
-        cell.textContent = 'No bookings found.';
-        row.appendChild(cell);
-        tbody.appendChild(row);
-        return;
-    }
-
-    filtered.forEach((b, i) => {
-        const row = document.createElement('tr');
-        const statusName = b.bookingStatus?.name || b.bookingStatusId || 'Pending';
-        const statusClass = getStatusClass(statusName);
-        row.innerHTML = `
-            <td>${b.bookingId}</td>
-            <td>${b.user?.displayName || b.user?.name || b.user?.username || b.userId}</td>
-            <td>${b.equipment?.name || b.equipmentId}</td>
-            <td><span class="${statusClass}">${statusName}</span></td>
-            <td>${b.fromDate ? new Date(b.fromDate).toLocaleString() : ''}</td>
-            <td>${b.toDate ? new Date(b.toDate).toLocaleString() : ''}</td>
-            <td>${b.notes || ''}</td>
-            <td>${b.createdDate ? new Date(b.createdDate).toLocaleString() : ''}</td>
-            <td>
-                <button class="action-btn approve-btn" data-idx="${bookings.indexOf(b)}" style="background:#4CAF50;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;margin-right:0.3rem;">Approve</button>
-                <button class="action-btn reject-btn" data-idx="${bookings.indexOf(b)}" style="background:#e57373;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;margin-right:0.3rem;">Reject</button>
-                <button class="action-btn delete-btn" data-idx="${bookings.indexOf(b)}" style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;">Delete</button>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-
-    // Add event listeners for action buttons
-    tbody.querySelectorAll('.approve-btn').forEach(btn => {
-        btn.addEventListener('click', async e => {
-            const idx = (btn instanceof HTMLElement ? btn.dataset.idx : undefined);
-            await updateBookingStatus(idx, 'Approved');
-        });
-    });
-    tbody.querySelectorAll('.reject-btn').forEach(btn => {
-        btn.addEventListener('click', async e => {
-            const idx = (btn instanceof HTMLElement ? btn.dataset.idx : undefined);
-            await updateBookingStatus(idx, 'Rejected');
-        });
-    });
-    tbody.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', async e => {
-            const idx = (btn instanceof HTMLElement ? btn.dataset.idx : undefined);
-            await deleteBooking(idx);
-        });
-    });
-}
-
-// Helper to cache status name -> id mapping
-let bookingStatusMap = null;
-
-async function getBookingStatusMap() {
-    if (bookingStatusMap) return bookingStatusMap;
+async function fetchBookingStatuses() {
     try {
         const res = await fetch('/api/BookingStatus');
         if (!res.ok) throw new Error('Failed to fetch booking statuses');
-        const statuses = await res.json();
-        bookingStatusMap = {};
-        statuses.forEach(s => {
-            bookingStatusMap[s.name.toLowerCase()] = s.bookingStatusId;
-        });
-        return bookingStatusMap;
-    } catch (e) {
-        alert('Failed to fetch booking statuses.');
-        return {};
+        bookingStatuses = await res.json();
+    } catch (err) {
+        console.error('Error fetching booking statuses:', err);
+        bookingStatuses = [];
     }
 }
 
-async function updateBookingStatus(idx, statusName) {
-    const booking = bookings[idx];
-    const statusMap = await getBookingStatusMap();
-    const statusId = statusMap[statusName.toLowerCase()];
-    if (!statusId) {
-        alert('Unknown status: ' + statusName);
-        return;
-    }
-    // Build updated booking object (clone and update status)
-    const updatedBooking = {
-        ...booking,
-        bookingStatusId: statusId,
-        bookingStatus: undefined // let backend resolve
-    };
-    try {
-        const res = await fetch(`/api/Booking/${booking.bookingId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedBooking)
-        });
-        if (!res.ok) throw new Error('Failed to update booking');
-        await fetchBookings();
-    } catch (e) {
-        alert('Failed to update booking status.');
-    }
+// Modal functions
+function openEditModal(booking) {
+	editBooking = { ...booking };
+	showEditModal = true;
+	renderAdminBookings();
 }
 
-async function deleteBooking(idx) {
-    const booking = bookings[idx];
-    try {
-        await fetch(`/api/Booking/${booking.bookingId}`, { method: 'DELETE' });
-        await fetchBookings();
-    } catch (e) {
-        alert('Failed to delete booking.');
-    }
+function closeEditModal() {
+	showEditModal = false;
+	editBooking = null;
+	renderAdminBookings();
 }
-// -------------------------
-// Initialize on page load (for direct navigation)
-// -------------------------
+
+function openDeleteModal(booking) {
+	deleteBookingObj = booking;
+	showDeleteModal = true;
+	renderAdminBookings();
+}
+
+function closeDeleteModal() {
+	showDeleteModal = false;
+	deleteBookingObj = null;
+	renderAdminBookings();
+}
+
+function handleInput(e, field) {
+	if (showEditModal && editBooking) editBooking[field] = e.target.value;
+}
+
+function handleSearch(e) {
+	searchTerm = e.target.value;
+	renderBookingsTable();
+}
+
+function handleSort(e) {
+	sortKey = e.target.value;
+	renderBookingsTable();
+}
+
+function handleSortOrder(e) {
+	sortAsc = !sortAsc;
+	renderBookingsTable();
+}
+
+function handleStatusFilter(e) {
+	statusFilter = e.target.value;
+	renderBookingsTable();
+}
+
+function handleFromDateFilter(e) {
+	fromDateFilter = e.target.value;
+	renderBookingsTable();
+}
+
+function handleToDateFilter(e) {
+	toDateFilter = e.target.value;
+	renderBookingsTable();
+}
+
+function getFilteredSortedList() {
+	let list = [...bookingsList];
+	if (searchTerm) {
+		list = list.filter(b => 
+			(b.user?.displayName || b.user?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+			(b.equipment?.name || '').toLowerCase().includes(searchTerm.toLowerCase())
+		);
+	}
+	if (statusFilter) {
+		list = list.filter(b => (b.bookingStatus?.name || '').toLowerCase() === statusFilter.toLowerCase());
+	}
+	// Date overlap filtering
+	if (fromDateFilter || toDateFilter) {
+		list = list.filter(b => {
+			const bookingFrom = b.fromDate ? new Date(b.fromDate) : null;
+			const bookingTo = b.toDate ? new Date(b.toDate) : null;
+			const filterFrom = fromDateFilter ? new Date(fromDateFilter) : null;
+			const filterTo = toDateFilter ? new Date(toDateFilter) : null;
+			
+			if (!bookingFrom || !bookingTo) return true;
+			
+			// Check for overlap: booking overlaps with filter range if:
+			// booking starts before filter ends AND booking ends after filter starts
+			if (filterFrom && filterTo) {
+				return bookingFrom <= filterTo && bookingTo >= filterFrom;
+			} else if (filterFrom) {
+				return bookingTo >= filterFrom;
+			} else if (filterTo) {
+				return bookingFrom <= filterTo;
+			}
+			return true;
+		});
+	}
+	list.sort((a, b) => {
+		let v1 = a[sortKey]?.toLowerCase?.() || a[sortKey];
+		let v2 = b[sortKey]?.toLowerCase?.() || b[sortKey];
+		if (v1 < v2) return sortAsc ? -1 : 1;
+		if (v1 > v2) return sortAsc ? 1 : -1;
+		return 0;
+	});
+	return list;
+}
+
+function renderBookingsTable() {
+	const tbody = document.getElementById('adminBookingsTableBody');
+	if (!tbody) return;
+	litRender(html`
+		${getFilteredSortedList().map((b, i) => html`
+			<tr>
+				<td><strong>${b.bookingId || ''}</strong></td>
+				<td>${b.user?.displayName || b.user?.name || b.userId || ''}</td>
+				<td>${b.equipment?.name || b.equipmentId || ''}</td>
+				<td>
+					<span class="badge ${(b.bookingStatus?.name || 'Pending')==='Approved'?'badge-success':'badge-secondary'}">${b.bookingStatus?.name || 'Pending'}</span>
+				</td>
+				<td>${b.fromDate ? new Date(b.fromDate).toLocaleDateString() : ''}</td>
+				<td>${b.toDate ? new Date(b.toDate).toLocaleDateString() : ''}</td>
+				<td>
+					<button class="btn btn-sm btn-secondary" @click=${() => openEditModal(b)}>Update</button>
+					<button class="btn btn-sm btn-danger" @click=${() => openDeleteModal(b)}>Delete</button>
+					${showDeleteModal && deleteBookingObj && deleteBookingObj.bookingId === b.bookingId ? html`
+						<div class="modal" style="display:flex;">
+							<div class="modal-content" style="width:430px;max-width:95vw;">
+								<h2 class="modal-title">Delete Booking</h2>
+								<p>Are you sure you want to delete this booking?</p>
+								<div class="mb-3">
+									Booking ID : <strong>${deleteBookingObj.bookingId}</strong><br/>
+									User : <strong>${deleteBookingObj.user?.displayName || deleteBookingObj.userId}</strong>
+								</div>
+								<div style="display:flex;gap:1.5rem;justify-content:center;">
+									<button class="btn btn-danger" @click=${confirmDeleteBooking}>Confirm</button>
+									<button class="btn btn-secondary" @click=${closeDeleteModal}>Cancel</button>
+								</div>
+							</div>
+						</div>
+					` : ""}
+				</td>
+			</tr>
+		`)}
+	`, tbody);
+}
+
+export async function renderAdminBookings() {
+	const section = document.getElementById("admin-bookings");
+	if (!section) return;
+	litRender(html`<div>Loading bookings management...</div>`, section);
+	await fetchBookings();
+	await fetchBookingStatuses();
+	console.log('Rendering bookings management UI...');
+
+	section.classList.remove('hidden');
+	litRender(html`
+		<div class="card-header">
+			<div class="card-subtitle">View, approve, reject, and manage bookings.</div>
+		</div>
+		<div class="card">
+			<div class="controls-container">
+				<div class="controls-left"></div>
+				<div class="controls-right">
+					<span>From:</span>
+					<input type="date" placeholder="From Date" @input=${handleFromDateFilter} .value=${fromDateFilter} class="form-input" title="Filter from date" />
+					<span>To:</span>
+					<input type="date" placeholder="To Date" @input=${handleToDateFilter} .value=${toDateFilter} class="form-input" title="Filter to date" />
+					<select @change=${handleSort} class="form-select">
+						<option value="bookingId">Sort by</option>
+						<option value="bookingId">ID</option>
+						<option value="user">User</option>
+						<option value="equipment">Equipment</option>
+					</select>
+					<button class="btn btn-primary" @click=${handleSortOrder}>
+						<span>${sortAsc ? "\u25B2" : "\u25BC"}</span>
+					</button>
+					<input type="text" placeholder="Search ..." @input=${handleSearch} .value=${searchTerm} class="form-input" />
+					<button class="btn btn-primary">
+						<span>&#128269;</span>
+					</button>
+					<select @change=${handleStatusFilter} class="form-select">
+						<option value="">All Statuses</option>
+						${bookingStatuses.map(s => html`<option value="${s.name}">${s.name}</option>`)}
+					</select>
+				</div>
+			</div>
+			<div class="table-container">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>USER</th>
+							<th>EQUIPMENT</th>
+							<th>STATUS</th>
+							<th>FROM DATE</th>
+							<th>TO DATE</th>
+							<th>ACTION</th>
+						</tr>
+					</thead>
+					<tbody id="adminBookingsTableBody"></tbody>
+				</table>
+			</div>
+		</div>
+
+		${showEditModal ? html`
+			<div class="modal" style="display:flex;">
+				<div class="modal-content" style="width:500px;max-width:95vw;">
+					<h2 class="modal-title">Update Booking</h2>
+					<p class="card-subtitle">Update booking status</p>
+					<div class="form-group">
+						<select @change=${e => handleInput(e, 'status')} class="form-select" .value=${editBooking?.bookingStatus?.name || ''}>
+							<option value="">Select Status</option>
+							${bookingStatuses.map(s => html`<option value="${s.name}">${s.name}</option>`)}
+						</select>
+					</div>
+					<div style="display:flex;gap:1.5rem;justify-content:center;">
+						<button class="btn btn-primary" @click=${updateBooking}>Update</button>
+						<button class="btn btn-secondary" @click=${closeEditModal}>Cancel</button>
+					</div>
+				</div>
+			</div>
+		` : ""}
+	`, section);
+	renderBookingsTable();
+}
+
+async function updateBooking() {
+	const status = bookingStatuses.find(s => s.name === editBooking.status);
+	const payload = {
+		...editBooking,
+		bookingStatusId: status ? status.bookingStatusId : editBooking.bookingStatusId
+	};
+	try {
+		const res = await fetch(`/api/Booking/${editBooking.bookingId}`, {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
+		});
+		if (!res.ok) throw new Error('Failed to update booking');
+		await fetchBookings();
+		renderBookingsTable();
+		closeEditModal();
+	} catch (err) {
+		console.error('Update booking error:', err);
+		alert('Error updating booking: ' + err.message);
+	}
+}
+
+async function confirmDeleteBooking() {
+	if (deleteBookingObj) {
+		try {
+			const res = await fetch(`/api/Booking/${deleteBookingObj.bookingId}`, { method: 'DELETE' });
+			if (!res.ok) throw new Error('Failed to delete booking');
+			await fetchBookings();
+			renderBookingsTable();
+		} catch (err) {
+			console.error('Delete booking error:', err);
+			alert('Error deleting booking: ' + err.message);
+		}
+	}
+	closeDeleteModal();
+}

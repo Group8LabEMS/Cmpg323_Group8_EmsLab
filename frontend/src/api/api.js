@@ -13,37 +13,43 @@ export async function getData() {
   catch (err) { console.error("Error fetching EQUIPMENT data:", err); }
 }
 
-/**
- * Get current user info
- * @returns {Promise<{ userId: string, email: string, role: string }|null>}
-*/
-export async function getCurrentUser() {
+/** @returns {Promise<{ totalUsers: number, activeBookings: number, maintenanceEquipment: number }>} */
+export async function getAdminAggregateStats() {
+  const res = await fetch("http://localhost:8000/api/stats/aggregates", { credentials: 'include' });
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  const text = await res.text();
+  console.log("RESPONSE:", text)
   try {
-    const res = await fetch('http://localhost:8000/api/Auth/me', { credentials: 'include' });
-    if (res.ok) { return await res.json(); }
-    return null;
-  }
-  catch (err) {
-    console.error('Error getting current user:', err);
-    return null;
+    return JSON.parse(text);
+  } catch (e) {
+    throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
   }
 }
 
-/**
- * Log out & redirect to login
- * @returns {Promise<void>}
- */
-export async function logout() {
+/** @returns {Promise<Array<{ month: number, year: number, count: number }>>} */
+export async function getBookingsPerMonth() {
+  const res = await fetch("http://localhost:8000/api/stats/bookings-per-month", {
+    credentials: 'include'
+  });
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  const text = await res.text();
   try {
-    await fetch('http://localhost:8000/api/Auth/logout', {
-      method: 'POST',
-      credentials: 'include'
-    });
-    window.location.href = 'login.html';
-  } catch (err) {
-    console.error('Logout error:', err);
-    window.location.href = 'login.html';
+    return JSON.parse(text);
+  } catch (e) {
+    throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
   }
 }
 
-
+/** @returns {Promise<Array<{ name: string, count: number }>>} */
+export async function getEquipmentUsage() {
+  const res = await fetch("http://localhost:8000/api/stats/equipment-usage", {
+    credentials: 'include'
+  });
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
+  }
+}
