@@ -159,6 +159,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("equipment").classList.remove("hidden");
       const btn = document.querySelector('.sidebar-btn[data-target="equipment"]');
       if (btn) btn.classList.add("active");
+      if (tabRenderers.equipment) tabRenderers.equipment();
     });
   }
   renderSidebar();
