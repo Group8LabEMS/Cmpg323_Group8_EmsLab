@@ -145,22 +145,22 @@ const tabRenderers = {
    reports: renderReports,
 };
 
-// Book Now button
-const bookNowBtn = document.getElementById("bookNowBtn");
-if (bookNowBtn) {
-  bookNowBtn.addEventListener("click", e => {
-    e.preventDefault();
-    document.querySelectorAll(".tab").forEach(tab => tab.classList.add("hidden"));
-    document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
-    document.getElementById("equipment").classList.remove("hidden");
-    const btn = document.querySelector('.sidebar-btn[data-target="equipment"]');
-    if (btn) btn.classList.add("active");
-  });
-}
-
-// Initialize on DOMContentLoaded
 document.addEventListener("DOMContentLoaded", async () => {
   await initAuth();
+  
+  // Book Now button - setup after auth to ensure currentRole is set
+  const bookNowBtn = document.getElementById("bookNowBtn");
+  if (bookNowBtn) {
+    bookNowBtn.classList.toggle('hidden', currentRole === 'Admin');
+    bookNowBtn.addEventListener("click", e => {
+      e.preventDefault();
+      document.querySelectorAll(".tab").forEach(tab => tab.classList.add("hidden"));
+      document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
+      document.getElementById("equipment").classList.remove("hidden");
+      const btn = document.querySelector('.sidebar-btn[data-target="equipment"]');
+      if (btn) btn.classList.add("active");
+    });
+  }
   renderSidebar();
   initSidebarResize();
 
