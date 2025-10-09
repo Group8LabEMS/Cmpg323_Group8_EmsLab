@@ -10,6 +10,7 @@ let pendingDeleteUserIndex = null;
 // DOM element references
 let userModal, userModalTitle, displayNameInput, universityNoInput, emailInput, passwordInput, repasswordInput;
 let confirmUserBtn, cancelUserBtn, userDeleteModal, userDeleteMessage, confirmUserDeleteBtn, cancelUserDeleteBtn;
+let isInitialized = false;
 
 // ---------- Render ---------- //
 // --- UI State ---
@@ -43,6 +44,15 @@ function getFilteredSortedList() {
 export function renderUsers() {
   const section = document.getElementById("userManagement");
   if (!section) return;
+  
+  // Initialize DOM elements and event listeners if not already initialized
+  if (!isInitialized) {
+    initializeDOMElements();
+    setupEventListeners();
+    fetchUsers();
+    isInitialized = true;
+    return;
+  }
   litRender(html`
     <div class="card-header">
       <h2 class="card-title">User Management</h2>
@@ -134,6 +144,10 @@ function openEditUser(index) {
   universityNoInput.value = u.ssoId || "";
   emailInput.value = u.email || "";
   
+  // Set role value for editing
+  const roleInput = /** @type {HTMLInputElement} */ (document.getElementById("roleInput"));
+  if (roleInput) { roleInput.value = u.role || "Student"; }
+  
   // Hide password fields for editing (passwords should be changed separately)
   passwordInput.style.display = "none";
   repasswordInput.style.display = "none";
@@ -191,7 +205,24 @@ async function confirmUserDelete() {
 // ---------- Actions ---------- //
 
 
-// Setup event listeners after DOM is loaded
+// Initialize DOM element references
+function initializeDOMElements() {
+  userModal            = document.getElementById("userModal");
+  userModalTitle       = document.getElementById("userModalTitle");
+  displayNameInput     = document.getElementById("displayNameInput");
+  universityNoInput    = document.getElementById("universityNoInput");
+  emailInput           = document.getElementById("emailInput");
+  passwordInput        = document.getElementById("passwordInput");
+  repasswordInput      = document.getElementById("repasswordInput");
+  confirmUserBtn       = document.getElementById("confirmUser");
+  cancelUserBtn        = document.getElementById("cancelUser");
+  userDeleteModal      = document.getElementById("userDeleteModal");
+  userDeleteMessage    = document.getElementById("userDeleteMessage");
+  confirmUserDeleteBtn = document.getElementById("confirmUserDelete");
+  cancelUserDeleteBtn  = document.getElementById("cancelUserDelete");
+}
+
+// Setup event listeners
 function setupEventListeners() {
   confirmUserBtn.addEventListener("click", async () => {
     const displayName = displayNameInput.value.trim();
@@ -224,11 +255,7 @@ function setupEventListeners() {
       return;
     }
 
-    const userObj = {
-      displayName,
-      ssoId,
-      email,
-    };
+    const userObj = { displayName, ssoId, email, role };
 
     // Only include password if provided
     if (password) {
@@ -269,23 +296,4 @@ async function fetchUsers() {
   }
 }
 
-// Initial load
-window.addEventListener("DOMContentLoaded", () => {
-  // Initialize DOM element references
-  userModal            = document.getElementById("userModal");
-  userModalTitle       = document.getElementById("userModalTitle");
-  displayNameInput     = document.getElementById("displayNameInput");
-  universityNoInput    = document.getElementById("universityNoInput");
-  emailInput           = document.getElementById("emailInput");
-  passwordInput        = document.getElementById("passwordInput");
-  repasswordInput      = document.getElementById("repasswordInput");
-  confirmUserBtn       = document.getElementById("confirmUser");
-  cancelUserBtn        = document.getElementById("cancelUser");
-  userDeleteModal      = document.getElementById("userDeleteModal");
-  userDeleteMessage    = document.getElementById("userDeleteMessage");
-  confirmUserDeleteBtn = document.getElementById("confirmUserDelete");
-  cancelUserDeleteBtn  = document.getElementById("cancelUserDelete");
-  
-  setupEventListeners();
-  fetchUsers();
-});
+

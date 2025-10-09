@@ -129,7 +129,9 @@ namespace Group8.LabEms.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, UserCreateUpdateDto userDto)
         {
-            var existingUser = await _context.Users.FindAsync(id);
+            var existingUser = await _context.Users
+                .Include(u => u.UserRoles)
+                .FirstOrDefaultAsync(u => u.UserId == id);
             if (existingUser == null) { return NotFound(); }
 
             existingUser.SsoId = userDto.SsoId;
@@ -140,6 +142,21 @@ namespace Group8.LabEms.Api.Controllers
             if (!string.IsNullOrEmpty(userDto.Password))
             {
                 existingUser.Password = _passwordService.HashPassword(userDto.Password);
+            }
+
+            // Handle role update if provided
+            if (!string.IsNullOrEmpty(userDto.Role))
+            {
+                // Remove all existing roles
+                _context.UserRoles.RemoveRange(existingUser.UserRoles);
+                
+                // Add new role
+                var roleEntity = await _context.Roles.FirstOrDefaultAsync(r => r.Name == userDto.Role);
+                if (roleEntity != null)
+                {
+                    var userRole = new UserRoleModel { UserId = existingUser.UserId, RoleId = roleEntity.RoleId };
+                    _context.UserRoles.Add(userRole);
+                }
             }
 
             try
