@@ -1,5 +1,6 @@
 import { html, render as litRender } from "lit";
 import { apiFetch } from "../api/api.js";
+import { addToast } from "../util/toast.js";
 
 // --- API Integration --- //
 async function fetchEquipment() {
@@ -94,9 +95,10 @@ async function addEquipment() {
 		renderEquipmentTable();
 		resetAddForm();
 		closeAddModal();
+		addToast('Success', 'Equipment added successfully');
 	} catch (err) {
 		console.error('Add Equipment error:', err);
-		alert('Error adding equipment: ' + err.message);
+		addToast('Error', 'Error adding equipment: ' + err.message);
 	}
 }
 
@@ -115,6 +117,7 @@ async function updateEquipment() {
 	await fetchEquipment();
 	renderEquipmentTable();
 	closeEditModal();
+	addToast('Success', 'Equipment updated successfully');
 }
 
 
@@ -133,6 +136,7 @@ async function confirmDeleteEquipment() {
 		await apiFetch('DELETE', `/api/Equipment/${deleteEquipmentObj.equipmentId}`, { responseType: 'void' });
 		await fetchEquipment();
 		renderEquipmentTable();
+		addToast('Success', 'Equipment deleted successfully');
 	}
 	closeDeleteModal();
 }

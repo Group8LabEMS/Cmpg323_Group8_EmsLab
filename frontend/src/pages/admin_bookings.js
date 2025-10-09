@@ -1,5 +1,6 @@
 import { html, render as litRender } from "lit";
 import { apiFetch } from "../api/api.js";
+import { addToast } from "../util/toast.js";
 
 let bookingsList = [];
 let bookingStatuses = [];
@@ -263,13 +264,13 @@ export async function renderAdminBookings() {
 
 async function updateBooking() {
 	if (!editBooking.status) {
-		alert('Please select a status');
+		addToast('Validation Error', 'Please select a status');
 		return;
 	}
 	
 	const status = bookingStatuses.find(s => s.name === editBooking.status);
 	if (!status) {
-		alert('Invalid status selected');
+		addToast('Validation Error', 'Invalid status selected');
 		return;
 	}
 	
@@ -282,9 +283,10 @@ async function updateBooking() {
 		await fetchBookings();
 		renderBookingsTable();
 		closeEditModal();
+		addToast('Success', 'Booking status updated successfully');
 	} catch (err) {
 		console.error('Update booking error:', err);
-		alert('Error updating booking: ' + err.message);
+		addToast('Error', 'Error updating booking: ' + err.message);
 	}
 }
 
@@ -294,9 +296,10 @@ async function confirmDeleteBooking() {
 			await apiFetch('DELETE', `/api/Booking/${deleteBookingObj.bookingId}`, { responseType: 'void' });
 			await fetchBookings();
 			renderBookingsTable();
+			addToast('Success', 'Booking deleted successfully');
 		} catch (err) {
 			console.error('Delete booking error:', err);
-			alert('Error deleting booking: ' + err.message);
+			addToast('Error', 'Error deleting booking: ' + err.message);
 		}
 	}
 	closeDeleteModal();

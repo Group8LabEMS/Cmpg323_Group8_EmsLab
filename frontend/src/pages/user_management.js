@@ -1,5 +1,6 @@
 import { html, render as litRender } from "lit-html";
 import { apiFetch } from "../api/api.js";
+import { addToast } from "../util/toast.js";
 
 // Global state
 let users = [];
@@ -178,8 +179,9 @@ async function confirmUserDelete() {
       try {
         await apiFetch('DELETE', `/api/User/${user.userId}`, { responseType: 'void' });
         await fetchUsers();
+        addToast('Success', 'User deleted successfully');
       } catch (e) {
-        alert("Failed to delete user.");
+        addToast('Error', 'Failed to delete user.');
       }
     }
     closeUserDeleteModal();
@@ -200,25 +202,25 @@ function setupEventListeners() {
     const role = document.getElementById("roleInput") ? /** @type {HTMLSelectElement} */ (document.getElementById("roleInput")).value : "Student";
 
     if (!displayName || !ssoId || !email) {
-      alert("Display name, university number, and email are required.");
+      addToast('Validation Error', 'Display name, university number, and email are required.');
       return;
     }
 
     // For new users, password is required
     if (editingUserIndex === null) {
       if (!password || !repassword) {
-        alert("Password is required for new users.");
+        addToast('Validation Error', 'Password is required for new users.');
         return;
       }
       if (password !== repassword) {
-        alert("Passwords do not match.");
+        addToast('Validation Error', 'Passwords do not match.');
         return;
       }
     }
 
     // For existing users, only validate password if provided
     if (editingUserIndex !== null && password && password !== repassword) {
-      alert("Passwords do not match.");
+      addToast('Validation Error', 'Passwords do not match.');
       return;
     }
 
@@ -244,8 +246,9 @@ function setupEventListeners() {
       }
       await fetchUsers();
       closeUserModal();
+      addToast('Success', editingUserIndex !== null ? 'User updated successfully' : 'User created successfully');
     } catch (e) {
-      alert("Failed to save user.");
+      addToast('Error', 'Failed to save user.');
     }
   });
 
@@ -262,7 +265,7 @@ async function fetchUsers() {
   } catch (e) {
     users = [];
     renderUsers();
-    alert("Could not load users from server.");
+    addToast('Error', 'Could not load users from server.');
   }
 }
 

@@ -1,5 +1,6 @@
 import { html, render as litRender } from "lit";
 import { apiFetch } from "../api/api.js";
+import { addToast } from "../util/toast.js";
 
 // ---------- DOM Refs ---------- //
 const maintenanceTableBody = document.getElementById("maintenanceTableBody");
@@ -24,7 +25,7 @@ export async function fetchMaintenance() {
   } catch (e) {
     maintenanceList = [];
     renderMaintenance();
-    alert('Could not load maintenance data from server.');
+    addToast('Error', 'Could not load maintenance data from server.');
   }
 }
 
@@ -62,8 +63,9 @@ async function updateStatus(id, newStatus) {
       body: { status: newStatus }
     });
     await fetchMaintenance();
+    addToast('Success', 'Maintenance status updated successfully');
   } catch (e) {
-    alert('Failed to update maintenance status.');
+    addToast('Error', 'Failed to update maintenance status.');
   }
 }
 // Fetch maintenance data on page load

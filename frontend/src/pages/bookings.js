@@ -4,6 +4,7 @@ import { equipmentList } from "./equipent.js";
 import { updateModal, deleteModal } from "../util/modals.js";
 import { getInputById } from "../util/dom.js";
 import { apiFetch } from "../api/api.js";
+import { addToast } from "../util/toast.js";
 
 //---------- Element references ----------//
 const bookingTableBody = document.getElementById("bookingTableBody");
@@ -102,12 +103,13 @@ confirmBooking.addEventListener("click", async () => {
       await apiFetch('POST', '/api/Booking', { body: booking });
       bookingModal.classList.add("hidden");
       await fetchAndRenderBookings();
+      addToast('Success', 'Booking created successfully');
     } catch (err) {
       console.error('Booking error:', err);
-      alert(err.message);
+      addToast('Booking Error', err.message);
     }
   } else {
-    alert("Please fill in all fields.");
+    addToast('Validation Error', 'Please fill in all fields.');
   }
 });
 
@@ -148,7 +150,7 @@ document.getElementById("confirmUpdate").addEventListener("click", () => {
     renderBookings();
     updateModal.classList.add("hidden");
   } else {
-    alert("Please fill in all fields.");
+    addToast('Validation Error', 'Please fill in all fields.');
   }
 });
 

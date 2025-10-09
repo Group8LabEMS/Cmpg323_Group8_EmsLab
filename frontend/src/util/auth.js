@@ -1,4 +1,5 @@
 import { apiFetch } from '../api/api.js';
+import { addToast } from './toast.js';
 
 /**
  * Get current user info
@@ -50,7 +51,7 @@ export async function checkAuth() {
 export async function requireRole(requiredRole) {
   const user = await checkAuth();
   if (!user || user.role !== requiredRole) {
-    alert('Access denied. Insufficient permissions.');
+    addToast('Access Denied', 'Insufficient permissions.');
     window.location.href = 'index.html';
     return false;
   }

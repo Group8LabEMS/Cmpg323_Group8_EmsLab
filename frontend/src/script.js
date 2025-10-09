@@ -86,9 +86,10 @@ function renderSidebar() {
   if (logout) logout.addEventListener('click', async () => {
     try {
       await doLogout();
+      addToast('Success', 'Logged out successfully');
     }
     catch (err) { console.error('Logout error:', err); }
-    window.location.href = 'login.html';
+    setTimeout(() => window.location.href = 'login.html', 1000);
   });
 }
 

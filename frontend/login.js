@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const password = form.password.value.trim();
 
     if (!username || !password) {
-      addToast('Login Failed', 'Please enter both username and password', 4000);
+      addToast('Login Failed', 'Please enter both username and password', 2000);
       return;
     }
 
@@ -30,15 +30,15 @@ document.addEventListener('DOMContentLoaded', async function() {
     catch (err) {
       const status = String(err).includes("status:") ? Number(String(err).split("status:").at(-1).trim()) : 0;
       if (status === 401) {
-        addToast('Authentication Failed', 'Invalid username or password. Please check your credentials.', 5000);
+        addToast('Authentication Failed', 'Invalid username or password. Please check your credentials.', 3000);
       } else if (status === 429) {
-        addToast('Too Many Attempts', 'Please wait before trying again.', 5000);
+        addToast('Too Many Attempts', 'Please wait before trying again.', 3000);
       } else if (status >= 500) {
-        addToast('Server Error', 'Unable to connect to server. Please try again later.', 5000);
+        addToast('Server Error', 'Unable to connect to server. Please try again later.', 3000);
       } else if (status === 0) {
-        addToast('Connection Error', 'No internet connection. Please check your network.', 5000);
+        addToast('Connection Error', 'No internet connection. Please check your network.', 3000);
       } else {
-        addToast('Login Failed', 'An unexpected error occurred. Please try again.', 5000);
+        addToast('Login Failed', 'An unexpected error occurred. Please try again.', 3000);
       }
     }
   };
