@@ -52,9 +52,16 @@ jobs:
 
       - name: Inject secrets into config files
         run: |
+          sed -i 's/"JwtSecretKey": "[^"]*"/"JwtSecretKey": "${{ secrets.JWT_SECRET_KEY }}"/g'                           ${{env.DOTNET_ROOT}}/labems-build/Configurations/appsettings.json
+
+          sed -i '/DefaultConnection\|ProductionConnection/s/server=localhost/server=${{ secrets.DB_SERVER }}/g'         ${{env.DOTNET_ROOT}}/labems-build/Configurations/appsettings.json
+          sed -i '/DefaultConnection\|ProductionConnection/s/port=3306/port=${{ secrets.DB_PORT }}/g'                    ${{env.DOTNET_ROOT}}/labems-build/Configurations/appsettings.json
           sed -i '/DefaultConnection\|ProductionConnection/s/database=labems/database=${{ secrets.DB_NAME }}/g'          ${{env.DOTNET_ROOT}}/labems-build/Configurations/appsettings.json
           sed -i '/DefaultConnection\|ProductionConnection/s/user=root/user=${{ secrets.DB_USER }}/g'                    ${{env.DOTNET_ROOT}}/labems-build/Configurations/appsettings.json
           sed -i '/DefaultConnection\|ProductionConnection/s/password=labems12345/password=${{ secrets.DB_PASSWORD }}/g' ${{env.DOTNET_ROOT}}/labems-build/Configurations/appsettings.json
+
+          sed -i '/DefaultConnection/s/server=localhost/server=${{ secrets.DB_SERVER }}/g'                               ${{env.DOTNET_ROOT}}/labems-build/Configurations/database.json
+          sed -i '/DefaultConnection/s/port=3306/port=${{ secrets.DB_PORT }}/g'                                          ${{env.DOTNET_ROOT}}/labems-build/Configurations/database.json
           sed -i '/DefaultConnection/s/database=labems/database=${{ secrets.DB_NAME }}/g'                                ${{env.DOTNET_ROOT}}/labems-build/Configurations/database.json
           sed -i '/DefaultConnection/s/user=root/user=${{ secrets.DB_USER }}/g'                                          ${{env.DOTNET_ROOT}}/labems-build/Configurations/database.json
           sed -i '/DefaultConnection/s/password=labems12345/password=${{ secrets.DB_PASSWORD }}/g'                       ${{env.DOTNET_ROOT}}/labems-build/Configurations/database.json
