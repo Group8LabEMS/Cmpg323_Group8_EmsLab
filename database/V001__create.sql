@@ -50,7 +50,7 @@ CREATE TABLE `user_role` (
     `user_id` INT NOT NULL,
     `role_id` INT NOT NULL,
     PRIMARY KEY (`user_id`, `role_id`),
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE,
     FOREIGN KEY (`role_id`) REFERENCES `role`(`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -76,7 +76,7 @@ CREATE TABLE `booking` (
     `booking_status_id` INT NOT NULL,
     `notes` TEXT,
     `created_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE,
     FOREIGN KEY (`equipment_id`) REFERENCES `equipment`(`equipment_id`),
     FOREIGN KEY (`booking_status_id`) REFERENCES `booking_status`(`booking_status_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -104,5 +104,5 @@ CREATE TABLE `audit_log` (
     `entity_type` VARCHAR(255) NOT NULL,
     `entity_id` INT NOT NULL,
     `details` JSON,
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`)
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

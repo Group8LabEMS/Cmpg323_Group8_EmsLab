@@ -26,21 +26,31 @@ namespace Group8.LabEms.Api.Controllers
 
        
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserModel>>> GetUsers()
-            => await _context.Users
+        public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetUsers()
+        {
+            var users = await _context.Users
                 .Include(u => u.UserRoles)
-                .Include(u => u.Bookings)
-                .Include(u => u.AuditLogs)
+                    .ThenInclude(ur => ur.Role)
                 .ToListAsync();
+
+            return users.Select(u => new UserResponseDto
+            {
+                UserId = u.UserId,
+                SsoId = u.SsoId,
+                DisplayName = u.DisplayName,
+                Email = u.Email,
+                CreatedAt = u.CreatedAt,
+                Role = u.UserRoles.FirstOrDefault()?.Role?.Name
+            }).ToList();
+        }
 
         
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserModel>> GetUser(int id)
+        public async Task<ActionResult<UserResponseDto>> GetUser(int id)
         {
             var user = await _context.Users
                 .Include(u => u.UserRoles)
-                .Include(u => u.Bookings)
-                .Include(u => u.AuditLogs)
+                    .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.UserId == id);
 
             if (user == null)
@@ -48,15 +58,35 @@ namespace Group8.LabEms.Api.Controllers
                 return NotFound();
             }
 
-            return user;
+            return new UserResponseDto
+            {
+                UserId = user.UserId,
+                SsoId = user.SsoId,
+                DisplayName = user.DisplayName,
+                Email = user.Email,
+                CreatedAt = user.CreatedAt,
+                Role = user.UserRoles.FirstOrDefault()?.Role?.Name
+            };
         }
 
        
         [HttpPost]
-        public async Task<ActionResult<UserModel>> CreateUser(UserModel user, [FromQuery] string role)
+        public async Task<ActionResult<UserResponseDto>> CreateUser(UserCreateUpdateDto userDto, [FromQuery] string role)
         {
-            user.Password = _passwordService.HashPassword(user.Password);
-            user.CreatedAt = DateTime.UtcNow;
+            if (string.IsNullOrEmpty(userDto.Password))
+            {
+                return BadRequest("Password is required for new users");
+            }
+
+            var user = new UserModel
+            {
+                SsoId = userDto.SsoId,
+                DisplayName = userDto.DisplayName,
+                Email = userDto.Email,
+                Password = _passwordService.HashPassword(userDto.Password),
+                CreatedAt = DateTime.UtcNow
+            };
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -84,25 +114,33 @@ namespace Group8.LabEms.Api.Controllers
                 // Don't fail user creation if email fails
             }
 
-            return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
+            return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, new UserResponseDto
+            {
+                UserId = user.UserId,
+                SsoId = user.SsoId,
+                DisplayName = user.DisplayName,
+                Email = user.Email,
+                CreatedAt = user.CreatedAt,
+                Role = roleEntity?.Name
+            });
         }
 
    
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, UserModel user)
+        public async Task<IActionResult> UpdateUser(int id, UserCreateUpdateDto userDto)
         {
-            if (id != user.UserId)
-            {
-                return BadRequest();
-            }
-
             var existingUser = await _context.Users.FindAsync(id);
             if (existingUser == null) { return NotFound(); }
 
-            existingUser.SsoId = user.SsoId;
-            existingUser.DisplayName = user.DisplayName;
-            existingUser.Email = user.Email;
-            // Password updates should be handled through the reset-password endpoint
+            existingUser.SsoId = userDto.SsoId;
+            existingUser.DisplayName = userDto.DisplayName;
+            existingUser.Email = userDto.Email;
+            
+            // Only update password if provided
+            if (!string.IsNullOrEmpty(userDto.Password))
+            {
+                existingUser.Password = _passwordService.HashPassword(userDto.Password);
+            }
 
             try
             {

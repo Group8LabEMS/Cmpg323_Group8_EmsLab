@@ -7,7 +7,7 @@ let editingUserIndex = null;
 let pendingDeleteUserIndex = null;
 
 // DOM element references
-let userModal, userModalTitle, nameInput, surnameInput, universityNoInput, emailInput, cellInput, passwordInput, repasswordInput;
+let userModal, userModalTitle, displayNameInput, universityNoInput, emailInput, passwordInput, repasswordInput;
 let confirmUserBtn, cancelUserBtn, userDeleteModal, userDeleteMessage, confirmUserDeleteBtn, cancelUserDeleteBtn;
 
 // ---------- Render ---------- //
@@ -107,15 +107,17 @@ export function renderUsers() {
 
 function openAddUser() {
   editingUserIndex = null;
-  userModalTitle.textContent = "User Profile";
-  nameInput.value = "";
-  surnameInput.value = "";
+  userModalTitle.textContent = "Create User";
+  displayNameInput.value = "";
   universityNoInput.value = "";
   emailInput.value = "";
-  cellInput.value = "";
-
   passwordInput.value = "";
   repasswordInput.value = "";
+  
+  // Show password fields for new user
+  passwordInput.style.display = "block";
+  repasswordInput.style.display = "block";
+  
   userModal.classList.remove("hidden");
 }
 
@@ -125,18 +127,17 @@ function openAddUser() {
  */
 function openEditUser(index) {
   editingUserIndex = index;
-  userModalTitle.textContent = "User Profile";
+  userModalTitle.textContent = "Edit User";
   const u = users[index];
-  // Split displayName into first and last if possible
-  const [first, ...last] = (u.displayName || "").split(" ");
-  nameInput.value = first || "";
-  surnameInput.value = last.join(" ") || "";
+  displayNameInput.value = u.displayName || "";
   universityNoInput.value = u.ssoId || "";
   emailInput.value = u.email || "";
-  cellInput.value = u.cell || "";
-
-  passwordInput.value = u.password || "";
-  repasswordInput.value = u.password || "";
+  
+  // Hide password fields for editing (passwords should be changed separately)
+  passwordInput.style.display = "none";
+  repasswordInput.style.display = "none";
+  passwordInput.value = "";
+  repasswordInput.value = "";
   
   userModal.classList.remove("hidden");
 }
@@ -191,42 +192,55 @@ async function confirmUserDelete() {
 // Setup event listeners after DOM is loaded
 function setupEventListeners() {
   confirmUserBtn.addEventListener("click", async () => {
-    const name = nameInput.value.trim();
-    const surname = surnameInput.value.trim();
+    const displayName = displayNameInput.value.trim();
     const ssoId = universityNoInput.value.trim();
     const email = emailInput.value.trim();
-    const cell = cellInput.value.trim();
-
     const password = passwordInput.value;
     const repassword = repasswordInput.value;
-    const role = document.getElementById("roleInput") ? /** @type {HTMLSelectElement} */ (document.getElementById("roleInput")).value : "";
+    const role = document.getElementById("roleInput") ? /** @type {HTMLSelectElement} */ (document.getElementById("roleInput")).value : "Student";
 
-    if (!name || !surname || !ssoId || !email || !cell || !password || !repassword) {
-      alert("All fields are required.");
+    if (!displayName || !ssoId || !email) {
+      alert("Display name, university number, and email are required.");
       return;
     }
-    if (password !== repassword) {
+
+    // For new users, password is required
+    if (editingUserIndex === null) {
+      if (!password || !repassword) {
+        alert("Password is required for new users.");
+        return;
+      }
+      if (password !== repassword) {
+        alert("Passwords do not match.");
+        return;
+      }
+    }
+
+    // For existing users, only validate password if provided
+    if (editingUserIndex !== null && password && password !== repassword) {
       alert("Passwords do not match.");
       return;
     }
 
     const userObj = {
-      displayName: name + " " + surname,
+      displayName,
       ssoId,
       email,
-      password,
     };
+
+    // Only include password if provided
+    if (password) {
+      userObj.password = password;
+    }
 
     try {
       if (editingUserIndex !== null) {
         // Update
         const user = users[editingUserIndex];
-        await apiFetch('PUT', `/api/User/${user.userId}`, {
-          body: { ...user, ...userObj, userId: user.userId }
-        });
+        await apiFetch('PUT', `/api/User/${user.userId}`, { body: userObj });
       } else {
         // Create
-        await apiFetch('POST', '/api/User', { body: userObj });
+        await apiFetch('POST', `/api/User?role=${encodeURIComponent(role)}`, { body: userObj });
       }
       await fetchUsers();
       closeUserModal();
@@ -257,12 +271,9 @@ window.addEventListener("DOMContentLoaded", () => {
   // Initialize DOM element references
   userModal            = document.getElementById("userModal");
   userModalTitle       = document.getElementById("userModalTitle");
-  nameInput            = document.getElementById("nameInput");
-  surnameInput         = document.getElementById("surnameInput");
+  displayNameInput     = document.getElementById("displayNameInput");
   universityNoInput    = document.getElementById("universityNoInput");
   emailInput           = document.getElementById("emailInput");
-  cellInput            = document.getElementById("cellInput");
-
   passwordInput        = document.getElementById("passwordInput");
   repasswordInput      = document.getElementById("repasswordInput");
   confirmUserBtn       = document.getElementById("confirmUser");
