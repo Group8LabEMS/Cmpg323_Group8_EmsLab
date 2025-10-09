@@ -24,7 +24,7 @@ services:
 
   backend:
     build: 
-      context: ./backend
+      context: ./Backend/Group8.LabEms.Api/Group8.LabEms.Api
       dockerfile: Dockerfile
     container_name: aspnet_api
     restart: unless-stopped
@@ -44,10 +44,10 @@ services:
     develop:
       watch:
         - action: sync
-          path: ./backend
+          path: ./Backend
           target: /src
         - action: rebuild
-          path: ./backend/Dockerfile
+          path: ./Backend/Dockerfile
 
   frontend:
     build:
