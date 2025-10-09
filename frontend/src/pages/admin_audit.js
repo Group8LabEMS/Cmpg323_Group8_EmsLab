@@ -1,5 +1,6 @@
 
 import { html, render } from "lit";
+import { apiFetch } from "../api/api.js";
 
 let auditLogs = [];
 let searchTerm = "";
@@ -8,9 +9,7 @@ let sortAsc = true;
 
 async function fetchAuditLogs() {
 	try {
-		const res = await fetch('/api/AuditLog');
-		if (!res.ok) throw new Error('Failed to fetch audit logs');
-		auditLogs = await res.json();
+		auditLogs = await apiFetch('GET', '/api/AuditLog');
 		renderAdminAudit();
 	} catch (err) {
 		auditLogs = [];

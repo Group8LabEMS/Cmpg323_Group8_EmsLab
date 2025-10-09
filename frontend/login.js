@@ -1,8 +1,11 @@
+import { apiFetch } from './src/api/api.js';
+
 document.addEventListener('DOMContentLoaded', async function() {
   // Check if already logged in
   try {
-    const res = await fetch('http://localhost:8000/api/Auth/me', { credentials: 'include' });
-    if (res.ok) { window.location.href = 'index.html'; return; }
+    await apiFetch('GET', '/api/Auth/me');
+    window.location.href = 'index.html';
+    return;
   } catch (err) { /* Not logged in, continue */ }
 
   const form = document.getElementById('loginForm');
@@ -14,15 +17,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     const password = form.password.value.trim();
 
     try {
-      const res = await fetch('http://localhost:8000/api/Auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ username, password })
+      await apiFetch('POST', '/api/Auth/login', {
+        body: { username, password }
       });
-      if (res.ok) { window.location.href = 'index.html'; }
-      else { alert('Invalid username or password.'); }
+      window.location.href = 'index.html';
     }
-    catch (err) { alert('Login failed.'); }
+    catch (err) { alert('Invalid username or password.'); }
   };
 });

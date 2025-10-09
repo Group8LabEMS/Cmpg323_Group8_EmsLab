@@ -122,6 +122,7 @@ function renderBookingsBarChart() {
       categoryPercentage: 0.7
     }]
   };
+  /** @type {import("chart.js").ChartConfiguration} */
   const config = {
     type: 'bar',
     data: data,

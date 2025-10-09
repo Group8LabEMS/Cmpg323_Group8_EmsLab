@@ -1,4 +1,5 @@
 import { html, render as litRender } from "lit";
+import { apiFetch } from "../api/api.js";
 
 // ---------- DOM Refs ---------- //
 const maintenanceTableBody = document.getElementById("maintenanceTableBody");
@@ -10,9 +11,7 @@ export let maintenanceList = [];
 // --- API Integration --- //
 export async function fetchMaintenance() {
   try {
-    const res = await fetch('/api/Maintenance');
-    if (!res.ok) throw new Error('Failed to fetch maintenance');
-    const data = await res.json();
+    const data = await apiFetch('GET', '/api/Maintenance');
     maintenanceList = data.map(m => ({
       id: m.maintenanceId,
       name: m.equipment?.name || '',
@@ -59,10 +58,8 @@ async function updateStatus(id, newStatus) {
   if (!eq) return;
   try {
     // Call backend to update status
-    await fetch(`/api/Maintenance/${id}/status`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: newStatus })
+    await apiFetch('PUT', `/api/Maintenance/${id}/status`, {
+      body: { status: newStatus }
     });
     await fetchMaintenance();
   } catch (e) {

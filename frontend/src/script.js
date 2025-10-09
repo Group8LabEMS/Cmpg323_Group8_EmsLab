@@ -14,6 +14,7 @@ import { renderReports } from "./pages/admin_reports.js";
 import { html, render } from "lit";
 import { logout as doLogout } from "./util/auth.js";
 import { initSidebarResize } from "./util/resize.js";
+import { apiFetch } from "./api/api.js";
 
 // Role-based tab config
 const TABS_BY_ROLE = {
@@ -41,17 +42,11 @@ let currentRole = 'Student';
 
 async function initAuth() {
   try {
-    const res = await fetch('http://localhost:8000/api/Auth/me', { credentials: 'include' });
-    if (res.ok) {
-      currentUser = await res.json();
-      currentRole = currentUser.role || 'Student';
-      // Expose globally for other modules
-      window.currentUser = currentUser;
-      window.currentRole = currentRole;
-    } else {
-      window.location.href = 'login.html';
-      return;
-    }
+    currentUser = await apiFetch('GET', '/api/Auth/me');
+    currentRole = currentUser.role || 'Student';
+    // Expose globally for other modules
+    window.currentUser = currentUser;
+    window.currentRole = currentRole;
   } catch (err) {
     window.location.href = 'login.html';
     return;

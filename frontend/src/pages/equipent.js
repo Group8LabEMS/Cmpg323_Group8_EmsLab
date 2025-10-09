@@ -1,5 +1,6 @@
 import { html, render as litRender } from "lit";
 import { openBooking } from "./bookings.js";
+import { apiFetch } from "../api/api.js";
 
 //---------- State ----------//
 export let selectedEquipment = null;
@@ -14,9 +15,7 @@ let sortAsc = true;
 async function fetchEquipment() {
   console.log('Fetching equipment userEquipment.js...');
   try {
-    const res = await fetch('/api/Equipment');
-    if (!res.ok) throw new Error('Failed to fetch equipment');
-    const data = await res.json();
+    const data = await apiFetch('GET', '/api/Equipment');
 
     // Map the backend fields to table columns
     equipmentList = data.map(eq => ({

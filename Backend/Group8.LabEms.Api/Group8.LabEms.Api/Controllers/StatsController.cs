@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Group8.LabEms.Api.Controllers
 {
-    [Route("api/admin/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class StatsController : ControllerBase

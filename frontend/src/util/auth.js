@@ -1,12 +1,12 @@
+import { apiFetch } from '../api/api.js';
+
 /**
  * Get current user info
  * @returns {Promise<{ userId: string, email: string, role: string }|null>}
 */
 export async function getCurrentUser() {
   try {
-    const res = await fetch('http://localhost:8000/api/Auth/me', { credentials: 'include' });
-    if (res.ok) { return await res.json(); }
-    return null;
+    return await apiFetch('GET', '/api/Auth/me');
   }
   catch (err) {
     console.error('Error getting current user:', err);
@@ -20,10 +20,7 @@ export async function getCurrentUser() {
  */
 export async function logout() {
   try {
-    await fetch('http://localhost:8000/api/Auth/logout', {
-      method: 'POST',
-      credentials: 'include'
-    });
+    await apiFetch('POST', '/api/Auth/logout', { responseType: 'void' });
     window.location.href = 'login.html';
   } catch (err) {
     console.error('Logout error:', err);

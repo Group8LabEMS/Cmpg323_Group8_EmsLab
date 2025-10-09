@@ -1,10 +1,10 @@
 import { html, render as litRender } from "lit";
+import { apiFetch } from "../api/api.js";
 
 // --- API Integration --- //
 async function fetchEquipment() {
 	console.log('Fetching equipment...');
-	const res = await fetch('/api/Equipment');
-	const data = await res.json();
+	const data = await apiFetch('GET', '/api/Equipment');
        equipmentList = data.map(eq => ({
 	       ...eq,
 	       name: eq.name,
@@ -21,8 +21,8 @@ async function fetchEquipment() {
 
 async function fetchEquipmentTypesAndStatuses() {
 	await Promise.all([
-		fetch('/api/EquipmentType').then(res => res.json()),
-		fetch('/api/EquipmentStatus').then(res => res.json())
+		apiFetch('GET', '/api/EquipmentType'),
+		apiFetch('GET', '/api/EquipmentStatus')
 	]).then(([types, statuses]) => {
 		equipmentTypes = types;
 		equipmentStatuses = statuses;
@@ -88,19 +88,8 @@ async function addEquipment() {
 		createdDate: new Date().toISOString(),
 	};
 	try {
-		const res = await fetch('/api/Equipment', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(payload)
-		});
-			const result = await res.json().catch(() => ({}));
-			console.log('Add Equipment response:', res.status, result);
-			if (!res.ok) {
-				let msg = 'Failed to add equipment: ' + (result?.message || res.status);
-				if (result?.errors) msg += '\n' + JSON.stringify(result.errors);
-				alert(msg);
-				return;
-			}
+		const result = await apiFetch('POST', '/api/Equipment', { body: payload });
+		console.log('Add Equipment response:', result);
 		await fetchEquipment();
 		renderEquipmentTable();
 		resetAddForm();
@@ -122,11 +111,7 @@ async function updateEquipment() {
 		availability: editEquipment.status,
 		createdDate: editEquipment.createdDate || new Date().toISOString(),
 	};
-	await fetch(`/api/Equipment/${editEquipment.equipmentId}`, {
-		method: 'PUT',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(payload)
-	});
+	await apiFetch('PUT', `/api/Equipment/${editEquipment.equipmentId}`, { body: payload });
 	await fetchEquipment();
 	renderEquipmentTable();
 	closeEditModal();
@@ -145,7 +130,7 @@ function closeDeleteModal() {
 }
 async function confirmDeleteEquipment() {
 	if (deleteEquipmentObj) {
-		await fetch(`/api/Equipment/${deleteEquipmentObj.equipmentId}`, { method: 'DELETE' });
+		await apiFetch('DELETE', `/api/Equipment/${deleteEquipmentObj.equipmentId}`, { responseType: 'void' });
 		await fetchEquipment();
 		renderEquipmentTable();
 	}

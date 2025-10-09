@@ -1,4 +1,5 @@
 import { html, render as litRender } from "lit-html";
+import { apiFetch } from "../api/api.js";
 
 // Global state
 let users = [];
@@ -174,7 +175,7 @@ async function confirmUserDelete() {
     const user = users[pendingDeleteUserIndex];
     if (user && user.userId) {
       try {
-        await fetch(`/api/User/${user.userId}`, { method: "DELETE" });
+        await apiFetch('DELETE', `/api/User/${user.userId}`, { responseType: 'void' });
         await fetchUsers();
       } catch (e) {
         alert("Failed to delete user.");
@@ -220,18 +221,12 @@ function setupEventListeners() {
       if (editingUserIndex !== null) {
         // Update
         const user = users[editingUserIndex];
-        await fetch(`/api/User/${user.userId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...user, ...userObj, userId: user.userId })
+        await apiFetch('PUT', `/api/User/${user.userId}`, {
+          body: { ...user, ...userObj, userId: user.userId }
         });
       } else {
         // Create
-        await fetch(`/api/User`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(userObj)
-        });
+        await apiFetch('POST', '/api/User', { body: userObj });
       }
       await fetchUsers();
       closeUserModal();
@@ -248,9 +243,7 @@ function setupEventListeners() {
 // --- API Integration --- //
 async function fetchUsers() {
   try {
-    const res = await fetch("/api/User");
-    if (!res.ok) throw new Error("Failed to fetch users");
-    users = await res.json();
+    users = await apiFetch('GET', '/api/User');
     renderUsers();
   } catch (e) {
     users = [];

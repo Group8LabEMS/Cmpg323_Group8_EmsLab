@@ -15,10 +15,10 @@ export default defineConfig({
     },
   },
   server: {
-    open: '/login.html', // Open the login page by default
+    open: '/login.html', // Default page
     proxy: {
       '/api': {
-  target: 'http://localhost:8000', // Updated to match backend port
+        target: 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
       },

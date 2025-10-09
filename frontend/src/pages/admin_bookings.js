@@ -1,4 +1,5 @@
 import { html, render as litRender } from "lit";
+import { apiFetch } from "../api/api.js";
 
 let bookingsList = [];
 let bookingStatuses = [];
@@ -18,9 +19,7 @@ let deleteBookingObj = null;
 // Fetch data
 export async function fetchBookings() {
     try {
-        const res = await fetch('/api/Booking');
-        if (!res.ok) throw new Error('Failed to fetch bookings');
-        const data = await res.json();
+        const data = await apiFetch('GET', '/api/Booking');
         console.log('Raw bookings response:', data);
         bookingsList = data;
     } catch (err) {
@@ -31,9 +30,7 @@ export async function fetchBookings() {
 
 async function fetchBookingStatuses() {
     try {
-        const res = await fetch('/api/BookingStatus');
-        if (!res.ok) throw new Error('Failed to fetch booking statuses');
-        bookingStatuses = await res.json();
+        bookingStatuses = await apiFetch('GET', '/api/BookingStatus');
     } catch (err) {
         console.error('Error fetching booking statuses:', err);
         bookingStatuses = [];
@@ -268,12 +265,7 @@ async function updateBooking() {
 		bookingStatusId: status ? status.bookingStatusId : editBooking.bookingStatusId
 	};
 	try {
-		const res = await fetch(`/api/Booking/${editBooking.bookingId}`, {
-			method: 'PUT',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(payload)
-		});
-		if (!res.ok) throw new Error('Failed to update booking');
+		await apiFetch('PUT', `/api/Booking/${editBooking.bookingId}`, { body: payload });
 		await fetchBookings();
 		renderBookingsTable();
 		closeEditModal();
@@ -286,8 +278,7 @@ async function updateBooking() {
 async function confirmDeleteBooking() {
 	if (deleteBookingObj) {
 		try {
-			const res = await fetch(`/api/Booking/${deleteBookingObj.bookingId}`, { method: 'DELETE' });
-			if (!res.ok) throw new Error('Failed to delete booking');
+			await apiFetch('DELETE', `/api/Booking/${deleteBookingObj.bookingId}`, { responseType: 'void' });
 			await fetchBookings();
 			renderBookingsTable();
 		} catch (err) {

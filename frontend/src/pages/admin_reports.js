@@ -2,6 +2,7 @@
 // API-integrated logic for the Admin Reports section.
 
 import { html, render } from "lit";
+import { apiFetch } from "../api/api.js";
 
 // --- Global State ---
 let currentReportData = [];
@@ -75,9 +76,7 @@ const REPORT_CONFIG = {
 
 async function fetchReportData(endpoint) {
     try {
-        const res = await fetch(endpoint);
-        if (!res.ok) throw new Error(`Failed to fetch report data from ${endpoint}`);
-        const data = await res.json();
+        const data = await apiFetch('GET', endpoint);
         
         // Normalize data keys (similar to admin_equipment.js)
         return data.map(item => {
@@ -125,12 +124,12 @@ async function fetchReportData(endpoint) {
 async function fetchUniqueOptions() {
     try {
         const [roles, faculties, departments, bookingStatuses, equipmentTypes, equipmentStatuses] = await Promise.all([
-            fetch('/api/Role').then(res => res.json()).catch(() => []),
-            fetch('/api/Faculty').then(res => res.json()).catch(() => []),
-            fetch('/api/Department').then(res => res.json()).catch(() => []),
-            fetch('/api/BookingStatus').then(res => res.json()).catch(() => []),
-            fetch('/api/EquipmentType').then(res => res.json()).catch(() => []),
-            fetch('/api/EquipmentStatus').then(res => res.json()).catch(() => []),
+            apiFetch('GET', '/api/Role').catch(() => []),
+            apiFetch('GET', '/api/Faculty').catch(() => []),
+            apiFetch('GET', '/api/Department').catch(() => []),
+            apiFetch('GET', '/api/BookingStatus').catch(() => []),
+            apiFetch('GET', '/api/EquipmentType').catch(() => []),
+            apiFetch('GET', '/api/EquipmentStatus').catch(() => []),
         ]);
 
         // Map API response to simple string arrays

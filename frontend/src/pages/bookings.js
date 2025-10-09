@@ -3,6 +3,7 @@ import { deleteMessage } from "../util/modals.js";
 import { equipmentList } from "./equipent.js";
 import { updateModal, deleteModal } from "../util/modals.js";
 import { getInputById } from "../util/dom.js";
+import { apiFetch } from "../api/api.js";
 
 //---------- Element references ----------//
 const bookingTableBody = document.getElementById("bookingTableBody");
@@ -98,22 +99,12 @@ confirmBooking.addEventListener("click", async () => {
     };
 
     try {
-      const response = await fetch("/api/Booking", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: 'include',
-        body: JSON.stringify(booking)
-      });
-      if (response.ok) {
-        bookingModal.classList.add("hidden");
-        await fetchAndRenderBookings();
-      } else {
-        const text = await response.text();
-        console.error('Booking error:', text);
-        alert(text); // Show backend error to user
-      }
+      await apiFetch('POST', '/api/Booking', { body: booking });
+      bookingModal.classList.add("hidden");
+      await fetchAndRenderBookings();
     } catch (err) {
       console.error('Booking error:', err);
+      alert(err.message);
     }
   } else {
     alert("Please fill in all fields.");
@@ -122,11 +113,7 @@ confirmBooking.addEventListener("click", async () => {
 
 async function fetchAndRenderBookings() {
   try {
-    const response = await fetch("/api/Booking", {
-      credentials: 'include'
-    });
-    if (!response.ok) throw new Error("Failed to fetch bookings");
-    const data = await response.json();
+    const data = await apiFetch('GET', '/api/Booking');
     bookings = data.map(b => ({
       name: b.equipment?.name || "",
       date: b.fromDate?.split("T")[0] || "",
