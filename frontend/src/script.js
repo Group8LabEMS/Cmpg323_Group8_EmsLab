@@ -11,6 +11,9 @@ import { renderAdminBookings } from "./pages/admin_bookings.js";
 import { renderMaintenance } from "./pages/maintenance.js";
 import { renderReports } from "./pages/admin_reports.js";
 
+// Import utilities
+import "./util/toast.js";
+
 import { html, render } from "lit";
 import { logout as doLogout } from "./util/auth.js";
 import { initSidebarResize } from "./util/resize.js";

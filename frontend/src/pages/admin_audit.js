@@ -75,11 +75,11 @@ export function renderAdminAudit() {
 				<tr>
 					<td>${log.auditLogId}</td>
 					<td>${log.timeStamp ? new Date(log.timeStamp).toLocaleString() : ''}</td>
-					<td>${log.user || log.userId || ''}</td>
-					<td>${log.action}</td>
+					<td>${log.user?.displayName || log.userId || ''}</td>
+					<td><b>${log.action}</b></td>
 					<td>${log.entityType}</td>
 					<td>${log.entityId}</td>
-					<td>${log.details || ''}</td>
+					<td><code>${log.details || ''}</code></td>
 				</tr>
 			`)}`, tableBody);
 		}
