@@ -274,7 +274,7 @@ function renderReportTable(data, config) {
     const tbody = document.getElementById('reportTableBody');
     if (!tbody) return;
 
-    render(html``, tbody);
+    tbody.innerHTML = '';
     
     if (data.length === 0) {
         const row = document.createElement('tr');
@@ -316,7 +316,7 @@ function populateSortOptions(config) {
     const select = document.getElementById('reportSortSelect');
     if (!select) return;
 
-    render(html`<option value="">Sort by</option>`, select); 
+    select.innerHTML = '<option value="">Sort by</option>';
 
     config.sortOptions.forEach(option => {
         const opt = document.createElement('option');
@@ -330,7 +330,7 @@ function renderTableHeader(config) {
     const headerRow = document.getElementById('reportTableHeader');
     if (!headerRow) return;
 
-    render(html``, headerRow);
+    headerRow.innerHTML = '';
     config.headers.forEach((header, index) => {
         const th = document.createElement('th');
         th.textContent = header;
