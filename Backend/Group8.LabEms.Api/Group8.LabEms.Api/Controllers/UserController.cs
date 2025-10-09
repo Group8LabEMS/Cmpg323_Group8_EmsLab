@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Group8.LabEms.Api.Services.Interfaces;
+using Group8.LabEms.Api.Services;
 
 namespace Group8.LabEms.Api.Controllers
 {
@@ -14,11 +15,13 @@ namespace Group8.LabEms.Api.Controllers
     {
         private readonly AppDbContext _context;
         private readonly INotificationService _notificationService;
+        private readonly PasswordService _passwordService;
 
-        public UserController(AppDbContext context, INotificationService notificationService)
+        public UserController(AppDbContext context, INotificationService notificationService, PasswordService passwordService)
         {
             _context = context;
             _notificationService = notificationService;
+            _passwordService = passwordService;
         }
 
        
@@ -52,6 +55,7 @@ namespace Group8.LabEms.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<UserModel>> CreateUser(UserModel user, [FromQuery] string role)
         {
+            user.Password = _passwordService.HashPassword(user.Password);
             user.CreatedAt = DateTime.UtcNow;
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -92,7 +96,13 @@ namespace Group8.LabEms.Api.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(user).State = EntityState.Modified;
+            var existingUser = await _context.Users.FindAsync(id);
+            if (existingUser == null) { return NotFound(); }
+
+            existingUser.SsoId = user.SsoId;
+            existingUser.DisplayName = user.DisplayName;
+            existingUser.Email = user.Email;
+            // Password updates should be handled through the reset-password endpoint
 
             try
             {

@@ -14,11 +14,13 @@ namespace Group8.LabEms.Api.Controllers
     {
         private readonly AppDbContext _context;
         private readonly JwtService _jwtService;
+        private readonly PasswordService _passwordService;
         
-        public AuthController(AppDbContext context, JwtService jwtService)
+        public AuthController(AppDbContext context, JwtService jwtService, PasswordService passwordService)
         {
             _context = context;
             _jwtService = jwtService;
+            _passwordService = passwordService;
         }
 
         [HttpPost("login")]
@@ -28,13 +30,15 @@ namespace Group8.LabEms.Api.Controllers
             {
                 var user = await _context.Users
                     .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
-                    .FirstOrDefaultAsync(u => u.Email == req.Username && u.Password == req.Password);
+                    .FirstOrDefaultAsync(u => u.Email == req.Username);
 
-                if (user == null)
+                if (user == null || !_passwordService.VerifyPassword(req.Password, user.Password))
                 {
                     Serilog.Log.Warning($"Login failed for username: {req.Username}");
                     return Unauthorized();
                 }
+
+
 
                 var role = user.UserRoles.FirstOrDefault()?.Role.Name ?? "Student";
                 
@@ -73,6 +77,71 @@ namespace Group8.LabEms.Api.Controllers
             return Ok(new { message = "Logged out successfully" });
         }
 
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequest req)
+        {
+            try
+            {
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == req.Email);
+                if (existingUser != null)
+                {
+                    return BadRequest(new { message = "User already exists" });
+                }
+
+                var user = new Models.UserModel
+                {
+                    SsoId = req.SsoId ?? Guid.NewGuid().ToString(),
+                    DisplayName = req.DisplayName,
+                    Email = req.Email,
+                    Password = _passwordService.HashPassword(req.Password),
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Student");
+                if (role != null)
+                {
+                    var userRole = new Models.UserRoleModel { UserId = user.UserId, RoleId = role.RoleId };
+                    _context.UserRoles.Add(userRole);
+                    await _context.SaveChangesAsync();
+                }
+
+                return Ok(new { message = "Registration successful", userId = user.UserId });
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(ex, "Exception during registration for email: {Email}", req?.Email);
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
+        }
+
+        [HttpPost("reset-password")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest req)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == req.UserId);
+                if (user == null)
+                {
+                    return NotFound(new { message = "User not found" });
+                }
+
+                user.Password = _passwordService.HashPassword(req.NewPassword);
+                await _context.SaveChangesAsync();
+
+                Serilog.Log.Information($"Password reset for userId: {user.UserId} by admin");
+                return Ok(new { message = "Password reset successfully" });
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(ex, "Exception during password reset for userId: {UserId}", req?.UserId);
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
+        }
+
         [HttpGet("me")]
         [Authorize]
         public IActionResult GetCurrentUser()
@@ -87,7 +156,21 @@ namespace Group8.LabEms.Api.Controllers
 
     public class LoginRequest
     {
-    public string? Username { get; set; }
-    public string? Password { get; set; }
+        public string? Username { get; set; }
+        public string? Password { get; set; }
+    }
+
+    public class RegisterRequest
+    {
+        public string? SsoId { get; set; }
+        public string DisplayName { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string Password { get; set; } = null!;
+    }
+
+    public class ResetPasswordRequest
+    {
+        public int UserId { get; set; }
+        public string NewPassword { get; set; } = null!;
     }
 }

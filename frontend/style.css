@@ -301,6 +301,10 @@ main {
   margin-bottom: var(--spacing-md);
 }
 
+.form-centered {
+  text-align: center;
+}
+
 .form-label {
   display: block;
   margin-bottom: var(--spacing-xs);

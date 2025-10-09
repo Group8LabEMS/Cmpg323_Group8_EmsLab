@@ -48,21 +48,22 @@ INSERT INTO maintenance_status (name, description) VALUES
 
 -- ----- Populate dummy data ----- --
 -- Users
+-- Default password is 'password' for all dummy users
 INSERT INTO user (sso_id, display_name, email, password) VALUES 
-('admin001', 'Admin User', 'admin@example.com', 'AdminPassword'),
-('student001', 'Student User', 'student@example.com', 'StudentPassword'),
-('faculty001', 'Dr. Sarah Johnson', 'sarah.johnson@university.edu', 'FacultyPass123'),
-('faculty002', 'Prof. Michael Chen', 'michael.chen@university.edu', 'FacultyPass456'),
-('student002', 'Alice Smith', 'alice.smith@student.edu', 'StudentPass789'),
-('student003', 'Bob Wilson', 'bob.wilson@student.edu', 'StudentPass012'),
-('student004', 'Carol Davis', 'carol.davis@student.edu', 'StudentPass345'),
-('student005', 'David Brown', 'david.brown@student.edu', 'StudentPass678'),
-('labassist001', 'Emma Thompson', 'emma.thompson@university.edu', 'AssistPass901'),
-('labassist002', 'James Rodriguez', 'james.rodriguez@university.edu', 'AssistPass234'),
-('maint001', 'Tom Martinez', 'tom.martinez@university.edu', 'MaintPass567'),
-('maint002', 'Lisa Anderson', 'lisa.anderson@university.edu', 'MaintPass890'),
-('manager001', 'Robert Taylor', 'robert.taylor@university.edu', 'ManagerPass123'),
-('tech001', 'Jennifer Lee', 'jennifer.lee@university.edu', 'TechPass456');
+('admin001',     'Admin User',         'admin@example.com',              '$2a$12$snZOsJ0uWsyyaRUt0p1DVeAqCBnXuVjV5/8Vy3TlmnRMn4BmKV2jm'),
+('student001',   'Student User',       'student@example.com',            '$2a$12$snZOsJ0uWsyyaRUt0p1DVeAqCBnXuVjV5/8Vy3TlmnRMn4BmKV2jm'),
+('faculty001',   'Dr. Sarah Johnson',  'sarah.johnson@university.edu',   '$2a$12$snZOsJ0uWsyyaRUt0p1DVeAqCBnXuVjV5/8Vy3TlmnRMn4BmKV2jm'),
+('faculty002',   'Prof. Michael Chen', 'michael.chen@university.edu',    '$2a$12$snZOsJ0uWsyyaRUt0p1DVeAqCBnXuVjV5/8Vy3TlmnRMn4BmKV2jm'),
+('student002',   'Alice Smith',        'alice.smith@student.edu',        '$2a$12$snZOsJ0uWsyyaRUt0p1DVeAqCBnXuVjV5/8Vy3TlmnRMn4BmKV2jm'),
+('student003',   'Bob Wilson',         'bob.wilson@student.edu',         '$2a$12$snZOsJ0uWsyyaRUt0p1DVeAqCBnXuVjV5/8Vy3TlmnRMn4BmKV2jm'),
+('student004',   'Carol Davis',        'carol.davis@student.edu',        '$2a$12$snZOsJ0uWsyyaRUt0p1DVeAqCBnXuVjV5/8Vy3TlmnRMn4BmKV2jm'),
+('student005',   'David Brown',        'david.brown@student.edu',        '$2a$12$snZOsJ0uWsyyaRUt0p1DVeAqCBnXuVjV5/8Vy3TlmnRMn4BmKV2jm'),
+('labassist001', 'Emma Thompson',      'emma.thompson@university.edu',   '$2a$12$snZOsJ0uWsyyaRUt0p1DVeAqCBnXuVjV5/8Vy3TlmnRMn4BmKV2jm'),
+('labassist002', 'James Rodriguez',    'james.rodriguez@university.edu', '$2a$12$snZOsJ0uWsyyaRUt0p1DVeAqCBnXuVjV5/8Vy3TlmnRMn4BmKV2jm'),
+('maint001',     'Tom Martinez',       'tom.martinez@university.edu',    '$2a$12$snZOsJ0uWsyyaRUt0p1DVeAqCBnXuVjV5/8Vy3TlmnRMn4BmKV2jm'),
+('maint002',     'Lisa Anderson',      'lisa.anderson@university.edu',   '$2a$12$snZOsJ0uWsyyaRUt0p1DVeAqCBnXuVjV5/8Vy3TlmnRMn4BmKV2jm'),
+('manager001',   'Robert Taylor',      'robert.taylor@university.edu',   '$2a$12$snZOsJ0uWsyyaRUt0p1DVeAqCBnXuVjV5/8Vy3TlmnRMn4BmKV2jm'),
+('tech001',      'Jennifer Lee',       'jennifer.lee@university.edu',    '$2a$12$snZOsJ0uWsyyaRUt0p1DVeAqCBnXuVjV5/8Vy3TlmnRMn4BmKV2jm');
 
 -- User Roles
 INSERT INTO user_role (user_id, role_id) 
