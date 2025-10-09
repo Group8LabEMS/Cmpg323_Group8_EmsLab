@@ -10,16 +10,33 @@ const userTableBody = document.getElementById("userTableBody");
 const userModal = document.getElementById("userModal");
 const userModalTitle = document.getElementById("userModalTitle");
 
-const nameInput = /** @type {HTMLInputElement} */ (document.getElementById("nameInput"));
-const surnameInput = /** @type {HTMLInputElement} */ (document.getElementById("surnameInput"));
-const universityNoInput = /** @type {HTMLInputElement} */ (document.getElementById("universityNoInput"));
-const emailInput = /** @type {HTMLInputElement} */ (document.getElementById("emailInput"));
-const cellInput = /** @type {HTMLInputElement} */ (document.getElementById("cellInput"));
-const facultyInput = /** @type {HTMLInputElement} */ (document.getElementById("facultyInput"));
-const departmentInput = /** @type {HTMLInputElement} */ (document.getElementById("departmentInput"));
-const passwordInput = /** @type {HTMLInputElement} */ (document.getElementById("passwordInput"));
-const repasswordInput = /** @type {HTMLInputElement} */ (document.getElementById("repasswordInput"));
-
+const nameInput = /** @type {HTMLInputElement} */ (
+  document.getElementById("nameInput")
+);
+const surnameInput = /** @type {HTMLInputElement} */ (
+  document.getElementById("surnameInput")
+);
+const universityNoInput = /** @type {HTMLInputElement} */ (
+  document.getElementById("universityNoInput")
+);
+const emailInput = /** @type {HTMLInputElement} */ (
+  document.getElementById("emailInput")
+);
+const cellInput = /** @type {HTMLInputElement} */ (
+  document.getElementById("cellInput")
+);
+const facultyInput = /** @type {HTMLInputElement} */ (
+  document.getElementById("facultyInput")
+);
+const departmentInput = /** @type {HTMLInputElement} */ (
+  document.getElementById("departmentInput")
+);
+const passwordInput = /** @type {HTMLInputElement} */ (
+  document.getElementById("passwordInput")
+);
+const repasswordInput = /** @type {HTMLInputElement} */ (
+  document.getElementById("repasswordInput")
+);
 
 const confirmUserBtn = document.getElementById("confirmUser");
 const cancelUserBtn = document.getElementById("cancelUser");
@@ -53,11 +70,14 @@ function toggleSortDir() {
 function getFilteredSortedList() {
   let list = [...users];
   if (searchTerm)
-    list = list.filter(u =>
-      (u.displayName || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (u.ssoId || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (u.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (u.role || "").toLowerCase().includes(searchTerm.toLowerCase())
+    list = list.filter(
+      (u) =>
+        (u.displayName || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        (u.ssoId || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (u.email || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (u.role || "").toLowerCase().includes(searchTerm.toLowerCase())
     );
   list.sort((a, b) => {
     let v1 = a[sortKey]?.toLowerCase?.() || a[sortKey];
@@ -72,39 +92,44 @@ function getFilteredSortedList() {
 export function renderUsers() {
   const section = document.getElementById("userManagement");
   if (!section) return;
-  litRender(html`
-    <h2 style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;margin: 1rem -7%">User Management</h2>
-    <div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin: 1rem -7%">View, add, update and delete users.</div>
-    <button style="float:right;margin-bottom:1.5rem;background:#8d5fc5;color:#fff;font-size:1.2rem;padding:0.7rem 2.5rem;border-radius:8px;border:none;box-shadow:0 2px 8px #bdbdbd;margin-right:4rem" @click=${openAddUser}>Create User</button>
-    <div style="clear:both"></div>
-    <div style="background:#fff;border-radius:20px;box-shadow:0 4px 15px #e0d3f3;padding:2rem 1.5rem 1.5rem 1.5rem;margin-left:-6.2rem;margin-right:4rem">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
-        <div style="display:flex;align-items:center;gap:0.5rem;">
-          <select @change=${handleSort} style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
+  litRender(
+    html`
+    <div class="mainContentButtons-Wrapper">
+      <button @click=${openAddUser} class="mainContentPrimaryButtons" >New User</button>
+    </div>
+
+    <div class="controllers-container">
+      <div class="sort-Wrapper">
+        <select class="sortDropDown" @change=${handleSort} >
             <option value="displayName">Sort by</option>
             <option value="displayName">Name</option>
             <option value="ssoId">University No</option>
             <option value="email">Email</option>
             <option value="role">Role</option>
-          </select>
-          <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;margin-left:0.5rem;display:flex;align-items:center;gap:0.3rem;" @click=${toggleSortDir}>
-            <span style="font-size:1.2rem;">${sortAsc ? "\u25B2" : "\u25BC"}</span>
-          </button>
-        </div>
-        <div style="display:flex;align-items:center;gap:0.5rem;">
-          <input type="text" placeholder="Search ..." @input=${handleSearch} value=${searchTerm} style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;" />
-          <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
-            <span style="font-size:1.2rem;">&#128269;</span>
-          </button>
-          <button style="background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
-            <span style="font-size:1.2rem;">&#128465;</span> FILTER
-          </button>
-        </div>
+        </select>
+        <button class="sortAscDescButton" @click=${toggleSortDir}>
+          <span style="font-size:1.2rem;">${sortAsc ? 
+            html`<img src='../Assets/SortZA.svg' alt='Sort' style='width:25px;height:25px;' />` : 
+            html`<img src='../Assets/SortAZ.svg' alt='Sort' style='width:25px;height:25px;' />`}</span>
+        </button>
       </div>
-      <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
+      <div class="searchfilter-Wrapper">
+        <div class="search-Wrapper">
+          <input class="search-Input" type="text" placeholder="Search ..." @input=${handleSearch} value=${searchTerm}  />
+          <button class="search-Button">
+            <img src="../Assets/Search.svg" alt="Search" style="width:25px;height:25px;" />
+          </button>
+        </div>
+        <button class="filter-Button">
+          <img src="../Assets/Filter.svg" alt="Search" style="width:25px;height:25px;" /> FILTER
+        </button>
+      </div>
+    </div>
+
+      <table>
         <thead>
-          <tr style="background:#8d5fc5;color:#fff;">
-            <th style="padding:1rem 0.5rem;">NAME</th>
+          <tr>
+            <th>NAME</th>
             <th>UNIVERSITY NO</th>
             <th>EMAIL</th>
             <th>ROLE</th>
@@ -128,7 +153,9 @@ export function renderUsers() {
         </tbody>
       </table>
     </div>
-  `, section);
+  `,
+    section
+  );
 }
 
 // ---------- Modal Handling ---------- //
@@ -167,7 +194,7 @@ function openEditUser(index) {
   departmentInput.value = u.department || "";
   passwordInput.value = u.password || "";
   repasswordInput.value = u.password || "";
-  
+
   userModal.classList.remove("hidden");
 }
 
@@ -177,7 +204,6 @@ function openEditUser(index) {
 function closeUserModal() {
   userModal.classList.add("hidden");
 }
-
 
 /**
  * Opens the user delete confirmation modal.
@@ -217,7 +243,6 @@ async function confirmUserDelete() {
 
 // ---------- Actions ---------- //
 
-
 confirmUserBtn.addEventListener("click", async () => {
   const name = nameInput.value.trim();
   const surname = surnameInput.value.trim();
@@ -228,9 +253,22 @@ confirmUserBtn.addEventListener("click", async () => {
   const department = departmentInput.value.trim();
   const password = passwordInput.value;
   const repassword = repasswordInput.value;
-  const role = document.getElementById("roleInput") ? /** @type {HTMLSelectElement} */ (document.getElementById("roleInput")).value : "";
+  const role = document.getElementById("roleInput")
+    ? /** @type {HTMLSelectElement} */ (document.getElementById("roleInput"))
+      .value
+    : "";
 
-  if (!name || !surname || !ssoId || !email || !cell || !faculty || !department || !password || !repassword) {
+  if (
+    !name ||
+    !surname ||
+    !ssoId ||
+    !email ||
+    !cell ||
+    !faculty ||
+    !department ||
+    !password ||
+    !repassword
+  ) {
     alert("All fields are required.");
     return;
   }
@@ -244,7 +282,6 @@ confirmUserBtn.addEventListener("click", async () => {
     ssoId,
     email,
     password,
-    
   };
 
   try {
@@ -254,14 +291,14 @@ confirmUserBtn.addEventListener("click", async () => {
       await fetch(`/api/User/${user.userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...user, ...userObj, userId: user.userId })
+        body: JSON.stringify({ ...user, ...userObj, userId: user.userId }),
       });
     } else {
       // Create
       await fetch(`/api/User`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userObj)
+        body: JSON.stringify(userObj),
       });
     }
     await fetchUsers();
@@ -271,9 +308,7 @@ confirmUserBtn.addEventListener("click", async () => {
   }
 });
 
-
 cancelUserBtn.addEventListener("click", closeUserModal);
-
 
 // User delete modal actions
 confirmUserDeleteBtn.addEventListener("click", confirmUserDelete);

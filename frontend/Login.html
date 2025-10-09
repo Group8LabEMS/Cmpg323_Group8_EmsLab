@@ -1,26 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LabEMS - Login</title>
+  <link rel="icon" href="Assets/labEMS_icon.svg" sizes="48x48" />
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="login-page">
- 
-  <header class="topbar">
-    <div class="logo">LabEMS</div>
-    <nav>
-      <!-- <a href="register.html">Sign Up</a> -->
-      <a href="about_us.html">About</a>
-      <a href="contact_us.html">Contact Us</a>
-      
-    </nav>
+
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-main">
+      <div id="logo_containter">
+        <img src="Assets/LabEMS_logo.svg" alt="LabEMS-logo" height="30px" />
+      </div>
+      <button class="mobile-menu-button" id="mobile-menu-button">
+        &#9776;
+      </button>
+    </div>
+    <div class="nav-and-user-container" id="nav-and-user-container">
+      <nav class="nav-links">
+        <a href="home.html" class="nav-item">Home</a>
+        <a href="about_us.html" class="nav-item">About Us</a>
+        <a href="contact_us.html" class="nav-item">Contact Us</a>
+        <button href="Login.html" class="secondary_button">Sign In</button>
+      </nav>
+    </div>
   </header>
 
-
-  <main class="login-container">
-    <section class="login-form">
+  <!--Login Container-->
+  <div class="login-container">
+    <div class="login-form">
       <h2>Login to LabEMS</h2>
       <p>Enter your credentials to access your account</p>
       <form id="loginForm">
@@ -31,8 +44,20 @@
         <button type="submit">Login</button>
         <a href="forgot_password.html" class="forgot-password">Forgot Password?</a>
       </form>
-    </section>
-  </main>
-<script src="login.js"></script>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <ul class="footer-links">
+      <li class="bottom-nav-item"><a href="">Terms and Conditions</a></li>
+      <li class="bottom-nav-item">|</li>
+      <li class="bottom-nav-item"><a href="">Privacy Policy</a></li>
+    </ul>
+  </footer>
+
+  <script src="login.js"></script>
+  <script src="mobileOptimisation.js"></script>
 </body>
+
 </html>

@@ -56,8 +56,8 @@ export function renderAdminBookings() {
     const headingDiv = document.createElement('div');
     headingDiv.className = 'admin-bookings-heading';
     headingDiv.innerHTML = `
-        <h2 style=\"color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;margin: 1rem -7%\">Bookings Management</h2>
-        <div style=\"color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin: 1rem -7%\">View, approve, reject, and manage bookings.</div>
+        <h2 class="content-heading">Bookings Management</h2>
+        <div class="content-description">View, approve, reject, and manage bookings.</div>
         <div style=\"clear:both\"></div>
     `;
     section.insertBefore(headingDiv, section.firstChild);

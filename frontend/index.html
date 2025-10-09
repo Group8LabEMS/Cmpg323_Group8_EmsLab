@@ -1,121 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LabEMS - Equipment Booking</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    <!-- Header -->
-    <header class="topbar">
-      <div class="logo">LabEMS</div>
-      <nav>
-  <a href="#bookings" id="bookNowBtn" data-target="bookings">Book Now</a>
-  <a href="about_us.html">About</a>
-  <a href="contact_us.html">Contact Us</a>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="Assets/labEMS_icon.svg" sizes="48x48" />
+  <title>LabEMS - Equipment Booking</title>
+  <link rel="icon" href="Assets/labEMS_icon.svg" sizes="48x48" />
+  <link rel="stylesheet" href="style.css">
+  <style>
+
+
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-main">
+      <div id="logo_containter">
+        <img src="Assets/LabEMS_logo.svg" alt="LabEMS-logo" height="35px" />
+      </div>
+      <button class="mobile-menu-button" id="mobile-menu-button">
+        &#9776;
+      </button>
+    </div>
+    <div class="nav-and-user-container" id="nav-and-user-container">
+      <nav class="nav-links">
+        <a href="about_us.html" class="nav-item">About</a>
+        <a href="" class="nav-item">Contact us</a>
+        <button class="secondary_button">Book Now</button>
       </nav>
-    </header>
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-  <h3 id="userDisplayName">User</h3>
-  <!-- Sidebar buttons are rendered dynamically by script.js based on role -->
-  <button class="sidebar-btn logout">Logout</button>
-      
-    </aside>
-
-    <!-- Main Content -->
-    <main>
-      <!-- Dashboard -->
-      <section id="dashboard" class="tab hidden">
-        <h2 style="color: #7A4EB0; font-size: 2rem; margin-bottom: 1.5rem;">Dashboard</h2>
-      </section>
-
-      <!-- Reports Section -->
-      <section id="reports" class="tab hidden">
-        <div class="admin-bookings-heading">
-          <h2 style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;margin: 1rem -7%">Reports Management</h2>
-          <div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin: 1rem -7%">View, filter, and download reports from various management sections.</div>
-          <div style="clear:both"></div>
+      <div class="user-profile-container">
+        <div class="user-details">
+          <h4 id="userDisplayName">Guest User</h4>
+          <nav class="user-links">
+            <a href="" class="nav-item">Logout</a>
+            <span>|</span>
+            <a href="" class="nav-item">Profile</a>
+          </nav>
         </div>
-        <div class="report-controls" style="margin: 1rem -7%;display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem;">
-          <select id="reportTypeSelect" style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
-            <option value="user">Users Report</option>
-            <option value="booking">Bookings Report</option>
-            <option value="equipment">Equipment Report</option>
-          </select>
-          <select id="reportSortSelect" style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
-            <option value="">Sort by</option>
-          </select>
-          <input type="text" id="reportSearchInput" placeholder="Search All Columns (Type to filter)" style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:180px;" />
-          <button id="reportFilterBtn" class="action-book" style="min-width: 120px; background-color: var(--secondary-color);background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
-            Filter <span id="filterActiveIndicator" class="hidden" style="margin-left: 5px; color: #ffeb3b; font-weight: bold;">(Active)</span>
-          </button>
-        </div>
-        <div class="report-table-container">
-          <table class="report-table" style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
-            <thead>
-              <tr id="reportTableHeader"></tr>
-            </thead>
-            <tbody id="reportTableBody"></tbody>
-          </table>
-        </div>
-        <div class="report-actions" style="margin:1rem -7%;display:flex;gap:1rem;">
-          <button id="reportClearFilterBtn" class="cancel-btn">Clear Form</button>
-          <button id="downloadReportBtn" class="action-book">Download CSV</button>
-        </div>
-      </section>
-      
-      <div id="filterModal" class="modal hidden">
-        <div class="modal-content">
-          <h2 id="filterModalTitle" style="color: #7A4EB0; margin-bottom: 20px;">Apply Filters</h2>
-          <div id="filterFormContent">
-            </div>
-          <div class="modal-actions" style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;">
-            <button id="modalClearFiltersBtn" class="cancel-btn">Clear Filters</button>
-            <button id="modalApplyFiltersBtn" class="action-book">Apply Filters</button>
-          </div>
+        <div id="user_profile_picture_container">
+          <img src="Assets/profile_picture_placeholder.svg" alt="user_profile_picture" height="50px"
+            class="user-profile-pic" />
         </div>
       </div>
+    </div>
+  </header>
 
-      <!-- Audit Section -->
-      <section id="adminAudit" class="tab hidden">
-        <div class="admin-bookings-heading">
-          <h2 style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;margin: 1rem -7%">System Audits</h2>
-          <div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin: 1rem -7%">View and search for system logs for all user actions.</div>
-          <div style="clear:both"></div>
-        </div>
-        <div class="audit-controls" style="margin: 1rem -7%;display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem;">
-          
-          <select id="auditSortSelect" style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
-            <option value="">Sort by</option>
-          </select>
-          <input type="text" id="auditSearchInput" placeholder="Search All Columns (Type to filter)" style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:180px;" />
-          
-        </div>
-        <div class="audit-table-container">
-          <table class="audit-table" style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
-            <thead>
-              <tr id="auditTableHeader"></tr>
-            </thead>
-            <tbody id="auditTableBody"></tbody>
-          </table>
-        </div>
-        
+  <!-- Main Content Area -->
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <!-- Sidebar buttons are rendered dynamically by script.js based on role -->
+      <button class="sidebar-btn logout">Logout</button>
+    </aside>
+
+    <main>
+      <!-- General User Content -->
+      <!-- Dashboard -->
+      <section id="dashboard" class="tab hidden">
+        <h2 class="content-heading">Dashboard</h2>
       </section>
-      
-      
 
-     
       <!-- Profile -->
       <section id="profile" class="tab hidden">
-        <h2>Profile</h2>
+        <h2 class="content-heading">Profile</h2>
+        <p class="content-description">View and Update your personal information</p>
       </section>
 
       <!-- Bookings -->
       <section id="bookings" class="tab hidden">
-        <h2>Your Bookings</h2>
+        <h2 class="content-heading">Bookings</h2>
+        <p class="content-description">View and manage your equipment bookings</p>
         <table>
           <thead>
             <tr>
@@ -132,37 +89,28 @@
 
       <!-- Equipment -->
       <section id="equipment" class="tab">
-        
 
-        <table>
-          
-          <tbody id="equipmentTableBody"></tbody>
-        </table>
-      </section>
-      <!-- Maintenance Tab (Admin only) -->
-      <section id="maintenance" class="tab hidden">
-        <h2 style="color:#7A4EB0;font-size:2rem;margin-bottom:1.5rem;margin:1rem -7%;">Maintenance Tracking</h2>
-        <p style="margin-bottom:1.5rem;margin:1rem -7%;">Track equipment that requires repair, is being repaired, or has been repaired.</p>
-        <table class="maintenance-table" style="margin:1rem -7%;">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Location</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="maintenanceTableBody"></tbody>
-        </table>
       </section>
 
-  <!-- User Management -->
-  <section id="userManagement" class="tab hidden"></section>
+      <!-- Administrator Content-->
+      <!-- User Management -->
+      <section id="userManagement" class="tab hidden">
+        <h2 class="content-heading">User Management</h2>
+        <div class="content-description">View and manage user accounts</div>
+      </section>
 
-      <!-- Admin Bookings Management -->
+      <!-- Bookings Management -->
       <section id="admin-bookings" class="tab hidden">
-        <table class="admin-bookings-table" style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
+        <!-- 
+        <h2 class="content-heading">Bookings Management</h2>
+        <div class="content-description">View, approve, reject, and manage bookings.</div>
+        -->
+      </section>
+
+      <!-- Bookings Management -->
+      <section id="admin-bookings" class="tab hidden">
+        <table class="admin-bookings-table"
+          style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
           <thead>
             <tr style="background:#8d5fc5;color:#fff;">
               <th>ID</th>
@@ -180,171 +128,255 @@
         </table>
       </section>
 
+
+      <!-- Equipment Management-->
+      <!--
+      <section id="admin_equipment" class="tab">
+        <h2 class="content-heading">Equipment Management</h2>
+        <div class="content-description">View, add, update and remove equipment</div>
+        <table>
+          <tbody id="equipmentTableBody"></tbody>
+        </table>
+      </section>
+      -->
+
+      <!-- Equipment Maintenance -->
+      <section id="maintenance" class="tab hidden">
+        <h2 class="content-heading">Maintenance Tracking</h2>
+        <p class="content-description">Track equipment that requires repair, is being repaired, or has been repaired.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="maintenanceTableBody"></tbody>
+        </table>
+      </section>
+
+
+      <!-- Audit trails-->
       <section id="adminAudit" class="tab hidden">
-        <div class="admin-bookings-heading">
-          <h2 style="color:#8d5fc5;font-size:2.5rem;margin-bottom:0.2rem;font-weight:bold;margin: 1rem -7%">Audit Trails</h2>
-          <div style="color:#8d5fc5;font-size:1.3rem;margin-bottom:0.5rem;margin: 1rem -7%">View audit logs for all system actions.</div>
-          <div style="clear:both"></div>
-        </div>
-        <div class="report-controls" style="margin: 1rem -7%;display:flex;align-items:center;gap:0.5rem;margin-bottom:1.2rem;">
-          <select id="auditSortSelect" style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
+          <h2 class="content-heading">Audit Trails</h2>
+          <div class="content-description">View audit logs for all system actions.</div>        
+        
+        <div class="report-controls controllers-container">
+          <select id="auditSortSelect"
+            style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
             <option value="">Sort by</option>
             <option value="date">Date</option>
             <option value="user">User</option>
             <option value="action">Action</option>
           </select>
-          <input type="text" id="auditSearchInput" placeholder="Search All Columns (Type to filter)" style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:180px;" />
-          <button id="auditFilterBtn" class="action-book" style="min-width: 120px; background-color: var(--secondary-color);background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
-            Filter <span id="auditFilterActiveIndicator" class="hidden" style="margin-left: 5px; color: #ffeb3b; font-weight: bold;">(Active)</span>
+          <input type="text" id="auditSearchInput" placeholder="Search All Columns (Type to filter)"
+            style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:180px;" />
+          <button id="auditFilterBtn" class="action-book"
+            style="min-width: 120px; background-color: var(--secondary-color);background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
+            Filter <span id="auditFilterActiveIndicator" class="hidden"
+              style="margin-left: 5px; color: #ffeb3b; font-weight: bold;">(Active)</span>
           </button>
         </div>
-        <div class="report-table-container" style="margin: 1rem -7%;">
-          <table class="report-table" style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
+
+          <table class="report-table"
+            style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
             <thead>
               <tr id="auditTableHeader"></tr>
             </thead>
             <tbody id="auditTableBody"></tbody>
           </table>
+
+      </section>
+
+      <!-- Reports Section -->
+      <section id="reports" class="tab hidden">
+        <h2 class="content-heading">Reports Management</h2>
+        <p class="content-description">Track equipment that requires repair, is being repaired, or has been repaired.
+        </p>
+
+        <div class="controllers-container">
+          <select id="reportTypeSelect"
+            style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
+            <option value="">Report Type </option>
+            <option value="user">Users Report</option>
+            <option value="booking">Bookings Report</option>
+            <option value="equipment">Equipment Report</option>
+          </select>
+          <select id="reportSortSelect"
+            style="font-size:1.1rem;padding:0.4rem 2.2rem 0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#8d5fc5;font-weight:bold;">
+            <option value="">Sort by</option>
+          </select>
+          <input type="text" id="reportSearchInput" placeholder="Search All Columns (Type to filter)"
+            style="font-size:1.1rem;padding:0.4rem 1.2rem;border-radius:8px;border:2px solid #8d5fc5;min-width:180px;" />
+          <button id="reportFilterBtn" class="action-book"
+            style="min-width: 120px; background-color: var(--secondary-color);background:#8d5fc5;color:#fff;padding:0.5rem 1.2rem;border-radius:8px;border:none;font-size:1.1rem;display:flex;align-items:center;gap:0.3rem;">
+            Filter <span id="filterActiveIndicator" class="hidden"
+              style="margin-left: 5px; color: #ffeb3b; font-weight: bold;">(Active)</span>
+          </button>
+        </div>
+        <div class="report-table-container">
+          <table class="report-table"
+            style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #e0d3f3;">
+            <thead>
+              <tr id="reportTableHeader"></tr>
+            </thead>
+            <tbody id="reportTableBody"></tbody>
+          </table>
+        </div>
+        <div class="mainContentButtons-Wrapper">
+          <button id="reportClearFilterBtn" class="mainContentSecondaryButtons">Clear Form</button>
+          <button id="downloadReportBtn" class="mainContentPrimaryButtons">Download CSV</button>
         </div>
       </section>
 
-      <!-- About Us -->
-      <section id="about" class="tab hidden">
-        <main class="login-container">
-          <section class="login-form">
-            <h2>About LabEMS</h2>
-            <p>Learn more about our mission and services</p>
-            <div class="about-content">
-              <p>
-                LabEMS is a cutting-edge Laboratory Equipment Management System designed to streamline the process of booking, managing, and maintaining laboratory equipment. Our mission is to empower researchers, students, and professionals by providing an intuitive platform to access state-of-the-art equipment with ease.
-              </p>
-              <p>
-                Founded with the goal of enhancing laboratory efficiency, LabEMS offers a user-friendly interface, real-time equipment availability, and robust management tools. Whether you're in academia, industry, or research, LabEMS is here to support your scientific endeavors.
-              </p>
-            </div>
-          </section>
-        </main>
-      </section>
-
-      <!-- Contact Us -->
-      <section id="contact" class="tab hidden">
-        <div class="modal-content">
-          <h2>Contact Us</h2>
-          <input type="text" placeholder="Your Email">
-          <textarea name="txt_email_description" cols="40" rows="5" class="contactus-textarea" placeholder="Description"></textarea>
-          <div>
-            <button class="contactus-action">Submit</button>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
+      <!--System Modals-->
       <!-- Booking Modal -->
       <div id="bookingModal" class="modal hidden">
-          <div class="modal-content">
-              <h3>Booking Confirmation</h3>
-              <p>Select Date and Time slot for your booking</p>
+        <div class="modal-content">
+          <h3>Booking Confirmation</h3>
+          <p>Select Date and Time slot for your booking</p>
 
-              <label>
-              <input type="date" id="bookingDate" placeholder="Date e.g. YYYY/MM/DD">
-              </label>
+          <label>
+            <input type="date" id="bookingDate" placeholder="Date e.g. YYYY/MM/DD">
+          </label>
 
-              <div class="time-inputs">
-              <input type="time" id="startTime" placeholder="Start Time">
-              <input type="time" id="endTime" placeholder="End Time">
-              </div>
-
-              <div class="modal-actions">
-              <button id="confirmBooking">Confirm</button>
-              <button id="cancelBooking" class="cancel">Cancel</button>
-              </div>
+          <div class="time-inputs">
+            <input type="time" id="startTime" placeholder="Start Time">
+            <input type="time" id="endTime" placeholder="End Time">
           </div>
+
+          <div class="modal-actions">
+            <button id="confirmBooking">Confirm</button>
+            <button id="cancelBooking" class="cancel">Cancel</button>
+          </div>
+        </div>
       </div>
 
       <!-- Update Booking Modal -->
       <div id="updateModal" class="modal hidden">
-      <div class="modal-content">
+        <div class="modal-content">
           <h3>Update Booking</h3>
           <p>Change the date and time for your booking</p>
 
           <label>
-              <input type="date" id="updateDate">
+            <input type="date" id="updateDate">
           </label>
 
           <div class="time-inputs">
-              <input type="time" id="updateStartTime">
-              <input type="time" id="updateEndTime">
+            <input type="time" id="updateStartTime">
+            <input type="time" id="updateEndTime">
           </div>
 
           <div class="modal-actions">
-              <button id="confirmUpdate">Update</button>
-              <button id="cancelUpdate" class="cancel">Cancel</button>
+            <button id="confirmUpdate">Update</button>
+            <button id="cancelUpdate" class="cancel">Cancel</button>
           </div>
-      </div>
-      </div>
-
-    <!-- Delete Booking Modal -->
-    <div id="deleteModal" class="modal hidden">
-      <div class="modal-content">
-        <h3>Delete Booking</h3>
-        <p id="deleteMessage">Are you sure you want to delete this booking?</p>
-
-        <div class="modal-actions">
-          <button id="confirmDelete">Confirm</button>
-          <button id="cancelDelete" class="cancel">Cancel</button>
         </div>
       </div>
-    </div>
 
-    <!-- User Delete Modal -->
-    <div id="userDeleteModal" class="modal hidden">
-      <div class="modal-content">
-        <h3>Delete User</h3>
-        <p id="userDeleteMessage">Are you sure you want to delete this user?</p>
-        <div class="modal-actions">
-          <button id="confirmUserDelete" class="action-delete">Delete</button>
-          <button id="cancelUserDelete" class="cancel-btn">Cancel</button>
+      <!-- Delete Booking Modal -->
+      <div id="deleteModal" class="modal hidden">
+        <div class="modal-content">
+          <h3>Delete Booking</h3>
+          <p id="deleteMessage">Are you sure you want to delete this booking?</p>
+
+          <div class="modal-actions">
+            <button id="confirmDelete">Confirm</button>
+            <button id="cancelDelete" class="cancel">Cancel</button>
+          </div>
         </div>
       </div>
-    </div>
-    
-    <!-- User Management Modal -->
-    <div id="userModal" class="modal hidden">
-  <div class="modal-content" style="max-width:420px;width:96vw;padding:2rem 2rem 2rem 2rem;margin:0 auto;">
-        <h2 id="userModalTitle" style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;font-weight:bold;text-align:center;">User Profile</h2>
-        <div style="color:#8d5fc5;font-size:1.2rem;margin-bottom:1.5rem;text-align:center;">Create and Update user information</div>
-        <form id="userForm" style="display:flex;flex-direction:column;gap:1.1rem;align-items:stretch;max-width:100%;">
-          <input type="text" id="nameInput" placeholder="Cosmo" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-          <input type="text" id="surnameInput" placeholder="Kramer" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-          <input type="text" id="universityNoInput" placeholder="12123434" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-          <input type="email" id="emailInput" placeholder="ckramer@mynwu.ac.za" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-          <input type="text" id="cellInput" placeholder="Cellphone No" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-          <input type="password" id="passwordInput" placeholder="Password" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-          <input type="password" id="repasswordInput" placeholder="Re-enter Password" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-          <label for="roleInput" style="font-size:1.1rem;margin-top:0.5rem;">Role</label>
-          <select id="roleInput" style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
-            <option value="Student">Student</option>
-            <option value="Admin">Admin</option>
-          </select>
 
-          <button id="confirmUser" class="action-book" style="width:100%;background:#8d5fc5;color:#fff;font-size:1.2rem;padding:1rem 0;border-radius:8px;border:none;font-weight:bold;margin-top:0.7rem;">Save</button>
-          <button id="cancelUser" class="cancel-btn" style="width:100%;margin-top:0.7rem;background:#fff;color:#8d5fc5;font-size:1.1rem;padding:0.7rem 0;border-radius:8px;border:2px solid #8d5fc5;box-sizing:border-box;">Cancel</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Admin Dashboard Modal -->
-    <div id="adminModal" class="modal hidden">
-      <div class="modal-content">
-        <span class="close-btn" onclick="closeAdminModal()">&times;</span>
-        <h2 id="modalTitle">Admin Action</h2>
-        <div id="modalBody">
-          <!-- dynamic content goes here -->
+      <!-- User Delete Modal -->
+      <div id="userDeleteModal" class="modal hidden">
+        <div class="modal-content">
+          <h3>Delete User</h3>
+          <p id="userDeleteMessage">Are you sure you want to delete this user?</p>
+          <div class="modal-actions">
+            <button id="confirmUserDelete" class="action-delete">Delete</button>
+            <button id="cancelUserDelete" class="cancel-btn">Cancel</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <script type="module" src="src/script.js"></script>
-  </body>
+      <!-- User Management Modal -->
+      <div id="userModal" class="modal hidden">
+        <div class="modal-content" style="max-width:420px;width:96vw;padding:2rem 2rem 2rem 2rem;margin:0 auto;">
+          <h2 id="userModalTitle"
+            style="color:#8d5fc5;font-size:2.2rem;margin-bottom:0.2rem;font-weight:bold;text-align:center;">User Profile
+          </h2>
+          <div style="color:#8d5fc5;font-size:1.2rem;margin-bottom:1.5rem;text-align:center;">Create and Update user
+            information</div>
+          <form id="userForm" style="display:flex;flex-direction:column;gap:1.1rem;align-items:stretch;max-width:100%;">
+            <input type="text" id="nameInput" placeholder="Cosmo"
+              style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+            <input type="text" id="surnameInput" placeholder="Kramer"
+              style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+            <input type="text" id="universityNoInput" placeholder="12123434"
+              style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+            <input type="email" id="emailInput" placeholder="ckramer@mynwu.ac.za"
+              style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+            <input type="text" id="cellInput" placeholder="Cellphone No"
+              style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+            <input type="password" id="passwordInput" placeholder="Password"
+              style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+            <input type="password" id="repasswordInput" placeholder="Re-enter Password"
+              style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+            <label for="roleInput" style="font-size:1.1rem;margin-top:0.5rem;">Role</label>
+            <select id="roleInput"
+              style="font-size:1.1rem;padding:0.7rem 1rem;border-radius:8px;border:2px solid #8d5fc5;background:#fff;color:#7A4EB0;outline:none;width:100%;box-sizing:border-box;">
+              <option value="Student">Student</option>
+              <option value="Admin">Admin</option>
+            </select>
+
+            <button id="confirmUser" class="action-book"
+              style="width:100%;background:#8d5fc5;color:#fff;font-size:1.2rem;padding:1rem 0;border-radius:8px;border:none;font-weight:bold;margin-top:0.7rem;">Save</button>
+            <button id="cancelUser" class="cancel-btn"
+              style="width:100%;margin-top:0.7rem;background:#fff;color:#8d5fc5;font-size:1.1rem;padding:0.7rem 0;border-radius:8px;border:2px solid #8d5fc5;box-sizing:border-box;">Cancel</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Filter Modal -->
+      <div id="filterModal" class="modal hidden">
+        <div class="modal-content">
+          <h2 id="filterModalTitle" style="color: #7A4EB0; margin-bottom: 20px;">Apply Filters</h2>
+          <div id="filterFormContent">
+          </div>
+          <div class="modal-actions" style="margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;">
+            <button id="modalClearFiltersBtn" class="cancel-btn">Clear Filters</button>
+            <button id="modalApplyFiltersBtn" class="action-book">Apply Filters</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Dashboard Modal -->
+      <div id="adminModal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close-btn" onclick="closeAdminModal()">&times;</span>
+          <h2 id="modalTitle">Admin Action</h2>
+          <div id="modalBody">
+            <!-- dynamic content goes here -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <ul class="footer-links">
+      <li class="bottom-nav-item"><a href="">Terms and Conditions</a></li>
+      <li class="bottom-nav-item">|</li>
+      <li class="bottom-nav-item"><a href="">Privacy Policy</a></li>
+    </ul>
+  </footer>
+
+  <script type="module" src="src/script.js"></script>
+  <script src="mobileOptimisation.js"></script>
+</body>
+
 </html>

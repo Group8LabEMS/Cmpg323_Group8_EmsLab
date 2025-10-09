@@ -11,20 +11,20 @@ import {
 // Role-based tab config
 const TABS_BY_ROLE = {
   Student: [
-    { id: 'dashboard', label: 'Dashboard' },
-    { id: 'profile', label: 'Profile' },
-    { id: 'bookings', label: 'Bookings' },
-    { id: 'equipment', label: 'Equipment' }
+    { id: 'dashboard', label: 'Dashboard', icon: 'Assets/Dashboard.svg' },
+    { id: 'profile', label: 'Profile', icon: 'Assets/Profile.svg' },
+    { id: 'bookings', label: 'Bookings', icon: 'Assets/Bookings.svg' },
+    { id: 'equipment', label: 'Equipment', icon: 'Assets/Equipment.svg' }
   ],
   Admin: [
-    { id: 'dashboard', label: 'Dashboard' },
-    { id: 'userManagement', label: 'User Management' },
-    { id: 'bookings', label: 'Bookings Management' },
-    { id: 'equipment', label: 'Equipment Management' },
-    { id: 'maintenance', label: 'Maintenance' },
-  { id: 'adminAudit', label: 'Audit Trails' },
-    { id: 'reports', label: 'Reports' },
-    { id: 'settings', label: 'Settings' }
+    { id: 'dashboard', label: 'Dashboard', icon: 'Assets/Dashboard.svg' },
+    { id: 'userManagement', label: 'Users', icon: 'Assets/UserManagement.svg' },
+    { id: 'bookings', label: 'Bookings', icon: 'Assets/BookingsManagement.svg' },
+    { id: 'equipment', label: 'Equipment', icon: 'Assets/EquipmentManagement.svg' },
+    { id: 'maintenance', label: 'Maintenance', icon: 'Assets/Maintenance.svg' },
+    { id: 'adminAudit', label: 'Audit Trails', icon: 'Assets/AuditTrails.svg' },
+    { id: 'reports', label: 'Reports', icon: 'Assets/Reports.svg' },
+    { id: 'settings', label: 'Settings' ,icon: 'Assets/Settings.svg'}
   ]
 };
 
@@ -49,7 +49,11 @@ function renderSidebar() {
 
   const tabs = TABS_BY_ROLE[currentRole] || [];
   sidebar.innerHTML = userName +
-    tabs.map(tab => `<button class="sidebar-btn" data-target="${tab.id}">${tab.label}</button>`).join('') +
+    tabs.map(tab => {
+      // support optional icon per tab
+      const iconHtml = tab.icon ? `<img src="${tab.icon}" alt="${tab.label}" class="sidebar-icon"/>` : '';
+      return `<button class="sidebar-btn" data-target="${tab.id}">${iconHtml}<span class="sidebar-label">${tab.label}</span></button>`;
+    }).join('') +
     logoutBtn;
 
   // Attach click events for sidebar buttons
@@ -81,7 +85,7 @@ import { renderDashboard } from "./pages/dashboard.js";
 import { renderProfile } from "./pages/profile.js";
 import { renderBookings } from "./pages/bookings.js";
 import { renderEquipmentManagement } from "./pages/admin_equipment.js";
-import { renderEquipment } from "./pages/equipent.js";
+import { renderEquipment } from "./pages/equipment.js";
 import { renderUsers } from "./pages/user_management.js";
 import { renderAdminDashboard } from "./pages/admin_dashboard.js";
 import { renderAdminAudit } from "./pages/admin_audit.js";

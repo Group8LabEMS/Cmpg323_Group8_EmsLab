@@ -3,19 +3,16 @@ import { html, render } from "lit";
 
 export function renderProfile() {
   const profileSection = document.getElementById("profile");
-  render(html`
-    <div class="profile-desc" style="margin: 1rem 17%;">View and Update your personal information</div>
-    <div class="profile-card">
+  render(html`   
       <form class="profile-form">
-  <input class="profile-input" type="text" value="John" placeholder="First Name" readonly>
-  <input class="profile-input" type="text" value="Doe" placeholder="Last Name" readonly>
-  <input class="profile-input" type="text" value="12345678" placeholder="University No" readonly>
-  <input class="profile-input" type="password" value="Password" placeholder="Password">
-  <input class="profile-input" type="email" value="johndoe@nwu.ac.za" placeholder="Email">
-  <input class="profile-input" type="password" value="Re-enter Password" placeholder="Re-enter Password">
-  <input class="profile-input" type="text" value="0721389459" placeholder="Cellphone No" style="grid-column: 1 / 2;">
-  <button class="profile-save-btn" type="submit" style="grid-column: 2 / 3;">Save</button>
+        <input class="inputField" type="text" value="John" placeholder="First Name" readonly>
+        <input class="inputField" type="text" value="Doe" placeholder="Last Name" readonly>
+        <input class="inputField" type="text" value="12345678" placeholder="University No" readonly>
+        <input class="inputField" type="password" value="Password" placeholder="Password">
+        <input class="inputField" type="email" value="johndoe@nwu.ac.za" placeholder="Email">
+        <input class="inputField" type="password" value="Re-enter Password" placeholder="Re-enter Password">
+        <input class="inputField" type="text" value="0721389459" placeholder="Cellphone No" style="grid-column: 1 / 2;">
+        <button class="primary-button" type="submit" style="grid-column: 2 / 3;">Save</button>
       </form>
-    </div>
   `, profileSection);
 }

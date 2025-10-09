@@ -1,6 +1,6 @@
 import { html, render as litRender } from "lit";
 import { deleteMessage } from "../util/modals.js";
-import { equipmentList } from "./equipent.js";
+import { equipmentList } from "./equipment.js";
 import { updateModal, deleteModal } from "../util/modals.js";
 import { getInputById } from "../util/dom.js";
 
