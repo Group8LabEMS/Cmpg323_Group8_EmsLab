@@ -114,6 +114,45 @@ namespace Group8.LabEms.Api.Controllers
             return NoContent();
         }
 
+        [HttpGet("maintenance")]
+        public async Task<ActionResult<IEnumerable<object>>> GetMaintenanceEquipment()
+        {
+            var maintenanceEquipment = await _context.Equipments
+                .Include(e => e.EquipmentType)
+                .Include(e => e.EquipmentStatus)
+                .Where(e => e.EquipmentStatus.Name == "Under Maintenance")
+                .Select(e => new {
+                    e.EquipmentId,
+                    e.Name,
+                    e.EquipmentTypeId,
+                    EquipmentType = new { e.EquipmentType.EquipmentTypeId, e.EquipmentType.Name, e.EquipmentType.Description },
+                    e.EquipmentStatusId,
+                    EquipmentStatus = new { e.EquipmentStatus.EquipmentStatusId, e.EquipmentStatus.Name, e.EquipmentStatus.Description },
+                    e.Availability,
+                    e.CreatedDate
+                })
+                .ToListAsync();
+            return Ok(maintenanceEquipment);
+        }
+
+        [HttpPut("{id}/maintenance/complete")]
+        public async Task<IActionResult> CompleteMaintenance(int id)
+        {
+            var equipment = await _context.Equipments.FindAsync(id);
+            if (equipment == null)
+                return NotFound();
+
+            var availableStatus = await _context.EquipmentStatuses
+                .FirstOrDefaultAsync(s => s.Name == "Available");
+            if (availableStatus == null)
+                return BadRequest("Available status not found");
+
+            equipment.EquipmentStatusId = availableStatus.EquipmentStatusId;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         private bool EquipmentExists(int id)
         {
             return _context.Equipments.Any(e => e.EquipmentId == id);
