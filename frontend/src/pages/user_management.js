@@ -103,7 +103,12 @@ export function renderUsers() {
               <td>${u.role || ''}</td>
               <td>
                 <button class="btn btn-sm btn-secondary" @click=${() => openEditUser(i)}>Update</button>
-                <button class="btn btn-sm btn-danger" @click=${() => openUserDeleteModal(i)}>Delete</button>
+                <button class="btn btn-sm ${String(u.userId) === window.currentUser?.userId ? 'btn-disabled' : 'btn-danger'}" 
+                        @click=${
+                          () => String(u.userId) === window.currentUser?.userId
+                            ? addToast("Nice try", "You cannot delete yourself")
+                            : openUserDeleteModal(i)
+                        }>Delete</button>
               </td>
             </tr>
           ` : html`<tr><td></td><td></td><td></td><td></td><td></td></tr>`)}

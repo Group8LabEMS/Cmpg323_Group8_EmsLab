@@ -1,5 +1,5 @@
 interface Window {
-  currentUser?: { userId: number; };
+  currentUser?: { userId: string; };
   currentRole?: string;
   addToast?: (title: string, desc: string, duration?: number) => void;
 }
