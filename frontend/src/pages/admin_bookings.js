@@ -63,7 +63,10 @@ function closeDeleteModal() {
 }
 
 function handleInput(e, field) {
-	if (showEditModal && editBooking) editBooking[field] = e.target.value;
+	if (showEditModal && editBooking) {
+		editBooking[field] = e.target.value;
+		console.log(`Updated ${field} to:`, e.target.value);
+	}
 }
 
 function handleSearch(e) {
@@ -242,9 +245,9 @@ export async function renderAdminBookings() {
 					<h2 class="modal-title">Update Booking</h2>
 					<p class="card-subtitle">Update booking status</p>
 					<div class="form-group">
-						<select @change=${e => handleInput(e, 'status')} class="form-select" .value=${editBooking?.bookingStatus?.name || ''}>
+						<select @change=${e => handleInput(e, 'status')} class="form-select" .value=${editBooking?.status || editBooking?.bookingStatus?.name || ''}>
 							<option value="">Select Status</option>
-							${bookingStatuses.map(s => html`<option value="${s.name}">${s.name}</option>`)}
+							${bookingStatuses.map(s => html`<option value="${s.name}" ?selected=${(editBooking?.status || editBooking?.bookingStatus?.name) === s.name}>${s.name}</option>`)}
 						</select>
 					</div>
 					<div style="display:flex;gap:1.5rem;justify-content:center;">
@@ -259,11 +262,21 @@ export async function renderAdminBookings() {
 }
 
 async function updateBooking() {
+	if (!editBooking.status) {
+		alert('Please select a status');
+		return;
+	}
+	
 	const status = bookingStatuses.find(s => s.name === editBooking.status);
+	if (!status) {
+		alert('Invalid status selected');
+		return;
+	}
+	
 	const payload = {
-		...editBooking,
-		bookingStatusId: status ? status.bookingStatusId : editBooking.bookingStatusId
+		bookingStatusId: status.bookingStatusId
 	};
+	
 	try {
 		await apiFetch('PUT', `/api/Booking/${editBooking.bookingId}`, { body: payload });
 		await fetchBookings();

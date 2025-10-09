@@ -97,14 +97,21 @@ namespace Group8.LabEms.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBooking(int id, BookingModel booking)
+        public async Task<IActionResult> UpdateBooking(int id, BookingUpdateDto updateDto)
         {
-            if (id != booking.BookingId)
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null)
             {
-                return BadRequest();
+                return NotFound("Booking not found");
             }
 
-            _context.Entry(booking).State = EntityState.Modified;
+            // Validate that the booking status exists
+            var statusExists = await _context.BookingsStatus.AnyAsync(s => s.BookingStatusId == updateDto.BookingStatusId);
+            if (!statusExists) { return BadRequest("Invalid BookingStatusId"); }
+
+            booking.BookingStatusId = updateDto.BookingStatusId;
 
             try
             {
