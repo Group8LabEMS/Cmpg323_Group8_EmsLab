@@ -147,6 +147,37 @@ namespace Group8.LabEms.Api.Controllers
             return NoContent();
         }
 
+        [HttpGet("user/{userId}/calendar")]
+        public async Task<ActionResult<IEnumerable<object>>> GetUserBookingDates(int userId)
+        {
+            var bookingDates = await _context.Bookings
+                .Where(b => b.UserId == userId)
+                .Select(b => new {
+                    Date = b.FromDate.Date,
+                    IsPast = b.FromDate.Date < DateTime.UtcNow.Date
+                })
+                .Distinct()
+                .ToListAsync();
+            return Ok(bookingDates);
+        }
+
+        [HttpGet("user/{userId}/upcoming")]
+        public async Task<ActionResult<IEnumerable<object>>> GetUserUpcomingBookings(int userId)
+        {
+            var upcomingBookings = await _context.Bookings
+                .Include(b => b.Equipment)
+                .Where(b => b.UserId == userId && b.FromDate >= DateTime.UtcNow)
+                .OrderBy(b => b.FromDate)
+                .Select(b => new {
+                    b.BookingId,
+                    EquipmentName = b.Equipment.Name,
+                    b.FromDate,
+                    b.ToDate
+                })
+                .ToListAsync();
+            return Ok(upcomingBookings);
+        }
+
         private bool BookingExists(int id)
         {
             return _context.Bookings.Any(e => e.BookingId == id);

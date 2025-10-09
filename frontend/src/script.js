@@ -108,11 +108,11 @@ function showAllowedTabs() {
 // Dynamically select equipment renderer based on role
 // Map tab to renderer
 const tabRenderers = {
-  dashboard: function() {
+  dashboard: async function() {
     if (currentRole && currentRole.toLowerCase() === 'admin') {
       renderAdminDashboard();
     } else {
-      renderDashboard();
+      await renderDashboard();
     }
   },
   profile: renderProfile,
@@ -151,14 +151,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const bookNowBtn = document.getElementById("bookNowBtn");
   if (bookNowBtn) {
     bookNowBtn.classList.toggle('hidden', currentRole === 'Admin');
-    bookNowBtn.addEventListener("click", e => {
+    bookNowBtn.addEventListener("click", async e => {
       e.preventDefault();
       document.querySelectorAll(".tab").forEach(tab => tab.classList.add("hidden"));
       document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
       document.getElementById("equipment").classList.remove("hidden");
       const btn = document.querySelector('.sidebar-btn[data-target="equipment"]');
       if (btn) btn.classList.add("active");
-      if (tabRenderers.equipment) tabRenderers.equipment();
+      if (tabRenderers.equipment) await tabRenderers.equipment();
     });
   }
   renderSidebar();
@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Hide all tabs by default
   document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
 
-  function showSectionFromHash() {
+  async function showSectionFromHash() {
     // Hide all tabs first
     document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
     const hash = window.location.hash.replace('#', '') || (TABS_BY_ROLE[currentRole] || [])[0]?.id;
@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const section = document.getElementById(hash);
       if (section) {
         section.classList.remove('hidden');
-        if (tabRenderers[hash]) tabRenderers[hash]();
+        if (tabRenderers[hash]) await tabRenderers[hash]();
       }
     }
     document.querySelectorAll('.sidebar-btn').forEach(btn => {

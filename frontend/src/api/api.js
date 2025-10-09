@@ -59,3 +59,13 @@ export async function getBookingsPerMonth() {
 export async function getEquipmentUsage() {
   return await apiFetch('GET', '/api/stats/equipment-usage');
 }
+
+/** @returns {Promise<Array<{ Date: string, IsPast: boolean }>>} */
+export async function getUserBookingDates(userId) {
+  return await apiFetch('GET', `/api/Booking/user/${userId}/calendar`);
+}
+
+/** @returns {Promise<Array<{ BookingId: number, EquipmentName: string, FromDate: string, ToDate: string }>>} */
+export async function getUserUpcomingBookings(userId) {
+  return await apiFetch('GET', `/api/Booking/user/${userId}/upcoming`);
+}

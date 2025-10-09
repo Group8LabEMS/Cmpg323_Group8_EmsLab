@@ -498,6 +498,12 @@ main {
 }
 
 /* Dashboard Components */
+.dashboard-flex {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
 .dashboard-row {
   display: flex;
   gap: var(--spacing-lg);
@@ -512,6 +518,128 @@ main {
   flex: 1;
   min-width: 300px;
   max-height: 400px;
+}
+
+.dashboard-calendar-card {
+  min-width: 420px;
+  max-width: 520px;
+}
+
+.dashboard-bookings-card {
+  min-width: 340px;
+  max-width: 420px;
+}
+
+.dashboard-calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-calendar-nav {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--primary-color);
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s ease;
+}
+
+.dashboard-calendar-nav:hover {
+  background: var(--background-color);
+}
+
+.dashboard-calendar-table {
+  font-size: 1.25rem;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dashboard-calendar-table th {
+  font-size: 1.1rem;
+  padding: 0.7rem 0.5rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  text-align: center;
+}
+
+.dashboard-calendar-table td {
+  padding: 0.7rem 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dashboard-calendar-table td:hover {
+  background: var(--background-color);
+}
+
+.dashboard-calendar-prev-month {
+  color: #bbb;
+}
+
+.dashboard-calendar-today {
+  border: 3px dashed var(--primary-color);
+  border-radius: var(--radius-md);
+  font-weight: bold;
+}
+
+.dashboard-calendar-past-booking {
+  background: #ffcc99;
+  border-radius: var(--radius-sm);
+}
+
+.dashboard-calendar-future-booking {
+  background: #b8ffb8;
+  border-radius: var(--radius-sm);
+}
+
+.dashboard-bookings-list {
+  font-size: 1.18rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dashboard-bookings-list li {
+  margin-bottom: 2.2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+}
+
+.dashboard-booking-dot {
+  width: 14px;
+  height: 14px;
+  background:#b8ffb8;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}
+
+.dashboard-booking-content {
+  flex: 1;
+}
+
+.dashboard-booking-equip {
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  display: block;
+  margin-bottom: var(--spacing-xs);
+}
+
+.dashboard-booking-time {
+  font-size: 1.08rem;
+  color: var(--text-medium);
+  line-height: 1.4;
+}
+
+.dashboard-no-bookings {
+  color: var(--text-light);
+  font-style: italic;
 }
 
 .chart-card {
