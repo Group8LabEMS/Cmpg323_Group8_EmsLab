@@ -88,6 +88,15 @@ confirmBooking.addEventListener("click", async () => {
   let end = getInputById("endTime").value;
 
   if (selectedEquipment && date && start && end) {
+    // Validate that booking date is not in the past
+    const bookingDateTime = new Date(`${date}T${start}:00`);
+    const now = new Date();
+    
+    if (bookingDateTime < now) {
+      addToast('Validation Error', 'Cannot book equipment for past dates or times.');
+      return;
+    }
+
     const booking = {
       userId: window.currentUser?.userId || 1, // Use logged-in user ID
       equipmentId: selectedEquipment.id,
@@ -144,6 +153,15 @@ document.getElementById("confirmUpdate").addEventListener("click", async () => {
   let end = getInputById("updateEndTime").value;
 
   if (date && start && end) {
+    // Validate that booking date is not in the past
+    const bookingDateTime = new Date(`${date}T${start}:00`);
+    const now = new Date();
+    
+    if (bookingDateTime < now) {
+      addToast('Validation Error', 'Cannot update booking to past dates or times.');
+      return;
+    }
+
     const booking = bookings[selectedBookingIndex];
     const updateData = {
       fromDate: `${date}T${start}:00`,
