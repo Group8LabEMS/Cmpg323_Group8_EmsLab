@@ -1,7 +1,7 @@
 -- ----- Initialize nominal types ----- --
 -- Roles
 INSERT INTO role (name) VALUES 
-('Admin'), ('Student'), ('Faculty'), ('Lab Assistant'), ('Maintenance Staff'), ('Lab Manager'), ('Technician');
+('Admin'), ('Student');
 
 -- Equipment Status
 INSERT INTO equipment_status (name, description) VALUES 
@@ -70,18 +70,18 @@ INSERT INTO user_role (user_id, role_id)
 SELECT u.user_id, r.role_id FROM user u, role r WHERE 
 (u.sso_id = 'admin001' AND r.name = 'Admin') OR
 (u.sso_id = 'student001' AND r.name = 'Student') OR
-(u.sso_id = 'faculty001' AND r.name = 'Faculty') OR
-(u.sso_id = 'faculty002' AND r.name = 'Faculty') OR
+(u.sso_id = 'faculty001' AND r.name = 'Admin') OR
+(u.sso_id = 'faculty002' AND r.name = 'Admin') OR
 (u.sso_id = 'student002' AND r.name = 'Student') OR
 (u.sso_id = 'student003' AND r.name = 'Student') OR
 (u.sso_id = 'student004' AND r.name = 'Student') OR
 (u.sso_id = 'student005' AND r.name = 'Student') OR
-(u.sso_id = 'labassist001' AND r.name = 'Lab Assistant') OR
-(u.sso_id = 'labassist002' AND r.name = 'Lab Assistant') OR
-(u.sso_id = 'maint001' AND r.name = 'Maintenance Staff') OR
-(u.sso_id = 'maint002' AND r.name = 'Maintenance Staff') OR
-(u.sso_id = 'manager001' AND r.name = 'Lab Manager') OR
-(u.sso_id = 'tech001' AND r.name = 'Technician');
+(u.sso_id = 'labassist001' AND r.name = 'Student') OR
+(u.sso_id = 'labassist002' AND r.name = 'Student') OR
+(u.sso_id = 'maint001' AND r.name = 'Admin') OR
+(u.sso_id = 'maint002' AND r.name = 'Admin') OR
+(u.sso_id = 'manager001' AND r.name = 'Admin') OR
+(u.sso_id = 'tech001' AND r.name = 'Admin');
 
 -- Equipment
 INSERT INTO equipment (name, equipment_type_id, equipment_status_id, availability) VALUES 
