@@ -57,7 +57,6 @@ export function openDelete(index) {
   const booking = bookings[index];
 
   litRender(html`
-    <p>Are you sure you want to delete booking?</p>
     <p><strong>Equipment: </strong>${booking.name}</p>
     <p><strong>Date: </strong>${booking.date}</p>
     <p><strong>Time: </strong>${booking.start} - ${booking.end}</p>
@@ -117,6 +116,7 @@ async function fetchAndRenderBookings() {
   try {
     const data = await apiFetch('GET', '/api/Booking');
     bookings = data.map(b => ({
+      id: b.bookingId,
       name: b.equipment?.name || "",
       date: b.fromDate?.split("T")[0] || "",
       start: b.fromDate?.split("T")[1]?.slice(0,5) || "",
@@ -138,17 +138,27 @@ cancelBooking.addEventListener("click", () => {
   bookingModal.classList.add("hidden");
 });
 
-document.getElementById("confirmUpdate").addEventListener("click", () => {
+document.getElementById("confirmUpdate").addEventListener("click", async () => {
   let date = getInputById("updateDate").value;
   let start = getInputById("updateStartTime").value;
   let end = getInputById("updateEndTime").value;
 
   if (date && start && end) {
-    bookings[selectedBookingIndex].date = date;
-    bookings[selectedBookingIndex].start = start;
-    bookings[selectedBookingIndex].end = end;
-    renderBookings();
-    updateModal.classList.add("hidden");
+    const booking = bookings[selectedBookingIndex];
+    const updateData = {
+      fromDate: `${date}T${start}:00`,
+      toDate: `${date}T${end}:00`
+    };
+
+    try {
+      await apiFetch('PUT', `/api/Booking/${booking.id}`, { body: updateData });
+      updateModal.classList.add("hidden");
+      await fetchAndRenderBookings();
+      addToast('Success', 'Booking updated successfully');
+    } catch (err) {
+      console.error('Update error:', err);
+      addToast('Update Error', err.message);
+    }
   } else {
     addToast('Validation Error', 'Please fill in all fields.');
   }
@@ -158,10 +168,18 @@ document.getElementById("cancelUpdate").addEventListener("click", () => {
   updateModal.classList.add("hidden");
 });
 
-document.getElementById("confirmDelete").addEventListener("click", () => {
-  bookings.splice(selectedBookingIndex, 1);
-  renderBookings();
-  deleteModal.classList.add("hidden");
+document.getElementById("confirmDelete").addEventListener("click", async () => {
+  const booking = bookings[selectedBookingIndex];
+  
+  try {
+    await apiFetch('DELETE', `/api/Booking/${booking.id}`);
+    deleteModal.classList.add("hidden");
+    await fetchAndRenderBookings();
+    addToast('Success', 'Booking deleted successfully');
+  } catch (err) {
+    console.error('Delete error:', err);
+    addToast('Delete Error', err.message);
+  }
 });
 
 document.getElementById("cancelDelete").addEventListener("click", () => {

@@ -4,8 +4,8 @@ namespace Group8.LabEms.Api.Models
 {
     public class BookingUpdateDto
     {
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "BookingStatusId must be greater than 0")]
-        public int BookingStatusId { get; set; }
+        public int? BookingStatusId { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
     }
 }

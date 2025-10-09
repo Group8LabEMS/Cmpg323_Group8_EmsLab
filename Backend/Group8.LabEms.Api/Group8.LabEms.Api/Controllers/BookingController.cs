@@ -19,10 +19,21 @@ namespace Group8.LabEms.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetBookings()
         {
-            var bookings = await _context.Bookings
+            var currentUserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var currentUserRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+            
+            IQueryable<BookingModel> query = _context.Bookings
                 .Include(b => b.User)
                 .Include(b => b.Equipment)
-                .Include(b => b.BookingStatus)
+                .Include(b => b.BookingStatus);
+            
+            // If user is not admin, filter to only their bookings
+            if (currentUserRole != "Admin")
+            {
+                query = query.Where(b => b.UserId == currentUserId);
+            }
+            
+            var bookings = await query
                 .Select(b => new {
                     b.BookingId,
                     b.UserId,
@@ -101,17 +112,38 @@ namespace Group8.LabEms.Api.Controllers
         {
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
 
+            var currentUserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var currentUserRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+
             var booking = await _context.Bookings.FindAsync(id);
             if (booking == null)
             {
                 return NotFound("Booking not found");
             }
 
-            // Validate that the booking status exists
-            var statusExists = await _context.BookingsStatus.AnyAsync(s => s.BookingStatusId == updateDto.BookingStatusId);
-            if (!statusExists) { return BadRequest("Invalid BookingStatusId"); }
+            // Authorization check: only booking owner or admin can update
+            if (currentUserRole != "Admin" && booking.UserId != currentUserId)
+            {
+                return Forbid("You can only update your own bookings");
+            }
 
-            booking.BookingStatusId = updateDto.BookingStatusId;
+            // Update booking status if provided
+            if (updateDto.BookingStatusId.HasValue)
+            {
+                var statusExists = await _context.BookingsStatus.AnyAsync(s => s.BookingStatusId == updateDto.BookingStatusId.Value);
+                if (!statusExists) { return BadRequest("Invalid BookingStatusId"); }
+                booking.BookingStatusId = updateDto.BookingStatusId.Value;
+            }
+
+            // Update dates if provided
+            if (updateDto.FromDate.HasValue)
+            {
+                booking.FromDate = updateDto.FromDate.Value;
+            }
+            if (updateDto.ToDate.HasValue)
+            {
+                booking.ToDate = updateDto.ToDate.Value;
+            }
 
             try
             {
@@ -135,10 +167,19 @@ namespace Group8.LabEms.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBooking(int id)
         {
+            var currentUserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var currentUserRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+
             var booking = await _context.Bookings.FindAsync(id);
             if (booking == null)
             {
                 return NotFound();
+            }
+
+            // Authorization check: only booking owner or admin can delete
+            if (currentUserRole != "Admin" && booking.UserId != currentUserId)
+            {
+                return Forbid("You can only delete your own bookings");
             }
 
             _context.Bookings.Remove(booking);
