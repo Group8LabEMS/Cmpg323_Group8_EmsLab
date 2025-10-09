@@ -1,7 +1,7 @@
 // Import page renderers
 import { renderDashboard } from "./pages/dashboard.js";
 import { renderProfile } from "./pages/profile.js";
-import { renderBookings } from "./pages/bookings.js";
+import { renderBookings, fetchAndRenderBookings } from "./pages/bookings.js";
 import { renderEquipmentManagement } from "./pages/admin_equipment.js";
 import { renderEquipment } from "./pages/equipent.js";
 import { renderUsers } from "./pages/user_management.js";
@@ -18,6 +18,7 @@ import { html, render } from "lit";
 import { logout as doLogout } from "./util/auth.js";
 import { initSidebarResize } from "./util/resize.js";
 import { apiFetch } from "./api/api.js";
+import { addToast } from "./util/toast.js";
 
 // Role-based tab config
 const TABS_BY_ROLE = {
@@ -127,7 +128,7 @@ const tabRenderers = {
       renderAdminBookings();
     } else {
       if (userBookingsSection) userBookingsSection.classList.remove('hidden');
-      renderBookings();
+      fetchAndRenderBookings();
     }
   },
   equipment: function() {

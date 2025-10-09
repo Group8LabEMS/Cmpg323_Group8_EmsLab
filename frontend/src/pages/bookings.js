@@ -121,7 +121,7 @@ confirmBooking.addEventListener("click", async () => {
   }
 });
 
-async function fetchAndRenderBookings() {
+export async function fetchAndRenderBookings() {
   try {
     const data = await apiFetch('GET', '/api/Booking');
     bookings = data.map(b => ({
