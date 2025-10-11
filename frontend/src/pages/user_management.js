@@ -49,10 +49,10 @@ export function renderUsers() {
   if (!isInitialized) {
     initializeDOMElements();
     setupEventListeners();
-    fetchUsers();
     isInitialized = true;
-    return;
+    fetchUsers();
   }
+
   litRender(html`
     <div class="card-header">
       <h2 class="card-title">User Management</h2>
@@ -200,7 +200,23 @@ async function confirmUserDelete() {
         await fetchUsers();
         addToast('Success', 'User deleted successfully');
       } catch (e) {
-        addToast('Error', 'Failed to delete user.');
+        // Handle backend constraint violation
+        const errorMsg = e?.message || e?.toString() || '';
+
+        if (
+          errorMsg.includes('FOREIGN KEY') || 
+          errorMsg.includes('constraint') || 
+          errorMsg.includes('Booking') ||
+          (e.status === 409) // or if your API returns HTTP 409 Conflict
+        ) {
+          addToast(
+            'Delete Blocked',
+            'User cannot be deleted because they have an active booking.',
+            3000
+          );
+        } else {
+          addToast('Error', 'Failed to delete user.');
+        }
       }
     }
     closeUserDeleteModal();

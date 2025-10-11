@@ -44,8 +44,8 @@ const REPORT_CONFIG = {
     },
     booking: {
         apiEndpoint: '/api/Booking',
-        headers: ["Booking ID", "User", "Equipment", "Status", "From Date/Time", "To Date/Time", "Notes", "Created On"],
-        keys: ["bookingId", "user", "equipment", "status", "fromDate", "toDate", "notes", "createdDate"],
+        headers: ["Booking ID", "User", "Equipment", "Status", "From Date/Time", "To Date/Time", "Created On"],
+        keys: ["bookingId", "user", "equipment", "status", "fromDate", "toDate", "createdDate"],
         sortOptions: ["Booking ID Ascending", "Equipment A to Z"],
         sortMap: {
             "Booking ID Ascending": { key: "bookingId", order: "asc" },
@@ -58,8 +58,8 @@ const REPORT_CONFIG = {
     },
     equipment: {
         apiEndpoint: '/api/Equipment',
-        headers: ["Equipment ID", "Name", "Type", "Status", "Availability", "Created On"],
-        keys: ["equipmentId", "name", "type", "status", "availability", "createdDate"],
+        headers: ["Equipment ID", "Name", "Type", "Status", "Location", "Created On"],
+        keys: ["equipmentId", "name", "type", "status", "location", "createdDate"],
         sortOptions: ["Equipment ID Ascending", "Name A to Z"],
         sortMap: {
             "Equipment ID Ascending": { key: "equipmentId", order: "asc" },
@@ -108,7 +108,7 @@ async function fetchReportData(endpoint) {
                     name: item.name,
                     type: item.equipmentType?.name || item.equipmentTypeId,
                     status: item.equipmentStatus?.name || item.equipmentStatusId,
-                    availability: item.availability,
+                    location: item.location,
                     createdDate: item.createdDate
                 };
             }
