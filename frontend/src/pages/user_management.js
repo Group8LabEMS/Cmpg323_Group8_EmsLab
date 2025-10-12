@@ -215,7 +215,7 @@ async function confirmUserDelete() {
             3000
           );
         } else {
-          addToast('Error', 'Failed to delete user.');
+          addToast('Cannot delete user', 'User has bookings and cannot be deleted.');
         }
       }
     }
