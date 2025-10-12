@@ -18,7 +18,8 @@ namespace Group8.LabEms.Api.Data
             modelBuilder.Entity<UserRoleModel>()
                 .HasOne(ur => ur.User)
                 .WithMany(u => u.UserRoles)
-                .HasForeignKey(ur => ur.UserId);
+                .HasForeignKey(ur => ur.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<UserRoleModel>()
                 .HasOne(ur => ur.Role)
@@ -44,6 +45,18 @@ namespace Group8.LabEms.Api.Data
             modelBuilder.Entity<MaintenanceStatusModel>()
             .HasIndex(b => b.Name)
             .IsUnique();
+
+            modelBuilder.Entity<AuditLogModel>()
+                .HasOne(a => a.User)
+                .WithMany(u => u.AuditLogs)
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<BookingModel>()
+                .HasOne(b => b.User)
+                .WithMany(u => u.Bookings)
+                .HasForeignKey(b => b.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
         }
         public DbSet<UserModel> Users { get; set; }

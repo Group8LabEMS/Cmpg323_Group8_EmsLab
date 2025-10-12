@@ -18,8 +18,8 @@ namespace Group8.LabEms.Api.Models
 
         [Column("user_id")]
         [ForeignKey(nameof(User))]
-        public int UserId { get; set; }
-        public UserModel User { get; set; } = null!;
+        public int? UserId { get; set; }
+        public UserModel? User { get; set; }
 
         [Required]
         [Column("action")]

@@ -4,6 +4,8 @@ using Group8.LabEms.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Group8.LabEms.Api.Services.Interfaces;
+using Group8.LabEms.Api.Services;
 
 namespace Group8.LabEms.Api.Controllers
 {
@@ -12,26 +14,43 @@ namespace Group8.LabEms.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly INotificationService _notificationService;
+        private readonly PasswordService _passwordService;
 
-        public UserController(AppDbContext context) => _context = context;
+        public UserController(AppDbContext context, INotificationService notificationService, PasswordService passwordService)
+        {
+            _context = context;
+            _notificationService = notificationService;
+            _passwordService = passwordService;
+        }
 
        
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserModel>>> GetUsers()
-            => await _context.Users
+        public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetUsers()
+        {
+            var users = await _context.Users
                 .Include(u => u.UserRoles)
-                .Include(u => u.Bookings)
-                .Include(u => u.AuditLogs)
+                    .ThenInclude(ur => ur.Role)
                 .ToListAsync();
+
+            return users.Select(u => new UserResponseDto
+            {
+                UserId = u.UserId,
+                SsoId = u.SsoId,
+                DisplayName = u.DisplayName,
+                Email = u.Email,
+                CreatedAt = u.CreatedAt,
+                Role = u.UserRoles.FirstOrDefault()?.Role?.Name
+            }).ToList();
+        }
 
         
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserModel>> GetUser(int id)
+        public async Task<ActionResult<UserResponseDto>> GetUser(int id)
         {
             var user = await _context.Users
                 .Include(u => u.UserRoles)
-                .Include(u => u.Bookings)
-                .Include(u => u.AuditLogs)
+                    .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.UserId == id);
 
             if (user == null)
@@ -39,14 +58,35 @@ namespace Group8.LabEms.Api.Controllers
                 return NotFound();
             }
 
-            return user;
+            return new UserResponseDto
+            {
+                UserId = user.UserId,
+                SsoId = user.SsoId,
+                DisplayName = user.DisplayName,
+                Email = user.Email,
+                CreatedAt = user.CreatedAt,
+                Role = user.UserRoles.FirstOrDefault()?.Role?.Name
+            };
         }
 
        
         [HttpPost]
-        public async Task<ActionResult<UserModel>> CreateUser(UserModel user, [FromQuery] string role)
+        public async Task<ActionResult<UserResponseDto>> CreateUser(UserCreateUpdateDto userDto, [FromQuery] string role)
         {
-            user.CreatedAt = DateTime.UtcNow;
+            if (string.IsNullOrEmpty(userDto.Password))
+            {
+                return BadRequest("Password is required for new users");
+            }
+
+            var user = new UserModel
+            {
+                SsoId = userDto.SsoId,
+                DisplayName = userDto.DisplayName,
+                Email = userDto.Email,
+                Password = _passwordService.HashPassword(userDto.Password),
+                CreatedAt = DateTime.UtcNow
+            };
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -59,19 +99,65 @@ namespace Group8.LabEms.Api.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
+            // Send welcome email notification
+            try
+            {
+                await _notificationService.SendWelcomeEmailAsync(
+                    user.Email,
+                    user.DisplayName,
+                    roleEntity?.Name ?? "User"
+                );
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Warning(ex, "Failed to send welcome email for user {UserId}", user.UserId);
+                // Don't fail user creation if email fails
+            }
+
+            return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, new UserResponseDto
+            {
+                UserId = user.UserId,
+                SsoId = user.SsoId,
+                DisplayName = user.DisplayName,
+                Email = user.Email,
+                CreatedAt = user.CreatedAt,
+                Role = roleEntity?.Name
+            });
         }
 
    
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, UserModel user)
+        public async Task<IActionResult> UpdateUser(int id, UserCreateUpdateDto userDto)
         {
-            if (id != user.UserId)
+            var existingUser = await _context.Users
+                .Include(u => u.UserRoles)
+                .FirstOrDefaultAsync(u => u.UserId == id);
+            if (existingUser == null) { return NotFound(); }
+
+            existingUser.SsoId = userDto.SsoId;
+            existingUser.DisplayName = userDto.DisplayName;
+            existingUser.Email = userDto.Email;
+            
+            // Only update password if provided
+            if (!string.IsNullOrEmpty(userDto.Password))
             {
-                return BadRequest();
+                existingUser.Password = _passwordService.HashPassword(userDto.Password);
             }
 
-            _context.Entry(user).State = EntityState.Modified;
+            // Handle role update if provided
+            if (!string.IsNullOrEmpty(userDto.Role))
+            {
+                // Remove all existing roles
+                _context.UserRoles.RemoveRange(existingUser.UserRoles);
+                
+                // Add new role
+                var roleEntity = await _context.Roles.FirstOrDefaultAsync(r => r.Name == userDto.Role);
+                if (roleEntity != null)
+                {
+                    var userRole = new UserRoleModel { UserId = existingUser.UserId, RoleId = roleEntity.RoleId };
+                    _context.UserRoles.Add(userRole);
+                }
+            }
 
             try
             {

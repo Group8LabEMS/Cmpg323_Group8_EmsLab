@@ -1,31 +1,4 @@
--- First, drop all existing tables in the correct order to avoid foreign key constraint violations
-
--- Set foreign key checks off temporarily to facilitate clean drops
-SET FOREIGN_KEY_CHECKS = 0;
-
--- Drop tables with foreign key dependencies first
-DROP TABLE IF EXISTS `audit_log`;
-DROP TABLE IF EXISTS `auditlog`; 
-DROP TABLE IF EXISTS `maintenance`;
-DROP TABLE IF EXISTS `booking`;
-DROP TABLE IF EXISTS `equipment`;
-DROP TABLE IF EXISTS `user_role`;
-DROP TABLE IF EXISTS `role`;
-DROP TABLE IF EXISTS `user`;
-
--- Drop lookup tables
-DROP TABLE IF EXISTS `equipment_status`;
-DROP TABLE IF EXISTS `equipment_type`;
-DROP TABLE IF EXISTS `booking_status`;
-DROP TABLE IF EXISTS `maintenance_type`;
-DROP TABLE IF EXISTS `maintenance_status`;
-
--- Re-enable foreign key checks
-SET FOREIGN_KEY_CHECKS = 1;
-
--- Original tables with modifications for normalisation
-
--- Status Type Tables
+-- ---- Nominal Tables ----- --
 CREATE TABLE `equipment_status` (
     `equipment_status_id` INT AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(50) NOT NULL UNIQUE,
@@ -56,44 +29,44 @@ CREATE TABLE `maintenance_status` (
     `description` VARCHAR(255) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- User Table (unchanged)
+-- ----- Users ----- --
 CREATE TABLE `user` (
     `user_id` INT AUTO_INCREMENT PRIMARY KEY,
-    `sso_id` VARCHAR(255) NOT NULL,
+    `sso_id` VARCHAR(255) NOT NULL UNIQUE,
     `display_name` VARCHAR(255) NOT NULL,
-    `email` VARCHAR(255) NOT NULL,
+    `email` VARCHAR(255) NOT NULL UNIQUE,
     `password` VARCHAR(255) NOT NULL,
-    `created_at` TIMESTAMP NOT NULL
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Role Table (unchanged)
+-- ----- Roles ----- --
 CREATE TABLE `role` (
     `role_id` INT AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(255) NOT NULL
+    `name` VARCHAR(255) NOT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- UserRole Table (unchanged)
+-- ----- UserRoles ----- --
 CREATE TABLE `user_role` (
     `user_id` INT NOT NULL,
     `role_id` INT NOT NULL,
     PRIMARY KEY (`user_id`, `role_id`),
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE,
     FOREIGN KEY (`role_id`) REFERENCES `role`(`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Equipment Table (modified)
+-- ----- Equipment ----- --
 CREATE TABLE `equipment` (
     `equipment_id` INT AUTO_INCREMENT PRIMARY KEY,
     `name` VARCHAR(255) NOT NULL,
     `equipment_type_id` INT NOT NULL,
     `equipment_status_id` INT NOT NULL,
-    `availability` VARCHAR(255),
-    `created_date` TIMESTAMP NOT NULL,
+    `location` VARCHAR(255),
+    `created_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (`equipment_type_id`) REFERENCES `equipment_type`(`equipment_type_id`),
     FOREIGN KEY (`equipment_status_id`) REFERENCES `equipment_status`(`equipment_status_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Booking Table (modified)
+-- ----- Bookings ----- --
 CREATE TABLE `booking` (
     `booking_id` INT AUTO_INCREMENT PRIMARY KEY,
     `user_id` INT NOT NULL,
@@ -102,13 +75,13 @@ CREATE TABLE `booking` (
     `to_date` TIMESTAMP NOT NULL,
     `booking_status_id` INT NOT NULL,
     `notes` TEXT,
-    `created_date` TIMESTAMP NOT NULL,
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`),
+    `created_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE RESTRICT,
     FOREIGN KEY (`equipment_id`) REFERENCES `equipment`(`equipment_id`),
     FOREIGN KEY (`booking_status_id`) REFERENCES `booking_status`(`booking_status_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Maintenance Table (modified)
+-- ----- Maintenance ----- --
 CREATE TABLE `maintenance` (
     `maintenance_id` INT AUTO_INCREMENT PRIMARY KEY,
     `equipment_id` INT NOT NULL,
@@ -122,16 +95,14 @@ CREATE TABLE `maintenance` (
     FOREIGN KEY (`maintenance_status_id`) REFERENCES `maintenance_status`(`maintenance_status_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- AuditLog Table (unchanged)
+-- ----- AuditLog ----- --
 CREATE TABLE `audit_log` (
     `auditlog_id` INT AUTO_INCREMENT PRIMARY KEY,
-    `timestamp` TIMESTAMP NOT NULL,
+    `timestamp` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `user_id` INT,
     `action` VARCHAR(255) NOT NULL,
     `entity_type` VARCHAR(255) NOT NULL,
     `entity_id` INT NOT NULL,
     `details` JSON,
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`)
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-

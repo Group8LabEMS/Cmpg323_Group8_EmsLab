@@ -84,3 +84,11 @@ npm-debug.log*
 .env.*.local
 
 .vscode
+
+
+Backend/Group8.LabEms.Api/Group8.LabEms.Api/Configurations/database.json
+Backend/Group8.LabEms.Api/Group8.LabEms.Api/Configurations/appsettings.json
+Backend/Group8.LabEms.Api/Group8.LabEms.Api/wwwroot/
+
+flyway.conf
+*.pem
