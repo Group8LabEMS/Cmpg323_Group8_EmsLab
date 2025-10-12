@@ -37,11 +37,11 @@ namespace Group8.LabEms.Api.Controllers
                 .Select(b => new {
                     b.BookingId,
                     b.UserId,
-                    User = new { b.User.UserId, b.User.DisplayName, b.User.Email },
+                    User = b.User == null ? null : new { b.User.UserId, b.User.DisplayName, b.User.Email },
                     b.EquipmentId,
-                    Equipment = new { b.Equipment.EquipmentId, b.Equipment.Name },
+                    Equipment = b.Equipment == null ? null : new { b.Equipment.EquipmentId, b.Equipment.Name },
                     b.BookingStatusId,
-                    BookingStatus = new { b.BookingStatus.BookingStatusId, b.BookingStatus.Name, b.BookingStatus.Description },
+                    BookingStatus = b.BookingStatus == null ? null : new { b.BookingStatus.BookingStatusId, b.BookingStatus.Name, b.BookingStatus.Description },
                     b.FromDate,
                     b.ToDate,
                     b.Notes,
@@ -63,11 +63,11 @@ namespace Group8.LabEms.Api.Controllers
                 .Select(b => new {
                     b.BookingId,
                     b.UserId,
-                    User = new { b.User.UserId, b.User.DisplayName, b.User.Email },
+                    User = b.User == null ? null : new { b.User.UserId, b.User.DisplayName, b.User.Email },
                     b.EquipmentId,
-                    Equipment = new { b.Equipment.EquipmentId, b.Equipment.Name },
+                    Equipment = b.Equipment == null ? null : new { b.Equipment.EquipmentId, b.Equipment.Name },
                     b.BookingStatusId,
-                    BookingStatus = new { b.BookingStatus.BookingStatusId, b.BookingStatus.Name, b.BookingStatus.Description },
+                    BookingStatus = b.BookingStatus == null ? null : new { b.BookingStatus.BookingStatusId, b.BookingStatus.Name, b.BookingStatus.Description },
                     b.FromDate,
                     b.ToDate,
                     b.Notes,
@@ -211,7 +211,7 @@ namespace Group8.LabEms.Api.Controllers
                 .OrderBy(b => b.FromDate)
                 .Select(b => new {
                     b.BookingId,
-                    EquipmentName = b.Equipment.Name,
+                    EquipmentName = b.Equipment != null ? b.Equipment.Name : null,
                     b.FromDate,
                     b.ToDate
                 })

@@ -17,7 +17,7 @@ export async function fetchMaintenance() {
       id: eq.equipmentId,
       name: eq.name || '',
       desc: eq.equipmentType?.name || '',
-      loc: eq.availability || '',
+      loc: eq.location || '',
       status: eq.equipmentStatus?.name || '',
     }));
     renderMaintenanceTable();

@@ -60,7 +60,7 @@ CREATE TABLE `equipment` (
     `name` VARCHAR(255) NOT NULL,
     `equipment_type_id` INT NOT NULL,
     `equipment_status_id` INT NOT NULL,
-    `availability` VARCHAR(255),
+    `location` VARCHAR(255),
     `created_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (`equipment_type_id`) REFERENCES `equipment_type`(`equipment_type_id`),
     FOREIGN KEY (`equipment_status_id`) REFERENCES `equipment_status`(`equipment_status_id`)
@@ -76,7 +76,7 @@ CREATE TABLE `booking` (
     `booking_status_id` INT NOT NULL,
     `notes` TEXT,
     `created_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE RESTRICT,
     FOREIGN KEY (`equipment_id`) REFERENCES `equipment`(`equipment_id`),
     FOREIGN KEY (`booking_status_id`) REFERENCES `booking_status`(`booking_status_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

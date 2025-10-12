@@ -108,7 +108,7 @@ async function fetchReportData(endpoint) {
                     name: item.name,
                     type: item.equipmentType?.name || item.equipmentTypeId,
                     status: item.equipmentStatus?.name || item.equipmentStatusId,
-                    location: item.location,
+                    location: item.location || '—',
                     createdDate: item.createdDate
                 };
             }

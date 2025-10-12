@@ -26,8 +26,8 @@ namespace Group8.LabEms.Api.Models
         public int EquipmentStatusId { get; set; }
     public EquipmentStatusModel? EquipmentStatus { get; set; }
 
-        [Column("availability")]
-        public string? Availability { get; set; }
+        [Column("location")]
+        public string? Location { get; set; }
 
         [Required]
         [Column("created_date")]

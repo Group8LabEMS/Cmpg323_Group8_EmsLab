@@ -28,7 +28,7 @@ namespace Group8.LabEms.Api.Controllers
                     EquipmentType = new { e.EquipmentType.EquipmentTypeId, e.EquipmentType.Name, e.EquipmentType.Description },
                     e.EquipmentStatusId,
                     EquipmentStatus = new { e.EquipmentStatus.EquipmentStatusId, e.EquipmentStatus.Name, e.EquipmentStatus.Description },
-                    e.Availability,
+                    e.Location,
                     e.CreatedDate
                 })
                 .ToListAsync();
@@ -50,7 +50,7 @@ namespace Group8.LabEms.Api.Controllers
                     EquipmentType = new { e.EquipmentType.EquipmentTypeId, e.EquipmentType.Name, e.EquipmentType.Description },
                     e.EquipmentStatusId,
                     EquipmentStatus = new { e.EquipmentStatus.EquipmentStatusId, e.EquipmentStatus.Name, e.EquipmentStatus.Description },
-                    e.Availability,
+                    e.Location,
                     e.CreatedDate
                 })
                 .FirstOrDefaultAsync();
@@ -128,7 +128,7 @@ namespace Group8.LabEms.Api.Controllers
                     EquipmentType = new { e.EquipmentType.EquipmentTypeId, e.EquipmentType.Name, e.EquipmentType.Description },
                     e.EquipmentStatusId,
                     EquipmentStatus = new { e.EquipmentStatus.EquipmentStatusId, e.EquipmentStatus.Name, e.EquipmentStatus.Description },
-                    e.Availability,
+                    e.Location,
                     e.CreatedDate
                 })
                 .ToListAsync();

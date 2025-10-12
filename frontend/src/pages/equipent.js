@@ -22,7 +22,7 @@ async function fetchEquipment() {
       id: eq.equipmentId,
       name: eq.name,
       desc: eq.equipmentType?.name || '',
-      loc: eq.availability || '',
+      loc: eq.location || '',
       status: eq.equipmentStatus?.name || '',
     }));
   } catch (err) {

@@ -15,7 +15,6 @@ async function fetchEquipment() {
 	       type: eq.equipmentType?.name || '',
 	       status: eq.equipmentStatus?.name || '',
 	       location: eq.location || eq.availability || '',
-	       availability: eq.availability,
 	       createdDate: eq.createdDate,
        }));
 }
@@ -85,7 +84,7 @@ async function addEquipment() {
 		name: addEquipmentForm.name,
 		equipmentTypeId: typeObj?.equipmentTypeId || 1,
 		equipmentStatusId: statusObj?.equipmentStatusId || 1,
-		availability: addEquipmentForm.location || statusObj?.name || 'Available',
+		location: addEquipmentForm.location || statusObj?.name || 'Available',
 		createdDate: new Date().toISOString(),
 	};
 	try {
@@ -110,7 +109,7 @@ async function updateEquipment() {
 		name: editEquipment.name,
 		equipmentTypeId: type ? type.equipmentTypeId : 1,
 		equipmentStatusId: status ? status.equipmentStatusId : 1,
-		availability: editEquipment.status,
+		location: editEquipment.location || '',
 		createdDate: editEquipment.createdDate || new Date().toISOString(),
 	};
 	await apiFetch('PUT', `/api/Equipment/${editEquipment.equipmentId}`, { body: payload });
