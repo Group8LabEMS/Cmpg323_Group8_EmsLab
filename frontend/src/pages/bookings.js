@@ -3,6 +3,8 @@ import { deleteMessage } from "../util/modals.js";
 import { equipmentList } from "./equipent.js";
 import { updateModal, deleteModal } from "../util/modals.js";
 import { getInputById } from "../util/dom.js";
+import { apiFetch } from "../api/api.js";
+import { addToast } from "../util/toast.js";
 
 //---------- Element references ----------//
 const bookingTableBody = document.getElementById("bookingTableBody");
@@ -55,7 +57,6 @@ export function openDelete(index) {
   const booking = bookings[index];
 
   litRender(html`
-    <p>Are you sure you want to delete booking?</p>
     <p><strong>Equipment: </strong>${booking.name}</p>
     <p><strong>Date: </strong>${booking.date}</p>
     <p><strong>Time: </strong>${booking.start} - ${booking.end}</p>
@@ -72,8 +73,8 @@ export function renderBookings() {
       <td>${b.start} - ${b.end}</td>
       <td><span class="status ${getStatusClass(b.status)}">${b.status}</span></td>
       <td>
-        <button class="action-book" @click=${() => openUpdate(i)}>Update</button>
-        <button class="action-delete" title="Delete booking" @click=${() => openDelete(i)}>Delete</button>
+        <button class="btn btn-primary" @click=${() => openUpdate(i)}>Update</button>
+        <button class="btn btn-danger" title="Delete booking" @click=${() => openDelete(i)}>Delete</button>
       </td>
     </tr>
   `);
@@ -87,8 +88,17 @@ confirmBooking.addEventListener("click", async () => {
   let end = getInputById("endTime").value;
 
   if (selectedEquipment && date && start && end) {
+    // Validate that booking date is not in the past
+    const bookingDateTime = new Date(`${date}T${start}:00`);
+    const now = new Date();
+    
+    if (bookingDateTime < now) {
+      addToast('Validation Error', 'Cannot book equipment for past dates or times.');
+      return;
+    }
+
     const booking = {
-      userId: Number(localStorage.getItem("userId")), // Use logged-in user ID
+      userId: window.currentUser?.userId || 1, // Use logged-in user ID
       equipmentId: selectedEquipment.id,
       bookingStatusId: 1, // Pending
       fromDate: `${date}T${start}:00`,
@@ -98,33 +108,24 @@ confirmBooking.addEventListener("click", async () => {
     };
 
     try {
-      const response = await fetch("/api/Booking", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(booking)
-      });
-      if (response.ok) {
-        bookingModal.classList.add("hidden");
-        await fetchAndRenderBookings();
-      } else {
-        const text = await response.text();
-        console.error('Booking error:', text);
-        alert(text); // Show backend error to user
-      }
+      await apiFetch('POST', '/api/Booking', { body: booking });
+      bookingModal.classList.add("hidden");
+      await fetchAndRenderBookings();
+      addToast('Success', 'Booking created successfully');
     } catch (err) {
       console.error('Booking error:', err);
+      addToast('Booking Error', err.message);
     }
   } else {
-    alert("Please fill in all fields.");
+    addToast('Validation Error', 'Please fill in all fields.');
   }
 });
 
-async function fetchAndRenderBookings() {
+export async function fetchAndRenderBookings() {
   try {
-    const response = await fetch("/api/Booking");
-    if (!response.ok) throw new Error("Failed to fetch bookings");
-    const data = await response.json();
+    const data = await apiFetch('GET', '/api/Booking');
     bookings = data.map(b => ({
+      id: b.bookingId,
       name: b.equipment?.name || "",
       date: b.fromDate?.split("T")[0] || "",
       start: b.fromDate?.split("T")[1]?.slice(0,5) || "",
@@ -146,19 +147,38 @@ cancelBooking.addEventListener("click", () => {
   bookingModal.classList.add("hidden");
 });
 
-document.getElementById("confirmUpdate").addEventListener("click", () => {
+document.getElementById("confirmUpdate").addEventListener("click", async () => {
   let date = getInputById("updateDate").value;
   let start = getInputById("updateStartTime").value;
   let end = getInputById("updateEndTime").value;
 
   if (date && start && end) {
-    bookings[selectedBookingIndex].date = date;
-    bookings[selectedBookingIndex].start = start;
-    bookings[selectedBookingIndex].end = end;
-    renderBookings();
-    updateModal.classList.add("hidden");
+    // Validate that booking date is not in the past
+    const bookingDateTime = new Date(`${date}T${start}:00`);
+    const now = new Date();
+    
+    if (bookingDateTime < now) {
+      addToast('Validation Error', 'Cannot update booking to past dates or times.');
+      return;
+    }
+
+    const booking = bookings[selectedBookingIndex];
+    const updateData = {
+      fromDate: `${date}T${start}:00`,
+      toDate: `${date}T${end}:00`
+    };
+
+    try {
+      await apiFetch('PUT', `/api/Booking/${booking.id}`, { body: updateData });
+      updateModal.classList.add("hidden");
+      await fetchAndRenderBookings();
+      addToast('Success', 'Booking updated successfully');
+    } catch (err) {
+      console.error('Update error:', err);
+      addToast('Update Error', err.message);
+    }
   } else {
-    alert("Please fill in all fields.");
+    addToast('Validation Error', 'Please fill in all fields.');
   }
 });
 
@@ -166,10 +186,18 @@ document.getElementById("cancelUpdate").addEventListener("click", () => {
   updateModal.classList.add("hidden");
 });
 
-document.getElementById("confirmDelete").addEventListener("click", () => {
-  bookings.splice(selectedBookingIndex, 1);
-  renderBookings();
-  deleteModal.classList.add("hidden");
+document.getElementById("confirmDelete").addEventListener("click", async () => {
+  const booking = bookings[selectedBookingIndex];
+  
+  try {
+    await apiFetch('DELETE', `/api/Booking/${booking.id}`);
+    deleteModal.classList.add("hidden");
+    await fetchAndRenderBookings();
+    addToast('Success', 'Booking deleted successfully');
+  } catch (err) {
+    console.error('Delete error:', err);
+    addToast('Delete Error', err.message);
+  }
 });
 
 document.getElementById("cancelDelete").addEventListener("click", () => {

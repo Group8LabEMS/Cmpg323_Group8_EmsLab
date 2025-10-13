@@ -1,10 +1,12 @@
 using System;
 using Group8.LabEms.Api.Data;
 using Group8.LabEms.Api.Services;
-//using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,8 +44,9 @@ builder.Services.AddCors(options =>
             policy
                 .WithOrigins("http://localhost:5173") // frontend URL
                 .AllowAnyHeader()
-                .AllowAnyMethod();
-                
+                .AllowAnyMethod()
+                .SetIsOriginAllowed(origin => true) // Allow same-origin requests
+                .AllowCredentials();
         });
 });
 
@@ -77,11 +80,52 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 
 
+// JWT Configuration
+var jwtKey = configuration["Jwt:SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
+var key = Encoding.UTF8.GetBytes(jwtKey);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = configuration["Jwt:Issuer"],
+            ValidAudience = configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(key)
+        };
+        
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["jwt"];
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<PasswordService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddBusinessServices();
 
 var app = builder.Build();
+
+// Configure static file serving for frontend
+// var frontendDistPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "frontend", "dist");
+// app.UseStaticFiles(new StaticFileOptions
+// {
+//     FileProvider = new PhysicalFileProvider(frontendDistPath),
+//     RequestPath = ""
+// });
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 // Middleware
 
@@ -95,8 +139,13 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+// SPA fallback routing - serve index.html for non-API routes
+app.MapFallbackToFile("index.html");
 
 app.Run();
 

@@ -1,165 +1,154 @@
-// Basic dashboard renderer
 import { html, render } from "lit";
 import { renderAdminDashboard as adminDash } from "./admin_dashboard.js";
+import { getUserBookingDates, getUserUpcomingBookings } from "../api/api.js";
+import { getCurrentUser } from "../util/auth.js";
+
+let currentCalendarDate = new Date();
+let userBookingDates = [];
 
 export async function renderDashboard() {
   const dashboardSection = document.getElementById("dashboard");
   if (!dashboardSection) return;
-  const role = localStorage.getItem('role');
-  if (role === 'admin') {
+  const role = window.currentRole;
+  if (role === 'Admin') {
     adminDash();
     return;
   }
- //fetch and flatten bookings to remove circular refs
-  const userId = localStorage.getItem('userID');
-  const bookings = await fetch(`/api/Booking?userId=${userId}`)
-    .then(res=> res.json())
-    .catch(() => []);
-  console.log('Fetched bookings:', bookings);
-  
-  const flattenedBookings = bookings.map(b => ({
-    bookingId: b.bookingId,
-    fromDate: b.fromDate,
-    toDate: b.toDate,
-    notes: b.notes,
-    equipmentName: b.equipment?.name || 'Unknown Equipment',
-    userName: b.user?.displayName || 'Unknown User',
-    bookingStatus: b.bookingStatus?.name || 'Unknown Status'
+
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  try {
+    const bookingData = await getUserBookingDates(user.userId);
+    userBookingDates = Array.isArray(bookingData) ? bookingData : [];
+  } catch (err) {
+    console.error('Error fetching booking dates:', err);
+    userBookingDates = [];
   }
-  ));
 
-  console.log('Flattened bookings:', flattenedBookings);
+  renderCalendarAndBookings(dashboardSection, user.userId);
+}
 
+async function renderCalendarAndBookings(dashboardSection, userId) {
+  const calendar = generateCalendar();
+  let upcomingBookings = [];
   
+  try {
+    const bookingsData = await getUserUpcomingBookings(userId);
+    upcomingBookings = Array.isArray(bookingsData) ? bookingsData : [];
+  } catch (err) {
+    console.error('Error fetching upcoming bookings:', err);
+    upcomingBookings = [];
+  }
 
-  //get booking status for dot colors
-  const bookingDates = flattenedBookings.map(b => {
-    const start = new Date(b.fromDate);
-    if (isNaN(start.getTime())) return null;
-    return { 
-      date: start.toLocaleDateString('en-CA'), // 'YYYY-MM-DD' in local timezone
-      status: b.bookingStatus 
-    };
-  }).filter(Boolean);
+  render(html`
+    <div class="dashboard-flex">
+      <div class="dashboard-row">
+        <div class="card dashboard-card dashboard-calendar-card" style="max-height: unset">
+          <div class="card-title dashboard-calendar-header">
+            <button @click=${() => changeMonth(-1)} class="dashboard-calendar-nav">‹</button>
+            <span>${calendar.monthName} ${calendar.year}</span>
+            <button @click=${() => changeMonth(1)} class="dashboard-calendar-nav">›</button>
+          </div>
+          <table class="dashboard-calendar-table">
+            <thead><tr>
+              <th>MON</th><th>TUE</th><th>WED</th><th>THU</th><th>FRI</th><th>SAT</th><th>SUN</th>
+            </tr></thead>
+            <tbody>
+              ${calendar.rows}
+            </tbody>
+          </table>
+        </div>
+        <div class="card dashboard-card dashboard-bookings-card">
+          <div class="card-title">Upcoming Bookings</div>
+          <ul class="dashboard-bookings-list">
+            ${upcomingBookings.length === 0 ? 
+              html`<li class="dashboard-no-bookings">No upcoming bookings</li>` :
+              upcomingBookings.map(booking => html`
+                <li>
+                  <span class="dashboard-booking-dot"></span>
+                  <div class="dashboard-booking-content">
+                    <span class="dashboard-booking-equip">${booking.equipmentName}</span>
+                    <span class="dashboard-booking-time">
+                      ${new Date(booking.fromDate).toLocaleDateString()}<br>
+                      ${new Date(booking.fromDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} to ${new Date(booking.toDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                    </span>
+                  </div>
+                </li>
+              `)
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  `, dashboardSection);
+}
 
-  // Calendar logic
+function generateCalendar() {
   const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth(); 
-  const day = today.getDate();
+  const year = currentCalendarDate.getFullYear();
+  const month = currentCalendarDate.getMonth();
   const monthNames = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
-  const currentMonth = monthNames[month];
+  
   const firstDay = new Date(year, month, 1);
   let startDay = firstDay.getDay();
   startDay = startDay === 0 ? 6 : startDay - 1;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const prevMonthDays = new Date(year, month, 0).getDate();
+  
   let rows = [];
   let week = [];
   
-  //filter for only bookings made in this month
-  const currentMonthBookings = flattenedBookings.filter(b => {
-  const start = new Date(b.fromDate);
-  return (
-    start.getMonth() === month &&
-    start.getFullYear() === year
-  );
-  });
-
   for (let i = 0; i < startDay; i++) {
-    week.push(html`<td style="color:#bbb">${prevMonthDays - startDay + i + 1}</td>`);
+    week.push(html`<td class="dashboard-calendar-prev-month">${prevMonthDays - startDay + i + 1}</td>`);
   }
-
+  
   for (let d = 1; d <= daysInMonth; d++) {
-    const currentDate = new Date(year, month, d).toLocaleDateString('en-CA');
-    const isToday = d === day;
-    const bookingForDay = bookingDates.find(b => b.date === currentDate);
-
-    // show dot color based on status
-    let dotColor = bookingForDay ? 'red' : '';
-    if (bookingForDay) {
-      if (bookingForDay.status === 'Approved') dotColor = 'green';
-      else if (bookingForDay.status === 'Pending') dotColor = 'orange';
-      else if (bookingForDay.status === 'Cancelled') dotColor = 'gray';
+    const currentDate = new Date(year, month, d);
+    const isToday = currentDate.toDateString() === today.toDateString();
+    const hasBooking = userBookingDates && userBookingDates.length > 0 && userBookingDates.some(booking => {
+      const bookingDate = new Date(booking.date || booking.Date);
+      return bookingDate.toDateString() === currentDate.toDateString();
+    });
+    const bookingInfo = userBookingDates && userBookingDates.find(booking => {
+      const bookingDate = new Date(booking.date || booking.Date);
+      return bookingDate.toDateString() === currentDate.toDateString();
+    });
+    
+    let cssClass = '';
+    if (isToday) {
+      cssClass = 'dashboard-calendar-today';
+    } else if (hasBooking) {
+      cssClass = (bookingInfo?.isPast || bookingInfo?.IsPast) ? 'dashboard-calendar-past-booking' : 'dashboard-calendar-future-booking';
     }
-
-    week.push(html`
-      <td style=${isToday ? 'background:#c6f3c6;border-radius:6px;font-weight:bold;position:relative;' : 'position:relative;'}>
-        ${d}
-        ${dotColor ? html`<span style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:6px;height:6px;background:${dotColor};border-radius:50%;display:inline-block;"></span>` : ''}
-      </td>
-    `);
-
+    
+    week.push(html`<td class="${cssClass}">${d}</td>`);
     if ((week.length) % 7 === 0) {
       rows.push(html`<tr>${week}</tr>`);
       week = [];
     }
   }
-
+  
   let trailing = 1;
   while (week.length < 7) {
-    week.push(html`<td style="color:#bbb">${trailing++}</td>`);
+    week.push(html`<td class="dashboard-calendar-prev-month">${trailing++}</td>`);
   }
   rows.push(html`<tr>${week}</tr>`);
+  
+  return {
+    monthName: monthNames[month],
+    year,
+    rows
+  };
+}
 
-  //Map bookings to HTML list items
-  const bookingItems = currentMonthBookings.map(b => {
-  const start = new Date(b.fromDate);
-  const end = new Date(b.toDate);
-
-  //Only proceed if start and end are valid
-  if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
-
-  const date = start.toISOString().split('T')[0];
-  const startTime = start.toTimeString().substring(0,5);
-  const endTime = end.toTimeString().substring(0,5);
-
-  // Determine dot color for booking list
-  let dotColor = 'red';
-  if (b.bookingStatus === 'Approved') dotColor = 'green';
-  else if (b.bookingStatus === 'Pending') dotColor = 'orange';
-  else if (b.bookingStatus === 'Cancelled') dotColor = 'gray';
-
-  return html`
-    <li style="margin-bottom:2.2rem;">
-      <span class="dashboard-booking-dot" style="width:14px;height:14px;background:${dotColor};border-radius:50%;display:inline-block;margin-right:8px;"></span>
-      <span class="dashboard-booking-equip" style="font-size:1.18rem;">
-        ${b.equipmentName || 'Unknown Equipment'}
-      </span><br>
-      <span class="dashboard-booking-time" style="font-size:1.08rem;">
-        ${date}<br>${startTime} to ${endTime}
-      </span>
-      <br>
-    </li>
-  `;
-}).filter(Boolean); // remove nulls
-
-  render(html`
-    <div class="dashboard-flex" style="gap:3.5rem;">
-      <div class="dashboard-calendar-card" style="min-width:420px;max-width:520px;padding:2.5rem 2.5rem 2.5rem 2.5rem;">
-        <div class="dashboard-calendar-title" style="font-size:1.6rem;margin-bottom:1.2rem;"> ${currentMonth} ${year}</div>
-        <table class="dashboard-calendar-table" style="font-size:1.25rem;">
-          <thead>
-            <tr>
-              <th style="font-size:1.1rem;padding:0.7rem 0.5rem;">MON</th><th style="font-size:1.1rem;padding:0.7rem 0.5rem;">TUE</th><th style="font-size:1.1rem;padding:0.7rem 0.5rem;">WED</th><th style="font-size:1.1rem;padding:0.7rem 0.5rem;">THU</th><th style="font-size:1.1rem;padding:0.7rem 0.5rem;">FRI</th><th style="font-size:1.1rem;padding:0.7rem 0.5rem;">SAT</th><th style="font-size:1.1rem;padding:0.7rem 0.5rem;">SUN</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rows}
-          </tbody>
-        </table>
-      </div>
-      <div class="dashboard-bookings-card" style="min-width:340px;max-width:420px;padding:2.5rem 2.5rem 2.5rem 2.5rem;">
-        <div class="dashboard-bookings-title" style="font-size:1.6rem;margin-bottom:1.2rem;">Upcoming Bookings</div>
-        <ul class="dashboard-bookings-list" style="font-size:1.18rem;">
-          ${bookingItems.length > 0
-            ? bookingItems
-            : html`<li>No bookings found</li>`}
-        </ul>
-      </div>
-    </div>
-  `, dashboardSection);
+async function changeMonth(direction) {
+  currentCalendarDate.setMonth(currentCalendarDate.getMonth() + direction);
+  const user = await getCurrentUser();
+  if (user) {
+    renderCalendarAndBookings(document.getElementById("dashboard"), user.userId);
+  }
 }

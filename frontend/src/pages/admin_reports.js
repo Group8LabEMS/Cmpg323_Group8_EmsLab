@@ -1,6 +1,9 @@
 // pages/admin_reports.js
 // API-integrated logic for the Admin Reports section.
 
+import { html, render } from "lit";
+import { apiFetch } from "../api/api.js";
+
 // --- Global State ---
 let currentReportData = [];
 let currentReportType = 'user'; 
@@ -73,9 +76,7 @@ const REPORT_CONFIG = {
 
 async function fetchReportData(endpoint) {
     try {
-        const res = await fetch(endpoint);
-        if (!res.ok) throw new Error(`Failed to fetch report data from ${endpoint}`);
-        const data = await res.json();
+        const data = await apiFetch('GET', endpoint);
         
         // Normalize data keys (similar to admin_equipment.js)
         return data.map(item => {
@@ -123,12 +124,12 @@ async function fetchReportData(endpoint) {
 async function fetchUniqueOptions() {
     try {
         const [roles, faculties, departments, bookingStatuses, equipmentTypes, equipmentStatuses] = await Promise.all([
-            fetch('/api/Role').then(res => res.json()).catch(() => []),
-            fetch('/api/Faculty').then(res => res.json()).catch(() => []),
-            fetch('/api/Department').then(res => res.json()).catch(() => []),
-            fetch('/api/BookingStatus').then(res => res.json()).catch(() => []),
-            fetch('/api/EquipmentType').then(res => res.json()).catch(() => []),
-            fetch('/api/EquipmentStatus').then(res => res.json()).catch(() => []),
+            apiFetch('GET', '/api/Role').catch(() => []),
+            apiFetch('GET', '/api/Faculty').catch(() => []),
+            apiFetch('GET', '/api/Department').catch(() => []),
+            apiFetch('GET', '/api/BookingStatus').catch(() => []),
+            apiFetch('GET', '/api/EquipmentType').catch(() => []),
+            apiFetch('GET', '/api/EquipmentStatus').catch(() => []),
         ]);
 
         // Map API response to simple string arrays
@@ -315,7 +316,7 @@ function populateSortOptions(config) {
     const select = document.getElementById('reportSortSelect');
     if (!select) return;
 
-    select.innerHTML = '<option value="">Sort by</option>'; 
+    select.innerHTML = '<option value="">Sort by</option>';
 
     config.sortOptions.forEach(option => {
         const opt = document.createElement('option');
@@ -397,7 +398,7 @@ function showFilterModal() {
     if (!modal || !formContent) return;
 
     modalTitle.textContent = `Filter ${config.headers[0].split(' ')[0]} Report`;
-    formContent.innerHTML = '';
+    render(html``, formContent);
 
     config.filterFields.forEach(field => {
         const group = document.createElement('div');
@@ -410,7 +411,7 @@ function showFilterModal() {
         if (field.type === 'select') {
             const select = document.createElement('select');
             select.id = `modalFilter-${field.key}`;
-            select.innerHTML = '<option value="">Any</option>';
+            render(html`<option value="">Any</option>`, select);
             UNIQUE_OPTIONS[field.optionsKey].forEach(option => {
                 const opt = document.createElement('option');
                 opt.value = option;

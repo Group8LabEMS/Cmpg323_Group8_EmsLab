@@ -1,12 +1,24 @@
-// Import user data helper functions
-import { 
-  loadUserData, 
-  checkAuthentication, 
-  handleLogout, 
-  getCurrentUser, 
-  hasRole, 
-  isAdmin 
-} from './helpers/userDataHelper.js';
+// Import page renderers
+import { renderDashboard } from "./pages/dashboard.js";
+import { renderProfile } from "./pages/profile.js";
+import { renderBookings, fetchAndRenderBookings } from "./pages/bookings.js";
+import { renderEquipmentManagement } from "./pages/admin_equipment.js";
+import { renderEquipment } from "./pages/equipent.js";
+import { renderUsers } from "./pages/user_management.js";
+import { renderAdminDashboard } from "./pages/admin_dashboard.js";
+import { renderAdminAudit } from "./pages/admin_audit.js";
+import { renderAdminBookings } from "./pages/admin_bookings.js";
+import { renderMaintenance } from "./pages/maintenance.js";
+import { renderReports } from "./pages/admin_reports.js";
+
+// Import utilities
+import "./util/toast.js";
+
+import { html, render } from "lit";
+import { logout as doLogout } from "./util/auth.js";
+import { initSidebarResize } from "./util/resize.js";
+import { apiFetch } from "./api/api.js";
+import { addToast } from "./util/toast.js";
 
 // Role-based tab config
 const TABS_BY_ROLE = {
@@ -14,7 +26,7 @@ const TABS_BY_ROLE = {
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'profile', label: 'Profile' },
     { id: 'bookings', label: 'Bookings' },
-    { id: 'equipment', label: 'Equipment' }
+    { id: 'equipment', label: 'Equipment' },
   ],
   Admin: [
     { id: 'dashboard', label: 'Dashboard' },
@@ -22,35 +34,45 @@ const TABS_BY_ROLE = {
     { id: 'bookings', label: 'Bookings Management' },
     { id: 'equipment', label: 'Equipment Management' },
     { id: 'maintenance', label: 'Maintenance' },
-  { id: 'adminAudit', label: 'Audit Trails' },
+    { id: 'adminAudit', label: 'Audit Trails' },
     { id: 'reports', label: 'Reports' },
     { id: 'settings', label: 'Settings' }
   ]
 };
 
+// Check authentication and get user info
+let currentUser = null;
+let currentRole = 'Student';
 
-
-// Initialize authentication and get current role
-const authCheck = checkAuthentication();
-if (!authCheck) {
-  // This will redirect to login, so we don't need to continue
+async function initAuth() {
+  try {
+    currentUser = await apiFetch('GET', '/api/Auth/me');
+    currentRole = currentUser.role || 'Student';
+    // Expose globally for other modules
+    window.currentUser = currentUser;
+    window.currentRole = currentRole;
+  } catch (err) {
+    window.location.href = 'login.html';
+    return;
+  }
 }
-
-const roleFromStorage = localStorage.getItem('role');
-let currentRole = roleFromStorage === 'Admin' ? 'Admin' : (roleFromStorage === 'Student' ? 'Student' : 'Student');
 
 // Render sidebar
 function renderSidebar() {
-  const sidebar = document.querySelector('aside.sidebar');
+  const sidebar = /** @type {HTMLElement} */ (document.querySelector('aside.sidebar'));
   if (!sidebar) return;
 
-  const userName = sidebar.querySelector('h3')?.outerHTML || '';
-  const logoutBtn = sidebar.querySelector('.logout')?.outerHTML || '';
-
+  const userNameEl = sidebar.querySelector('h3');
+  const userNameText = userNameEl?.textContent || '';
+  
   const tabs = TABS_BY_ROLE[currentRole] || [];
-  sidebar.innerHTML = userName +
-    tabs.map(tab => `<button class="sidebar-btn" data-target="${tab.id}">${tab.label}</button>`).join('') +
-    logoutBtn;
+  
+  render(html`
+    ${userNameText ? html`<h3>${userNameText}</h3>` : ''}
+    ${tabs.map(tab => html`<button class="btn btn-secondary sidebar-btn" data-target="${tab.id}">${tab.label}</button>`)}
+    <button class="btn sidebar-btn logout btn-danger">Logout</button>
+    <div class="resize-handle"></div>
+  `, sidebar);
 
   // Attach click events for sidebar buttons
   sidebar.querySelectorAll('.sidebar-btn[data-target]').forEach(btn => {
@@ -62,7 +84,14 @@ function renderSidebar() {
 
   // Logout button - use the new handleLogout function
   const logout = sidebar.querySelector('.logout');
-  if (logout) logout.addEventListener('click', handleLogout);
+  if (logout) logout.addEventListener('click', async () => {
+    try {
+      await doLogout();
+      addToast('Success', 'Logged out successfully');
+    }
+    catch (err) { console.error('Logout error:', err); }
+    setTimeout(() => window.location.href = 'login.html', 1000);
+  });
 }
 
 // Show only allowed tabs
@@ -76,30 +105,15 @@ function showAllowedTabs() {
   });
 }
 
-// Import page renderers
-import { renderDashboard } from "./pages/dashboard.js";
-import { renderProfile } from "./pages/profile.js";
-import { renderBookings } from "./pages/bookings.js";
-import { renderEquipmentManagement } from "./pages/admin_equipment.js";
-import { renderEquipment } from "./pages/equipent.js";
-import { renderUsers } from "./pages/user_management.js";
-import { renderAdminDashboard } from "./pages/admin_dashboard.js";
-import { renderAdminAudit } from "./pages/admin_audit.js";
-import { renderAdminBookings, fetchBookings } from "./pages/admin_bookings.js";
-import { renderMaintenance } from "./pages/maintenance.js";
-import { renderReports } from "./pages/admin_reports.js";
-
-
 
 // Dynamically select equipment renderer based on role
 // Map tab to renderer
 const tabRenderers = {
-  dashboard: function() {
-    const role = localStorage.getItem('role');
-    if (role && role.toLowerCase() === 'admin') {
+  dashboard: async function() {
+    if (currentRole && currentRole.toLowerCase() === 'admin') {
       renderAdminDashboard();
     } else {
-      renderDashboard();
+      await renderDashboard();
     }
   },
   profile: renderProfile,
@@ -111,11 +125,10 @@ const tabRenderers = {
     if (adminBookingsSection) adminBookingsSection.classList.add('hidden');
     if (currentRole === 'Admin') {
       if (adminBookingsSection) adminBookingsSection.classList.remove('hidden');
-      // Always fetch fresh bookings when switching to admin tab
-      fetchBookings();
+      renderAdminBookings();
     } else {
       if (userBookingsSection) userBookingsSection.classList.remove('hidden');
-      renderBookings();
+      fetchAndRenderBookings();
     }
   },
   equipment: function() {
@@ -132,30 +145,30 @@ const tabRenderers = {
    reports: renderReports,
 };
 
-// Book Now button
-const bookNowBtn = document.getElementById("bookNowBtn");
-if (bookNowBtn) {
-  bookNowBtn.addEventListener("click", e => {
-    e.preventDefault();
-    document.querySelectorAll(".tab").forEach(tab => tab.classList.add("hidden"));
-    document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
-    document.getElementById("equipment").classList.remove("hidden");
-    const btn = document.querySelector('.sidebar-btn[data-target="equipment"]');
-    if (btn) btn.classList.add("active");
-  });
-}
-
-// Initialize on DOMContentLoaded
-document.addEventListener("DOMContentLoaded", () => {
-  // Load user data first
-  loadUserData();
+document.addEventListener("DOMContentLoaded", async () => {
+  await initAuth();
   
+  // Book Now button - setup after auth to ensure currentRole is set
+  const bookNowBtn = document.getElementById("bookNowBtn");
+  if (bookNowBtn) {
+    bookNowBtn.classList.toggle('hidden', currentRole === 'Admin');
+    bookNowBtn.addEventListener("click", async e => {
+      e.preventDefault();
+      document.querySelectorAll(".tab").forEach(tab => tab.classList.add("hidden"));
+      document.querySelectorAll(".sidebar-btn").forEach(b => b.classList.remove("active"));
+      document.getElementById("equipment").classList.remove("hidden");
+      const btn = document.querySelector('.sidebar-btn[data-target="equipment"]');
+      if (btn) btn.classList.add("active");
+      if (tabRenderers.equipment) await tabRenderers.equipment();
+    });
+  }
   renderSidebar();
+  initSidebarResize();
 
   // Hide all tabs by default
   document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
 
-  function showSectionFromHash() {
+  async function showSectionFromHash() {
     // Hide all tabs first
     document.querySelectorAll('.tab').forEach(tab => tab.classList.add('hidden'));
     const hash = window.location.hash.replace('#', '') || (TABS_BY_ROLE[currentRole] || [])[0]?.id;
@@ -164,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const section = document.getElementById(hash);
       if (section) {
         section.classList.remove('hidden');
-        if (tabRenderers[hash]) tabRenderers[hash]();
+        if (tabRenderers[hash]) await tabRenderers[hash]();
       }
     }
     document.querySelectorAll('.sidebar-btn').forEach(btn => {

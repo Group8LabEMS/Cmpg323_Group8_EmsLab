@@ -1,4 +1,6 @@
 import { html, render as litRender } from "lit";
+import { apiFetch } from "../api/api.js";
+import { addToast } from "../util/toast.js";
 
 // ---------- DOM Refs ---------- //
 const maintenanceTableBody = document.getElementById("maintenanceTableBody");
@@ -10,27 +12,24 @@ export let maintenanceList = [];
 // --- API Integration --- //
 export async function fetchMaintenance() {
   try {
-    const res = await fetch('/api/Maintenance');
-    if (!res.ok) throw new Error('Failed to fetch maintenance');
-    const data = await res.json();
-    maintenanceList = data.map(m => ({
-      id: m.maintenanceId,
-      name: m.equipment?.name || '',
-      desc: m.description,
-      loc: m.location,
-      status: m.maintenanceStatus?.name || '',
-      // add other fields as needed
+    const data = await apiFetch('GET', '/api/Equipment/maintenance');
+    maintenanceList = data.map(eq => ({
+      id: eq.equipmentId,
+      name: eq.name || '',
+      desc: eq.equipmentType?.name || '',
+      loc: eq.availability || '',
+      status: eq.equipmentStatus?.name || '',
     }));
-    renderMaintenance();
+    renderMaintenanceTable();
   } catch (e) {
     maintenanceList = [];
-    renderMaintenance();
-    alert('Could not load maintenance data from server.');
+    renderMaintenanceTable();
+    addToast('Error', 'Could not load maintenance data from server.');
   }
 }
 
 // ---------- Render ---------- //
-export function renderMaintenance() {
+function renderMaintenanceTable() {
   const rows = maintenanceList.map(eq => html`
     <tr>
       <td>${eq.name}</td>
@@ -38,13 +37,7 @@ export function renderMaintenance() {
       <td>${eq.loc}</td>
       <td><span class="${statusClass(eq.status)}">${eq.status}</span></td>
       <td>
-        ${eq.status === "Needs Repair" ? html`
-          <button class="action-book" @click=${() => updateStatus(eq.id, "Repair In Progress")}>Start Repair</button>
-        ` : eq.status === "Repair In Progress" ? html`
-          <button class="action-book" @click=${() => updateStatus(eq.id, "Repair Completed")}>Mark Completed</button>
-        ` : html`
-          <button class="action-disabled" disabled>Done</button>
-        `}
+        <button class="btn btn-primary" @click=${() => markAsAvailable(eq.id)}>Done</button>
       </td>
     </tr>
   `);
@@ -52,21 +45,18 @@ export function renderMaintenance() {
   litRender(html`${rows}`, maintenanceTableBody);
 }
 
+export async function renderMaintenance() {
+  await fetchMaintenance();
+}
+
 // ---------- Update Status ---------- //
-async function updateStatus(id, newStatus) {
-  // Find the maintenance item
-  const eq = maintenanceList.find(e => e.id === id);
-  if (!eq) return;
+async function markAsAvailable(equipmentId) {
   try {
-    // Call backend to update status
-    await fetch(`/api/Maintenance/${id}/status`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: newStatus })
-    });
+    await apiFetch('PUT', `/api/Equipment/${equipmentId}/maintenance/complete`);
     await fetchMaintenance();
+    addToast('Success', 'Equipment moved out of maintenance successfully');
   } catch (e) {
-    alert('Failed to update maintenance status.');
+    addToast('Error', 'Failed to update equipment status.');
   }
 }
 // Fetch maintenance data on page load

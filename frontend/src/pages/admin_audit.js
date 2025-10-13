@@ -1,71 +1,22 @@
 // pages/admin_reports.js
 // API-integrated logic for the Admin Reports section.
 
-// --- Global State ---
-let currentAuditLogData = [];
-let currentAuditType = 'user'; 
+import { html, render } from "lit";
+import { apiFetch } from "../api/api.js";
 
 // Only keep role filter for user audit type
 let currentFilters = {
     user: { role: '' }
 };
 
-// --- Report Data & Configuration ---
-
-// Only keep roles in unique options
-let UNIQUE_OPTIONS = {
-    roles: []
-};
-
-const AUDIT_CONFIG = {
-    user: {
-        apiEndpoint: '/api/AuditLog',
-        headers: ["TimeStamp", "User", "Action", "Affected Object", "Summary"],
-        keys: ["timeStamp", "userDisplayName", "action", "entityType", "detailsMessage"],
-        sortOptions: ["User ID Ascending", "Name A to Z", "Name Z to A"],
-        sortMap: {
-            "User ID Ascending": { key: "userId", order: "asc" },
-            "Name A to Z": { key: "userDisplayName", order: "asc" },
-            "Name Z to A": { key: "userDisplayName", order: "desc" },
-        },
-        filterFields: [
-            { key: "role", label: "Role", type: "select", optionsKey: "roles" }
-        ],
-    },
-};
-
-// --- API Fetching Functions ---
-
-async function fetchAuditLogData(endpoint) {
-    try {
-        const res = await fetch(endpoint);
-        if (!res.ok) throw new Error(`Failed to fetch auditlog data from ${endpoint}`);
-        const data = await res.json();
-        // Normalize data keys for table display
-        return data.map(item => {
-            if (currentAuditType === 'user') {
-                let detailsMessage = '';
-                try {
-                    const parsed = JSON.parse(item.details);
-                    detailsMessage = parsed.message || item.details;
-                } catch {
-                    detailsMessage = item.details;
-                }
-                return {
-                    timeStamp: item.timeStamp,
-                    userDisplayName: item.user?.displayName || item.userId,
-                    userId: item.userId,
-                    action: item.action,
-                    entityType: item.entityType,
-                    detailsMessage: detailsMessage
-                };
-            }
-            return item;
-        });
-    } catch (err) {
-        console.error(`Error fetching data from ${endpoint}:`, err);
-        return [];
-    }
+async function fetchAuditLogs() {
+	try {
+		auditLogs = await apiFetch('GET', '/api/AuditLog');
+		renderAdminAudit();
+	} catch (err) {
+		auditLogs = [];
+		renderAdminAudit();
+	}
 }
 
 async function fetchUniqueOptions() {
@@ -469,9 +420,69 @@ function setupEventListeners() {
 // --- Main Export Function ---
 
 export function renderAdminAudit() {
-const auditSection = document.getElementById('adminAudit');
-    if (!auditSection) return;
-    
-    setupEventListeners();
-    loadAndRefreshData();
+	const section = document.getElementById("adminAudit");
+	if (!section) return;
+	section.classList.remove("hidden");
+	
+	// Update table header and body only
+	const headerRow = document.getElementById('auditTableHeader');
+	const tableBody = document.getElementById('auditTableBody');
+	
+	if (headerRow) {
+		render(html`
+			<th>ID</th>
+			<th>Timestamp</th>
+			<th>User</th>
+			<th>Action</th>
+			<th>Entity Type</th>
+			<th>Entity ID</th>
+			<th>Details</th>
+		`, headerRow);
+	}
+	
+	if (tableBody) {
+		if (getFilteredSortedLogs().length === 0) {
+			render(html`<tr><td colspan="7" style="text-align:center;">No audit logs found.</td></tr>`, tableBody);
+		} else {
+			render(html`${getFilteredSortedLogs().map(log => html`
+				<tr>
+					<td>${log.auditLogId}</td>
+					<td>${log.timeStamp ? new Date(log.timeStamp).toLocaleString() : ''}</td>
+					<td>${log.user?.displayName || log.userId || ''}</td>
+					<td><b>${log.action}</b></td>
+					<td>${log.entityType}</td>
+					<td>${log.entityId}</td>
+					<td><code>${log.details || ''}</code></td>
+				</tr>
+			`)}`, tableBody);
+		}
+	}
+	
+	// Setup event listeners for controls
+	const searchInput = document.getElementById('auditSearchInput');
+	const sortSelect = document.getElementById('auditSortSelect');
+	
+	if (searchInput && !searchInput.hasAttribute('data-initialized')) {
+		searchInput.addEventListener('input', handleSearch);
+		searchInput.setAttribute('data-initialized', 'true');
+	}
+	
+	if (sortSelect && !sortSelect.hasAttribute('data-initialized')) {
+		sortSelect.addEventListener('change', handleSort);
+		sortSelect.setAttribute('data-initialized', 'true');
+	}
 }
+
+// Initial fetch on tab open
+window.addEventListener('hashchange', () => {
+	if (window.location.hash.replace('#', '') === 'adminAudit') {
+		fetchAuditLogs();
+	}
+});
+
+// For direct navigation
+window.addEventListener('DOMContentLoaded', () => {
+	if (window.location.hash.replace('#', '') === 'adminAudit') {
+		fetchAuditLogs();
+	}
+});

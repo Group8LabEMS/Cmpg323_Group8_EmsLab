@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Group8.LabEms.Api.Data;
 using Group8.LabEms.Api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ namespace Group8.LabEms.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EquipmentController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -14,29 +16,49 @@ namespace Group8.LabEms.Api.Controllers
         public EquipmentController(AppDbContext context) => _context = context;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EquipmentModel>>> GetEquipments()
-            => await _context.Equipments
+        public async Task<ActionResult<IEnumerable<object>>> GetEquipments()
+        {
+            var equipments = await _context.Equipments
                 .Include(e => e.EquipmentType)
                 .Include(e => e.EquipmentStatus)
-                .Include(e => e.Bookings)
-                .Include(e => e.Maintenances)
+                .Select(e => new {
+                    e.EquipmentId,
+                    e.Name,
+                    e.EquipmentTypeId,
+                    EquipmentType = new { e.EquipmentType.EquipmentTypeId, e.EquipmentType.Name, e.EquipmentType.Description },
+                    e.EquipmentStatusId,
+                    EquipmentStatus = new { e.EquipmentStatus.EquipmentStatusId, e.EquipmentStatus.Name, e.EquipmentStatus.Description },
+                    e.Availability,
+                    e.CreatedDate
+                })
                 .ToListAsync();
+            return Ok(equipments);
+        }
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<EquipmentModel>> GetEquipment(int id)
+        public async Task<ActionResult<object>> GetEquipment(int id)
         {
             var equipment = await _context.Equipments
                 .Include(e => e.EquipmentType)
                 .Include(e => e.EquipmentStatus)
-                .Include(e => e.Bookings)
-                .Include(e => e.Maintenances)
-                .FirstOrDefaultAsync(e => e.EquipmentId == id);
+                .Where(e => e.EquipmentId == id)
+                .Select(e => new {
+                    e.EquipmentId,
+                    e.Name,
+                    e.EquipmentTypeId,
+                    EquipmentType = new { e.EquipmentType.EquipmentTypeId, e.EquipmentType.Name, e.EquipmentType.Description },
+                    e.EquipmentStatusId,
+                    EquipmentStatus = new { e.EquipmentStatus.EquipmentStatusId, e.EquipmentStatus.Name, e.EquipmentStatus.Description },
+                    e.Availability,
+                    e.CreatedDate
+                })
+                .FirstOrDefaultAsync();
 
             if (equipment == null)
                 return NotFound();
 
-            return equipment;
+            return Ok(equipment);
         }
 
 
@@ -87,6 +109,45 @@ namespace Group8.LabEms.Api.Controllers
                 return NotFound();
 
             _context.Equipments.Remove(equipment);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpGet("maintenance")]
+        public async Task<ActionResult<IEnumerable<object>>> GetMaintenanceEquipment()
+        {
+            var maintenanceEquipment = await _context.Equipments
+                .Include(e => e.EquipmentType)
+                .Include(e => e.EquipmentStatus)
+                .Where(e => e.EquipmentStatus.Name == "Under Maintenance")
+                .Select(e => new {
+                    e.EquipmentId,
+                    e.Name,
+                    e.EquipmentTypeId,
+                    EquipmentType = new { e.EquipmentType.EquipmentTypeId, e.EquipmentType.Name, e.EquipmentType.Description },
+                    e.EquipmentStatusId,
+                    EquipmentStatus = new { e.EquipmentStatus.EquipmentStatusId, e.EquipmentStatus.Name, e.EquipmentStatus.Description },
+                    e.Availability,
+                    e.CreatedDate
+                })
+                .ToListAsync();
+            return Ok(maintenanceEquipment);
+        }
+
+        [HttpPut("{id}/maintenance/complete")]
+        public async Task<IActionResult> CompleteMaintenance(int id)
+        {
+            var equipment = await _context.Equipments.FindAsync(id);
+            if (equipment == null)
+                return NotFound();
+
+            var availableStatus = await _context.EquipmentStatuses
+                .FirstOrDefaultAsync(s => s.Name == "Available");
+            if (availableStatus == null)
+                return BadRequest("Available status not found");
+
+            equipment.EquipmentStatusId = availableStatus.EquipmentStatusId;
             await _context.SaveChangesAsync();
 
             return NoContent();

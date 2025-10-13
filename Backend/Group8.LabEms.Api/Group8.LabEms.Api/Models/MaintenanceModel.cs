@@ -41,12 +41,8 @@ namespace Group8.LabEms.Api.Models
         public bool IsValid(out string err)
         {
             err = string.Empty;
-            if(ScheduledFor < DateTime.UtcNow)
-            
-                err = "Scheduled date must be in the future";
-                return string.IsNullOrEmpty(err);
-            
-
+            if(ScheduledFor < DateTime.UtcNow) { err = "Scheduled date must be in the future"; }
+            return string.IsNullOrEmpty(err);
         }
     }
 }
