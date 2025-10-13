@@ -136,18 +136,14 @@ INSERT INTO equipment (name, equipment_type_id, equipment_status_id, location) V
 
 -- Bookings
 INSERT INTO booking (user_id, equipment_id, from_date, to_date, booking_status_id, notes) VALUES 
-((SELECT user_id FROM user WHERE sso_id = 'admin001'), 1, '2025-09-10 09:00:00', '2025-09-10 12:00:00', 2, 'Physics lab experiment - wave analysis'),
 ((SELECT user_id FROM user WHERE sso_id = 'student001'), 6, '2025-09-15 13:00:00', '2025-09-15 17:00:00', 1, 'Software development project'),
 ((SELECT user_id FROM user WHERE sso_id = 'student002'), 2, '2025-09-12 10:00:00', '2025-09-12 16:00:00', 2, 'CAD modeling assignment'),
-((SELECT user_id FROM user WHERE sso_id = 'faculty001'), 3, '2025-09-18 14:00:00', '2025-09-18 15:30:00', 1, 'Research presentation'),
 ((SELECT user_id FROM user WHERE sso_id = 'student003'), 10, '2025-09-20 09:00:00', '2025-09-20 11:00:00', 2, 'Signal generation lab'),
 ((SELECT user_id FROM user WHERE sso_id = 'student004'), 12, '2025-09-22 13:00:00', '2025-09-22 17:00:00', 1, 'Network configuration lab'),
 ((SELECT user_id FROM user WHERE sso_id = 'student005'), 15, '2025-09-25 08:00:00', '2025-09-25 12:00:00', 2, 'Digital circuit analysis'),
-((SELECT user_id FROM user WHERE sso_id = 'faculty002'), 18, '2025-09-28 14:00:00', '2025-09-28 18:00:00', 1, 'Mobile app development'),
 ((SELECT user_id FROM user WHERE sso_id = 'student002'), 20, '2025-10-01 10:00:00', '2025-10-01 12:00:00', 3, 'Equipment unavailable for requested time'),
 ((SELECT user_id FROM user WHERE sso_id = 'labassist001'), 22, '2025-10-03 09:00:00', '2025-10-03 15:00:00', 2, 'Field measurement project'),
 ((SELECT user_id FROM user WHERE sso_id = 'student003'), 25, '2025-10-05 11:00:00', '2025-10-05 13:00:00', 4, 'User cancelled due to schedule conflict'),
-((SELECT user_id FROM user WHERE sso_id = 'faculty001'), 28, '2025-10-08 13:00:00', '2025-10-08 17:00:00', 5, 'Presentation completed successfully'),
 ((SELECT user_id FROM user WHERE sso_id = 'student004'), 30, '2025-10-10 08:00:00', '2025-10-10 16:00:00', 2, 'Frequency measurement lab');
 
 -- Maintenance
