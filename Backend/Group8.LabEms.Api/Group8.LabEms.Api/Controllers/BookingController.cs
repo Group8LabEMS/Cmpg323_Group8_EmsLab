@@ -59,6 +59,32 @@ namespace Group8.LabEms.Api.Controllers
                 return BadRequest("Invalid User, Equipment, or BookingStatus ID. " + debugMsg);
             }
 
+            //CHECK FOR CONFLICTS
+            var hasBookingConflict = await _context.Bookings
+            .Where(b => b.EquipmentId == booking.EquipmentId)
+            .Where(b =>b.BookingStatus.Name == "Approved" || b.BookingStatus.Name == "Pending")
+            .Where(b => b.BookingId != booking.BookingId) 
+            .Where(b => b.FromDate < booking.ToDate && b.ToDate > booking.FromDate)
+            .AnyAsync();
+            
+
+            var hasEquipmentConflict = await _context.Equipments
+            .Where(e => e.EquipmentStatus.Name != "Available")
+            .Where(e => e.Availability != "Available")
+            .AnyAsync();
+
+            if (hasEquipmentConflict || hasBookingConflict)
+            {
+                return Conflict("The selected Equipment is not available or is already");
+            }
+
+            if (booking.FromDate < DateTime.UtcNow)
+                return BadRequest("From date must must not be in the past");
+
+            if (booking.FromDate >= booking.ToDate)
+                return BadRequest("From date must not be after start date"); 
+
+
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 

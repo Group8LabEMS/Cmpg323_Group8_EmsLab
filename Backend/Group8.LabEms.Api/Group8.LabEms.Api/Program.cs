@@ -13,7 +13,7 @@ string? _connectionString = string.Empty;
 
 IConfiguration configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory() + "/Configurations")
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("appsettings.example.json", optional: false, reloadOnChange: true)
     .Build();
 
 // Replace the default configuration with your custom one
