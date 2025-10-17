@@ -36,9 +36,13 @@ export async function renderAdminDashboard() {
           <div class="admin-stat-value">${statsData.totalUsers}</div>
           <div class="admin-stat-label">Total Users</div>
         </div>
+          <div class="stat-card">
+            <div class="admin-stat-value">${statsData.activeBookings}</div>
+            <div class="admin-stat-label">Active Bookings</div>
+          </div>
         <div class="stat-card">
-          <div class="admin-stat-value">${statsData.activeBookings}</div>
-          <div class="admin-stat-label">Active Bookings</div>
+          <div class="admin-stat-value">${statsData.pendingBookings}</div>
+          <div class="admin-stat-label">Pending Bookings</div>
         </div>
         <div class="stat-card">
           <div class="admin-stat-value">${statsData.maintenanceEquipment}</div>

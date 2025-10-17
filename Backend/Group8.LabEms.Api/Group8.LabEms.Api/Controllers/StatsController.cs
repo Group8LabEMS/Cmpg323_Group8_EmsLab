@@ -21,13 +21,20 @@ namespace Group8.LabEms.Api.Controllers
             var activeBookings = await _context.Bookings
                 .Where(b => b.BookingStatus.Name == "Approved")
                 .CountAsync();
+
+            var pendingBookings = await _context.Bookings
+                .Where(b => b.BookingStatus.Name == "Pending")
+                .CountAsync();
+
             var maintenanceEquipment = await _context.Equipments
                 .Where(e => e.EquipmentStatus.Name == "Under Maintenance")
                 .CountAsync();
 
-            return Ok(new {
+            return Ok(new
+            {
                 totalUsers,
                 activeBookings,
+                pendingBookings,    
                 maintenanceEquipment
             });
         }
