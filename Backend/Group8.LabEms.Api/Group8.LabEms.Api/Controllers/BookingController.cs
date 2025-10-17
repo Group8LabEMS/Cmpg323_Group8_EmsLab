@@ -150,7 +150,7 @@ namespace Group8.LabEms.Api.Controllers
 
             if (updateDto.BookingStatusId.Value == 2) // Approved
             {
-                 try
+            try
             {
                 await _notificationService.SendBookingConfirmationAsync(
                     booking.User.Email,
