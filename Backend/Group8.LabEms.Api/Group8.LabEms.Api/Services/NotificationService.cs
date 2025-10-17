@@ -48,7 +48,7 @@ namespace Group8.LabEms.Api.Services
             if (string.IsNullOrWhiteSpace(subject))
                 throw new ArgumentException("Subject cannot be null or empty", nameof(subject));
 
-            await SendEmailAsync(new[] { toEmail }, subject, body, isHtml);
+            await SendEmailAsync(new[] { toEmail }, subject, body, isHtml, attachmentBytes, attachmentName);
         }
 
         public async Task SendEmailAsync(string[] toEmails, string subject, string body, bool isHtml = false , byte[]? attachmentBytes = null, string? attachmentName = null)
@@ -71,6 +71,12 @@ namespace Group8.LabEms.Api.Services
                 message.Body = body;
                 message.IsBodyHtml = isHtml;
 
+                // if attachment is provided, add it to the email
+                if (attachmentBytes != null && attachmentBytes.Length > 0)
+                {
+                    message.Attachments.Add(new Attachment(new System.IO.MemoryStream(attachmentBytes), attachmentName ?? "Attachment.pdf"));
+                }
+
                 foreach (var email in toEmails)
                 {
                     message.To.Add(email);
@@ -86,23 +92,23 @@ namespace Group8.LabEms.Api.Services
             }
         }
 
-        public async Task SendBookingConfirmationAsync(string userEmail, string equipmentName, DateTime bookingDate, DateTime startTime, DateTime endTime)
+        public async Task SendBookingNotificationAsync(string userEmail, string userName, string equipmentName, DateTime startTime, DateTime endTime, string bookingStatus)
         {
-            var subject = "Booking Confirmation - LabEMS";
+            var subject = "Equipment Booking - LabEMS";
             var body = $@"
-                <h2>Booking Confirmation</h2>
-                <p>Dear User,</p>
-                <p>Your booking has been confirmed with the following details:</p>
+                <h2>Equipment Booking</h2>
+                <p>Dear {userName},</p>
+                <p>Your booking update:</p>
                 <ul>
                     <li><strong>Equipment:</strong> {equipmentName}</li>
-                    <li><strong>Date:</strong> {bookingDate:yyyy-MM-dd}</li>
+                    <li><strong>Date:</strong> {startTime:yyyy-MM-dd}</li>
                     <li><strong>Time:</strong> {startTime:HH:mm} - {endTime:HH:mm}</li>
+                    <li><strong>Status:</strong> {bookingStatus}</li>
                 </ul>
-                <p>Please ensure you return the equipment on time and in good condition.</p>
                 <p>Best regards,<br/>LabEMS Team</p>
             ";
-            var pdf = BookingPDF(equipmentName, bookingDate, startTime, endTime);
-            await SendEmailAsync(userEmail, subject, body, true, pdf, "BookingConfirmation.pdf");
+            var pdf = BookingPDF(equipmentName, startTime, startTime, endTime, bookingStatus, userName);
+            await SendEmailAsync(userEmail, subject, body, true, pdf, "Booking.pdf");
         }
 
         public async Task SendBookingCancellationAsync(string userEmail, string equipmentName, DateTime bookingDate)
@@ -186,7 +192,7 @@ namespace Group8.LabEms.Api.Services
             await SendEmailAsync(userEmail, subject, body, true);
         }
 
-         private byte[] BookingPDF(string equipmentName, DateTime bookingDate, DateTime startTime, DateTime endTime)
+         private byte[] BookingPDF(string equipmentName, DateTime bookingDate, DateTime startTime, DateTime endTime, string bookingStatus, string userName)
         {
             var document = Document.Create(container =>
             {
@@ -208,11 +214,15 @@ namespace Group8.LabEms.Api.Services
                             .FontColor(Colors.Black)
                             .AlignCenter();
 
-                            col.Item().Text("Your booking has been confirmed!").FontSize(14).AlignCenter();
+                            col.Item().Text("Booking Details").FontSize(14).AlignCenter();
+                            //empty line
+                            col.Item().Text("").FontSize(10);
+                            col.Item().PaddingTop(20).Text($"Dear {userName},").FontSize(14);
+                            col.Item().Text("").FontSize(10);
                             col.Item().Text($"Equipment: {equipmentName}").FontSize(14).Bold();
                             col.Item().Text($"Date: {bookingDate:yyyy-MM-dd}").FontSize(14).Bold();
                             col.Item().Text($"Time: {startTime:HH:mm} - {endTime:HH:mm}").FontSize(14).Bold();
-                            col.Item().PaddingTop(20).Text("Please ensure you return the equipment on time and in good condition.");
+                            col.Item().Text($"Status: {bookingStatus}").FontSize(14).Bold();
                         });
                         
 

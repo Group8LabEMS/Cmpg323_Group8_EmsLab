@@ -6,7 +6,7 @@ namespace Group8.LabEms.Api.Services.Interfaces
     {
         Task SendEmailAsync(string toEmail, string subject, string body, bool isHtml = false, byte[]? attachmentBytes = null, string? attachmentName = null);
         Task SendEmailAsync(string[] toEmails, string subject, string body, bool isHtml = false ,byte[]? attachmentBytes = null, string? attachmentName = null);
-        Task SendBookingConfirmationAsync(string userEmail, string equipmentName, DateTime bookingDate, DateTime startTime, DateTime endTime);
+        Task SendBookingNotificationAsync(string userEmail, string userName, string equipmentName, DateTime startTime, DateTime endTime, string bookingStatus);
         Task SendBookingCancellationAsync(string userEmail, string equipmentName, DateTime bookingDate);
         Task SendMaintenanceNotificationAsync(string userEmail, string equipmentName, DateTime maintenanceDate, string maintenanceType);
         Task SendEquipmentAvailableAsync(string userEmail, string equipmentName);
