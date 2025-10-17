@@ -41,7 +41,7 @@ namespace Group8.LabEms.Api.Services
             Console.WriteLine($"SMTP Host: {_smtpHost}, Port: {_smtpPort}, From: {_fromEmail}");
         }
 
-        public async Task SendEmailAsync(string toEmail, string subject, string body, bool isHtml = false)
+        public async Task SendEmailAsync(string toEmail, string subject, string body, bool isHtml = false,byte[]? attachmentBytes = null, string? attachmentName = null)
         {
             if (string.IsNullOrWhiteSpace(toEmail))
                 throw new ArgumentException("Email address cannot be null or empty", nameof(toEmail));
@@ -51,7 +51,7 @@ namespace Group8.LabEms.Api.Services
             await SendEmailAsync(new[] { toEmail }, subject, body, isHtml);
         }
 
-        public async Task SendEmailAsync(string[] toEmails, string subject, string body, bool isHtml = false)
+        public async Task SendEmailAsync(string[] toEmails, string subject, string body, bool isHtml = false , byte[]? attachmentBytes = null, string? attachmentName = null)
         {
             if (toEmails == null || toEmails.Length == 0)
                 throw new ArgumentException("At least one email address must be provided", nameof(toEmails));
@@ -102,7 +102,7 @@ namespace Group8.LabEms.Api.Services
                 <p>Best regards,<br/>LabEMS Team</p>
             ";
             var pdf = BookingPDF(equipmentName, bookingDate, startTime, endTime);
-            await SendEmailAsync(userEmail, subject, body, true);
+            await SendEmailAsync(userEmail, subject, body, true, pdf, "BookingConfirmation.pdf");
         }
 
         public async Task SendBookingCancellationAsync(string userEmail, string equipmentName, DateTime bookingDate)
