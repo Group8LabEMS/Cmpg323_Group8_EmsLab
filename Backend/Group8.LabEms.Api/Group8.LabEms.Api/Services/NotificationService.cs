@@ -4,6 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Group8.LabEms.Api.Services.Interfaces;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using System;
+using System.Collections.Generic;
 
 namespace Group8.LabEms.Api.Services
 {
@@ -36,7 +41,7 @@ namespace Group8.LabEms.Api.Services
             Console.WriteLine($"SMTP Host: {_smtpHost}, Port: {_smtpPort}, From: {_fromEmail}");
         }
 
-        public async Task SendEmailAsync(string toEmail, string subject, string body, bool isHtml = false)
+        public async Task SendEmailAsync(string toEmail, string subject, string body, bool isHtml = false,byte[]? attachmentBytes = null, string? attachmentName = null)
         {
             if (string.IsNullOrWhiteSpace(toEmail))
                 throw new ArgumentException("Email address cannot be null or empty", nameof(toEmail));
@@ -46,7 +51,7 @@ namespace Group8.LabEms.Api.Services
             await SendEmailAsync(new[] { toEmail }, subject, body, isHtml);
         }
 
-        public async Task SendEmailAsync(string[] toEmails, string subject, string body, bool isHtml = false)
+        public async Task SendEmailAsync(string[] toEmails, string subject, string body, bool isHtml = false , byte[]? attachmentBytes = null, string? attachmentName = null)
         {
             if (toEmails == null || toEmails.Length == 0)
                 throw new ArgumentException("At least one email address must be provided", nameof(toEmails));
@@ -96,8 +101,8 @@ namespace Group8.LabEms.Api.Services
                 <p>Please ensure you return the equipment on time and in good condition.</p>
                 <p>Best regards,<br/>LabEMS Team</p>
             ";
-
-            await SendEmailAsync(userEmail, subject, body, true);
+            var pdf = BookingPDF(equipmentName, bookingDate, startTime, endTime);
+            await SendEmailAsync(userEmail, subject, body, true, pdf, "BookingConfirmation.pdf");
         }
 
         public async Task SendBookingCancellationAsync(string userEmail, string equipmentName, DateTime bookingDate)
@@ -179,6 +184,50 @@ namespace Group8.LabEms.Api.Services
             ";
 
             await SendEmailAsync(userEmail, subject, body, true);
+        }
+
+         private byte[] BookingPDF(string equipmentName, DateTime bookingDate, DateTime startTime, DateTime endTime)
+        {
+            var document = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Margin(50);
+                    page.Size(PageSizes.A4);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(12).FontColor(Colors.Black));
+
+
+
+                    page.Content()
+                        .Column(col =>
+                        {
+                            col.Item().Text("LabEMS")
+                            .FontSize(28)
+                            .Bold()
+                            .FontColor(Colors.Black)
+                            .AlignCenter();
+
+                            col.Item().Text("Your booking has been confirmed!").FontSize(14).AlignCenter();
+                            col.Item().Text($"Equipment: {equipmentName}").FontSize(14).Bold();
+                            col.Item().Text($"Date: {bookingDate:yyyy-MM-dd}").FontSize(14).Bold();
+                            col.Item().Text($"Time: {startTime:HH:mm} - {endTime:HH:mm}").FontSize(14).Bold();
+                            col.Item().PaddingTop(20).Text("Please ensure you return the equipment on time and in good condition.");
+                        });
+                        
+
+                    page.Footer()
+                        .AlignCenter()
+                        .Text(x =>
+                        {
+                            x.Span("Generated on ");
+                            x.Span(DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm")).Bold();
+                            x.Span(" UTC");
+                        });
+                });
+            });
+            QuestPDF.Settings.License = LicenseType.Community;
+            return document.GeneratePdf();
         }
     }
 }
