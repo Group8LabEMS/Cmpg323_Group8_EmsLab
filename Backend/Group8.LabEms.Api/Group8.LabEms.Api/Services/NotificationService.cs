@@ -4,6 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Group8.LabEms.Api.Services.Interfaces;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using System;
+using System.Collections.Generic;
 
 namespace Group8.LabEms.Api.Services
 {
@@ -96,7 +101,7 @@ namespace Group8.LabEms.Api.Services
                 <p>Please ensure you return the equipment on time and in good condition.</p>
                 <p>Best regards,<br/>LabEMS Team</p>
             ";
-
+            var pdf = BookingPDF(equipmentName, bookingDate, startTime, endTime);
             await SendEmailAsync(userEmail, subject, body, true);
         }
 
@@ -179,6 +184,50 @@ namespace Group8.LabEms.Api.Services
             ";
 
             await SendEmailAsync(userEmail, subject, body, true);
+        }
+
+         private byte[] BookingPDF(string equipmentName, DateTime bookingDate, DateTime startTime, DateTime endTime)
+        {
+            var document = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Margin(50);
+                    page.Size(PageSizes.A4);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(12).FontColor(Colors.Black));
+
+
+
+                    page.Content()
+                        .Column(col =>
+                        {
+                            col.Item().Text("LabEMS")
+                            .FontSize(28)
+                            .Bold()
+                            .FontColor(Colors.Black)
+                            .AlignCenter();
+
+                            col.Item().Text("Your booking has been confirmed!").FontSize(14).AlignCenter();
+                            col.Item().Text($"Equipment: {equipmentName}").FontSize(14).Bold();
+                            col.Item().Text($"Date: {bookingDate:yyyy-MM-dd}").FontSize(14).Bold();
+                            col.Item().Text($"Time: {startTime:HH:mm} - {endTime:HH:mm}").FontSize(14).Bold();
+                            col.Item().PaddingTop(20).Text("Please ensure you return the equipment on time and in good condition.");
+                        });
+                        
+
+                    page.Footer()
+                        .AlignCenter()
+                        .Text(x =>
+                        {
+                            x.Span("Generated on ");
+                            x.Span(DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm")).Bold();
+                            x.Span(" UTC");
+                        });
+                });
+            });
+            QuestPDF.Settings.License = LicenseType.Community;
+            return document.GeneratePdf();
         }
     }
 }
