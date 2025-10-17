@@ -4,6 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Group8.LabEms.Api.Services.Interfaces;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using System;
+using System.Collections.Generic;
 
 namespace Group8.LabEms.Api.Services
 {
@@ -36,17 +41,17 @@ namespace Group8.LabEms.Api.Services
             Console.WriteLine($"SMTP Host: {_smtpHost}, Port: {_smtpPort}, From: {_fromEmail}");
         }
 
-        public async Task SendEmailAsync(string toEmail, string subject, string body, bool isHtml = false)
+        public async Task SendEmailAsync(string toEmail, string subject, string body, bool isHtml = false,byte[]? attachmentBytes = null, string? attachmentName = null)
         {
             if (string.IsNullOrWhiteSpace(toEmail))
                 throw new ArgumentException("Email address cannot be null or empty", nameof(toEmail));
             if (string.IsNullOrWhiteSpace(subject))
                 throw new ArgumentException("Subject cannot be null or empty", nameof(subject));
 
-            await SendEmailAsync(new[] { toEmail }, subject, body, isHtml);
+            await SendEmailAsync(new[] { toEmail }, subject, body, isHtml, attachmentBytes, attachmentName);
         }
 
-        public async Task SendEmailAsync(string[] toEmails, string subject, string body, bool isHtml = false)
+        public async Task SendEmailAsync(string[] toEmails, string subject, string body, bool isHtml = false , byte[]? attachmentBytes = null, string? attachmentName = null)
         {
             if (toEmails == null || toEmails.Length == 0)
                 throw new ArgumentException("At least one email address must be provided", nameof(toEmails));
@@ -66,6 +71,12 @@ namespace Group8.LabEms.Api.Services
                 message.Body = body;
                 message.IsBodyHtml = isHtml;
 
+                // if attachment is provided, add it to the email
+                if (attachmentBytes != null && attachmentBytes.Length > 0)
+                {
+                    message.Attachments.Add(new Attachment(new System.IO.MemoryStream(attachmentBytes), attachmentName ?? "Attachment.pdf"));
+                }
+
                 foreach (var email in toEmails)
                 {
                     message.To.Add(email);
@@ -81,23 +92,23 @@ namespace Group8.LabEms.Api.Services
             }
         }
 
-        public async Task SendBookingConfirmationAsync(string userEmail, string equipmentName, DateTime bookingDate, DateTime startTime, DateTime endTime)
+        public async Task SendBookingNotificationAsync(string userEmail, string userName, string equipmentName, DateTime startTime, DateTime endTime, string bookingStatus)
         {
-            var subject = "Booking Confirmation - LabEMS";
+            var subject = "Equipment Booking - LabEMS";
             var body = $@"
-                <h2>Booking Confirmation</h2>
-                <p>Dear User,</p>
-                <p>Your booking has been confirmed with the following details:</p>
+                <h2>Equipment Booking</h2>
+                <p>Dear {userName},</p>
+                <p>Your booking update:</p>
                 <ul>
                     <li><strong>Equipment:</strong> {equipmentName}</li>
-                    <li><strong>Date:</strong> {bookingDate:yyyy-MM-dd}</li>
+                    <li><strong>Date:</strong> {startTime:yyyy-MM-dd}</li>
                     <li><strong>Time:</strong> {startTime:HH:mm} - {endTime:HH:mm}</li>
+                    <li><strong>Status:</strong> {bookingStatus}</li>
                 </ul>
-                <p>Please ensure you return the equipment on time and in good condition.</p>
                 <p>Best regards,<br/>LabEMS Team</p>
             ";
-
-            await SendEmailAsync(userEmail, subject, body, true);
+            var pdf = BookingPDF(equipmentName, startTime, startTime, endTime, bookingStatus, userName);
+            await SendEmailAsync(userEmail, subject, body, true, pdf, "Booking.pdf");
         }
 
         public async Task SendBookingCancellationAsync(string userEmail, string equipmentName, DateTime bookingDate)
@@ -179,6 +190,54 @@ namespace Group8.LabEms.Api.Services
             ";
 
             await SendEmailAsync(userEmail, subject, body, true);
+        }
+
+         private byte[] BookingPDF(string equipmentName, DateTime bookingDate, DateTime startTime, DateTime endTime, string bookingStatus, string userName)
+        {
+            var document = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Margin(50);
+                    page.Size(PageSizes.A4);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(12).FontColor(Colors.Black));
+
+
+
+                    page.Content()
+                        .Column(col =>
+                        {
+                            col.Item().Text("LabEMS")
+                            .FontSize(28)
+                            .Bold()
+                            .FontColor(Colors.Black)
+                            .AlignCenter();
+
+                            col.Item().Text("Booking Details").FontSize(14).AlignCenter();
+                            //empty line
+                            col.Item().Text("").FontSize(10);
+                            col.Item().PaddingTop(20).Text($"Dear {userName},").FontSize(14);
+                            col.Item().Text("").FontSize(10);
+                            col.Item().Text($"Equipment: {equipmentName}").FontSize(14).Bold();
+                            col.Item().Text($"Date: {bookingDate:yyyy-MM-dd}").FontSize(14).Bold();
+                            col.Item().Text($"Time: {startTime:HH:mm} - {endTime:HH:mm}").FontSize(14).Bold();
+                            col.Item().Text($"Status: {bookingStatus}").FontSize(14).Bold();
+                        });
+                        
+
+                    page.Footer()
+                        .AlignCenter()
+                        .Text(x =>
+                        {
+                            x.Span("Generated on ");
+                            x.Span(DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm")).Bold();
+                            x.Span(" UTC");
+                        });
+                });
+            });
+            QuestPDF.Settings.License = LicenseType.Community;
+            return document.GeneratePdf();
         }
     }
 }
