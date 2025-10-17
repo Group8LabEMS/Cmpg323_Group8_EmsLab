@@ -147,7 +147,10 @@ namespace Group8.LabEms.Api.Controllers
                 booking.ToDate = updateDto.ToDate.Value;
             }
 
-            try
+
+            if (updateDto.BookingStatusId.Value == 2) // Approved
+            {
+                 try
             {
                 await _notificationService.SendBookingConfirmationAsync(
                     booking.User.Email,
@@ -161,6 +164,9 @@ namespace Group8.LabEms.Api.Controllers
             {
                 
             }
+
+            }
+           
 
             try
             {
