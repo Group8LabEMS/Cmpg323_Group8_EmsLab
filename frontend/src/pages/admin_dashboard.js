@@ -42,7 +42,7 @@ export async function renderAdminDashboard() {
         </div>
         <div class="stat-card">
           <div class="admin-stat-value">${statsData.maintenanceEquipment}</div>
-          <div class="admin-stat-label">Equipment in maintenance</div>
+          <div class="admin-stat-label">Equipment in Maintenance</div>
         </div>
       </div>
       <div class="dashboard-row">
