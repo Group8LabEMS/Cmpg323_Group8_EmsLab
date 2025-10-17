@@ -4,6 +4,7 @@ using Group8.LabEms.Api.Data;
 using Group8.LabEms.Api.Models;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Group8.LabEms.Api.Services.Interfaces;
 
 namespace Group8.LabEms.Api.Controllers
 {
@@ -13,6 +14,7 @@ namespace Group8.LabEms.Api.Controllers
     public class BookingController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly INotificationService _notificationService;
 
         public BookingController(AppDbContext context) => _context = context;
 
@@ -143,6 +145,21 @@ namespace Group8.LabEms.Api.Controllers
             if (updateDto.ToDate.HasValue)
             {
                 booking.ToDate = updateDto.ToDate.Value;
+            }
+
+            try
+            {
+                await _notificationService.SendBookingConfirmationAsync(
+                    booking.User.Email,
+                    booking.Equipment.Name,
+                    booking.FromDate,
+                    Convert.ToDateTime(booking.FromDate.ToShortTimeString()),
+                    Convert.ToDateTime(booking.ToDate.ToShortTimeString())
+                );
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                
             }
 
             try
