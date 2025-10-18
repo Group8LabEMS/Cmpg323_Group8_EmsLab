@@ -14,9 +14,11 @@ namespace Group8.LabEms.Api.Models
 
         [Required]
         [Column("name")]
+        [StringLength(300,ErrorMessage ="entry too long")]
         public string Name { get; set; } = string.Empty;
 
         [Column("description")]
+        [StringLength(300,ErrorMessage ="entry too long")]
         public string? Description { get; set; }
 
         public ICollection<EquipmentModel> Equipments { get; set; } = new List<EquipmentModel>();

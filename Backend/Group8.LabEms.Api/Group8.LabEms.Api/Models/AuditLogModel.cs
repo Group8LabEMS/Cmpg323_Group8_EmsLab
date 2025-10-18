@@ -11,6 +11,7 @@ namespace Group8.LabEms.Api.Models
     {
         [Key]
         [Column("auditlog_id")]
+
         public int AuditLogId { get; set; }
 
         [Column("timestamp")]
@@ -23,6 +24,7 @@ namespace Group8.LabEms.Api.Models
 
         [Required]
         [Column("action")]
+        [StringLength(300,ErrorMessage ="entry too long")]
         public string Action { get; set; } = string.Empty;
 
         [Required]
@@ -34,6 +36,7 @@ namespace Group8.LabEms.Api.Models
         public int EntityId { get; set; }
 
         [Column("details")]
+        [StringLength(300,ErrorMessage ="entry too long")]
         public string? Details { get; set; } // JSON stored as string at runtime
     }
 }

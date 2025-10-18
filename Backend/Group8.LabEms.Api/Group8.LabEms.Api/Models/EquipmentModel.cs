@@ -27,6 +27,7 @@ namespace Group8.LabEms.Api.Models
     public EquipmentStatusModel? EquipmentStatus { get; set; }
 
         [Column("availability")]
+        [StringLength(300,ErrorMessage ="entry too long")]
         public string? Availability { get; set; }
 
         [Required]

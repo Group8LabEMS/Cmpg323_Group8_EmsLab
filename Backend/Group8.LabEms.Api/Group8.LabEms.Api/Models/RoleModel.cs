@@ -14,6 +14,7 @@ namespace Group8.LabEms.Api.Models
 
         [Required]
         [Column("name")]
+        [StringLength(300,ErrorMessage ="entry too long")]
         public required string Name { get; set; }
 
         public ICollection<UserRoleModel> UserRoles { get; set; } = new List<UserRoleModel>();

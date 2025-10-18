@@ -37,6 +37,7 @@ namespace Group8.LabEms.Api.Models
         public DateTime ToDate { get; set; }
 
         [Column("notes")]
+        [StringLength(300,ErrorMessage ="entry too long")]
         public string? Notes { get; set; }
 
         [Required]

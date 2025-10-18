@@ -18,19 +18,23 @@ namespace Group8.LabEms.Api.Models
 
         [Required]
         [Column("display_name")]
+        [StringLength(300,ErrorMessage ="entry too long")]
         public string DisplayName { get; set; } = null!;
 
         [Required]
         [Column("email")]
+        [StringLength(300, ErrorMessage = "entry too long")]
+        [DataType(DataType.EmailAddress)]
         public string Email { get; set; } = null!;
-
 
         [Required]
         [Column("password")]
+        [DataType(DataType.Password)]
         public string Password { get; set; } = null!;
 
         [Column("created_at")]
-        public DateTime CreatedAt { get; set; }
+        [DataType(DataType.DateTime)]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation collections
         public ICollection<UserRoleModel> UserRoles { get; set; } = new List<UserRoleModel>();

@@ -29,12 +29,15 @@ namespace Group8.LabEms.Api.Models
 
         [Required]
         [Column("scheduled_for")]
+        [DataType(DataType.DateTime)]
         public DateTime ScheduledFor { get; set; }
 
         [Column("started_at")]
+        [DataType(DataType.DateTime)]
         public DateTime? StartedAt { get; set; }
 
         [Column("completed_at")]
+        [DataType(DataType.DateTime)]
         public DateTime? CompletedAt { get; set; }
 
         //ADD SOME VALIDATIONS

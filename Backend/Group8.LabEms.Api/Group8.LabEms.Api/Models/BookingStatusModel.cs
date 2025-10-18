@@ -14,9 +14,11 @@ namespace Group8.LabEms.Api.Models
 
         [Required]
         [Column("name")]
+        [StringLength(300,ErrorMessage ="entry too long")]
         public required string Name { get; set; }
 
         [Column("description")]
+        [StringLength(300,ErrorMessage ="entry too long")]
         public string? Description { get; set; }
 
         public ICollection<BookingModel> Bookings { get; set; } = new List<BookingModel>();
