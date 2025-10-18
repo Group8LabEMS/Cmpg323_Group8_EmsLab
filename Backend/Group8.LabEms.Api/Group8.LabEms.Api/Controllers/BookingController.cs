@@ -4,6 +4,8 @@ using Group8.LabEms.Api.Data;
 using Group8.LabEms.Api.Models;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Group8.LabEms.Api.Services.Interfaces;
+using System.Text.Json;
 
 namespace Group8.LabEms.Api.Controllers
 {
@@ -13,8 +15,13 @@ namespace Group8.LabEms.Api.Controllers
     public class BookingController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly INotificationService _notificationService;
 
-        public BookingController(AppDbContext context) => _context = context;
+        public BookingController(AppDbContext context, INotificationService notificationService)
+        {
+            _context = context;
+            _notificationService = notificationService;
+        }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<object>>> GetBookings()
@@ -115,7 +122,14 @@ namespace Group8.LabEms.Api.Controllers
             var currentUserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
             var currentUserRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
 
-            var booking = await _context.Bookings.FindAsync(id);
+
+            var booking = await _context.Bookings
+                            .Include(b => b.User)
+                            .Include(b => b.Equipment)
+                            .Include(b => b.BookingStatus)
+                            .Where(b => b.BookingId == id)
+                            .FirstOrDefaultAsync();
+
             if (booking == null)
             {
                 return NotFound("Booking not found");
@@ -143,6 +157,25 @@ namespace Group8.LabEms.Api.Controllers
             if (updateDto.ToDate.HasValue)
             {
                 booking.ToDate = updateDto.ToDate.Value;
+            }
+
+              
+            try
+            {
+                
+                await _notificationService.SendBookingNotificationAsync(
+                    booking.User.Email,
+                    booking.User.DisplayName,
+                    booking.Equipment.Name,
+                    booking.FromDate,
+                    booking.ToDate,
+                    (await _context.BookingsStatus.FindAsync(updateDto.BookingStatusId.Value)).Name
+                );
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Warning(ex, "Failed to send booking approval email for booking {BookingId}", booking.BookingId);
+                // Don't fail the update if email fails
             }
 
             try
