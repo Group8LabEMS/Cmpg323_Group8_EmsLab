@@ -14,6 +14,45 @@ namespace Group8.LabEms.Api.Controllers
 
         public BookingController(AppDbContext context) => _context = context;
 
+        // FILTERING BY DATES
+
+        [HttpGet("date-range")]
+        public async Task<ActionResult<IEnumerable<BookingModel>>> GetBookingsInDateRange([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+        {
+            if (!startDate.HasValue && !endDate.HasValue)
+            {
+                return BadRequest("Both startDate and endDate query parameters are required.");
+            }
+
+            if (startDate.HasValue && endDate.HasValue && startDate > endDate)
+            {
+                return BadRequest("startDate must be earlier than or equal to endDate.");
+            }
+
+            var query =  _context.Bookings.AsQueryable();
+
+
+            //IF ONLY THE START DATE IS PROVIDED
+            if (startDate.HasValue)
+            {
+                query = query.Where(b => b.FromDate >= startDate);
+            }
+            else if (endDate.HasValue)
+            {
+                  //IF ONLY THE END DATE IS PROVIDED
+                query = query.Where(b => b.ToDate <= endDate);
+            }
+            else
+            {
+                //BOTH DATES PROVIDED
+                query = query.Where(b => b.FromDate >= startDate && b.ToDate <= endDate);
+            }
+
+            
+            return Ok(await query.ToListAsync());
+        }
+
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookingModel>>> GetBookingStatus()
             => await _context.Bookings

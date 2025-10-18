@@ -13,6 +13,29 @@ namespace Group8.LabEms.Api.Controllers
 
         public EquipmentController(AppDbContext context) => _context = context;
 
+
+        [HttpGet("filter")]
+        public async Task<ActionResult<IEnumerable<EquipmentModel>>> GetFilteredEquipments([FromQuery] int? typeId, [FromQuery] int? statusId)
+        {
+            var query = _context.Equipments
+                .Include(e => e.EquipmentType)
+                .Include(e => e.EquipmentStatus)
+                .Include(e => e.Bookings)
+                .Include(e => e.Maintenances)
+                .AsQueryable();
+
+            if (typeId.HasValue)
+                query = query.Where(e => e.EquipmentTypeId == typeId.Value);
+
+            if (statusId.HasValue)
+                query = query.Where(e => e.EquipmentStatusId == statusId.Value);
+
+            return await query.ToListAsync();
+        }
+
+        
+
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EquipmentModel>>> GetEquipments()
             => await _context.Equipments

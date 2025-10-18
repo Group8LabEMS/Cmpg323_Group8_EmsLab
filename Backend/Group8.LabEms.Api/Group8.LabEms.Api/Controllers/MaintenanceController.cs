@@ -13,7 +13,23 @@ namespace Group8.LabEms.Api.Controllers
 
         public MaintenanceController(AppDbContext context) => _context = context;
 
-       
+        //GET SCHEDULED MAINTENANCES 
+        [HttpGet("date-scheduled")]
+        public async Task<ActionResult<IEnumerable<MaintenanceModel>>> GetScheduledMaintenances([FromQuery] DateTime scheduledFor)
+        {
+            var query = _context.Maintenances.AsQueryable();
+
+            if (scheduledFor == null)
+            {
+                return BadRequest("Scheduled for is not specified");
+            }
+            query = query.Where(m => m.ScheduledFor >= scheduledFor);
+
+            return Ok(await query.ToListAsync());
+        }
+
+
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MaintenanceModel>>> GetMaintenances()
             => await _context.Maintenances

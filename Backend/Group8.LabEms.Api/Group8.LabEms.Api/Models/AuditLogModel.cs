@@ -15,6 +15,7 @@ namespace Group8.LabEms.Api.Models
         public int AuditLogId { get; set; }
 
         [Column("timestamp")]
+        [DataType(DataType.DateTime)]
         public DateTime TimeStamp { get; set; }
 
         [Column("user_id")]
