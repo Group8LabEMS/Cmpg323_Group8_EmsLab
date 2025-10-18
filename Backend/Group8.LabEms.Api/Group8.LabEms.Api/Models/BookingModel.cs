@@ -41,7 +41,7 @@ namespace Group8.LabEms.Api.Models
 
         [Required]
         [Column("created_date")]
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
         public bool IsValid(out string err)
         {
