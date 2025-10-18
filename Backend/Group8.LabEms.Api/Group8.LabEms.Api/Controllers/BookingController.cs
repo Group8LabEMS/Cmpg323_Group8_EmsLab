@@ -23,8 +23,109 @@ namespace Group8.LabEms.Api.Controllers
             _notificationService = notificationService;
         }
 
+      
+
+        // GET BOOKINGS with pagination
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<object>>> GetBookings()
+        public async Task<ActionResult<IEnumerable<BookingModel>>> GetBookings(
+            [FromQuery] string status = null,
+            [FromQuery] string displayName = null,
+            [FromQuery] string equipmentName = null,
+            [FromQuery] string sortBy = null,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            //INCLUDE RELATED ENTITIES
+            var query = _context.Bookings
+            .Include(b => b.BookingStatus)
+            .Include(b => b.Equipment)
+            .Include(b => b.User)
+            .AsQueryable();
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                query = query.Where(b =>b.BookingStatus != null && b.BookingStatus.Name == status);
+            }
+
+            if (!string.IsNullOrEmpty(displayName))
+            {
+                query = query.Where(b => b.User != null && b.User.DisplayName == displayName);
+            }
+
+             if (!string.IsNullOrEmpty(equipmentName))
+            {
+                query = query.Where(b => b.Equipment != null && b.Equipment.Name == equipmentName);
+            }
+
+            //IMPLEMENT SORTING
+            if (!string.IsNullOrEmpty(sortBy) || page > 1)
+            {
+                query = sortBy?.ToLower() switch
+                {
+                    "date" => query.OrderBy(b => b.CreatedDate),
+                    "displayName" => query.OrderBy(b => b.User.DisplayName),
+                    "equipmentName" => query.OrderBy(b => b.Equipment.Name),
+                    _ => query.OrderBy(b => b.CreatedDate)
+                };
+
+            }
+
+            var bookingsCount = await query.CountAsync();
+            var bookings = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return Ok(new { bookingsCount, bookings});
+            
+        }
+
+
+        //GET BOOKINGS WITH OPTIONAL STATUS FILTER
+        [HttpGet("status")]
+        public async Task<ActionResult<IEnumerable<BookingModel>>> GetBookingsByStatus([FromQuery] string status = null)
+        {
+            var query = _context.Bookings
+            .Include(b => b.BookingStatus)
+            .AsQueryable();
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                query = query.Where(b => b.BookingStatus.Name == status);
+            }
+
+            var bookings = await query.ToListAsync();
+            return Ok(bookings);
+        }
+                
+        
+        //GET HISTORICAL BOOKINGS
+        //THIS IS GOOD FOR THE DASHBOARD
+        [HttpGet("historical")]
+        public async Task<ActionResult> GetHistoricalBookings([FromQuery] DateTime? fromDate = null)
+        {
+            var historicalStatuses = new[] { "Completed", "Cancelled", "Approved", "Rejected" };
+
+            var query = _context.Bookings
+                .Include(b => b.BookingStatus)
+                .Where(b => historicalStatuses.Contains(b.BookingStatus.Name));
+
+                 // IF THE FROM DATE IS  PROVIDED, FILTER BY IT
+            if (fromDate.HasValue)
+            {
+              query = query.Where(b => b.CreatedDate >= fromDate.Value);
+            }
+            var bookings = await query.ToListAsync();
+                
+            return Ok(bookings);
+        }
+        
+    
+
+        // FILTERING BY DATES
+
+        [HttpGet("date-range")]
+        public async Task<ActionResult<IEnumerable<BookingModel>>> GetBookingsInDateRange([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
         {
             var currentUserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
             var currentUserRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
@@ -57,6 +158,16 @@ namespace Group8.LabEms.Api.Controllers
                 .ToListAsync();
             return Ok(bookings);
         }
+
+
+        // [HttpGet]
+        // public async Task<ActionResult<IEnumerable<BookingModel>>> GetBooking()
+        //     => await _context.Bookings
+
+        //         .Include(x => x.Equipment)
+        //         .Include(u => u.User)
+        //         .Include(b => b.BookingStatus)
+        //         .ToListAsync();
 
 
         [HttpGet("{id}")]
@@ -107,6 +218,32 @@ namespace Group8.LabEms.Api.Controllers
                 Serilog.Log.Error(debugMsg);
                 return BadRequest("Invalid User, Equipment, or BookingStatus ID. " + debugMsg);
             }
+
+            //CHECK FOR CONFLICTS
+            var hasBookingConflict = await _context.Bookings
+            .Where(b => b.EquipmentId == booking.EquipmentId)
+            .Where(b =>b.BookingStatus.Name == "Approved" || b.BookingStatus.Name == "Pending")
+            .Where(b => b.BookingId != booking.BookingId) 
+            .Where(b => b.FromDate < booking.ToDate && b.ToDate > booking.FromDate)
+            .AnyAsync();
+            
+
+            var hasEquipmentConflict = await _context.Equipments
+            .Where(e => e.EquipmentStatus.Name != "Available")
+            // .Where(e => e.Location != "Available")
+            .AnyAsync();
+
+            if (hasEquipmentConflict || hasBookingConflict)
+            {
+                return Conflict("The selected Equipment is not available or is already booked");
+            }
+
+            if (booking.FromDate < DateTime.UtcNow)
+                return BadRequest("From date must must not be in the past");
+
+            if (booking.FromDate >= booking.ToDate)
+                return BadRequest("From date must not be after start date"); 
+
 
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();

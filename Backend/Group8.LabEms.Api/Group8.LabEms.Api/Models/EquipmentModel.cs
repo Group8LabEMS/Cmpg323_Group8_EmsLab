@@ -31,7 +31,7 @@ namespace Group8.LabEms.Api.Models
 
         [Required]
         [Column("created_date")]
-        public DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
         // Navigation collections
         public ICollection<BookingModel> Bookings { get; set; } = new List<BookingModel>();
