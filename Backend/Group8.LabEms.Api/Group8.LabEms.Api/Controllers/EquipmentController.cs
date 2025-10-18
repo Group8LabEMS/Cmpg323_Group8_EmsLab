@@ -113,7 +113,7 @@ namespace Group8.LabEms.Api.Controllers
 
             return NoContent();
         }
-
+        //   /api/equipment/maintenance
         [HttpGet("maintenance")]
         public async Task<ActionResult<IEnumerable<object>>> GetMaintenanceEquipment()
         {

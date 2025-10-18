@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Microsoft.Extensions.FileProviders;
 using System.Text;
+using System.Text.RegularExpressions;
+using Group8.LabEms.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -143,6 +145,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+app.UseAuditLogging();
 
 // SPA fallback routing - serve index.html for non-API routes
 app.MapFallbackToFile("index.html");
