@@ -61,4 +61,4 @@ dotnet test
 ```
 
 ## Documentation
-Additional documentation and user guides can be found in the `documents/` folder.
+Additional documentation, user manual and developer manual can be found in the `documents/` folder.
