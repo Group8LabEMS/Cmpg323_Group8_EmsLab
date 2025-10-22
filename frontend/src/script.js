@@ -36,7 +36,6 @@ const TABS_BY_ROLE = {
     { id: 'maintenance', label: 'Maintenance' },
     { id: 'adminAudit', label: 'Audit Trails' },
     { id: 'reports', label: 'Reports' },
-    { id: 'settings', label: 'Settings' }
   ]
 };
 
