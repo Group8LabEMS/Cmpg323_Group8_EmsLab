@@ -42,6 +42,9 @@ async function renderCalendarAndBookings(dashboardSection, userId) {
   }
 
   render(html`
+    <div class="card-header">
+      <div class="card-subtitle">Welcome to your personal dashboard</div>
+    </div>
     <div class="dashboard-flex">
       <div class="dashboard-row">
         <div class="card dashboard-card dashboard-calendar-card" style="max-height: unset">

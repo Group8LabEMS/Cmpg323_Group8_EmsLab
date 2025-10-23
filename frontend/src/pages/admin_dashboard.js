@@ -30,6 +30,9 @@ export async function renderAdminDashboard() {
   }
 
   litRender(html`
+    <div class="card-header">
+      <div class="card-subtitle">Overview of system statistics and performance metrics</div>
+    </div>
     <div class="admin-dashboard-grid">
       <div class="stats-container">
         <div class="stat-card">

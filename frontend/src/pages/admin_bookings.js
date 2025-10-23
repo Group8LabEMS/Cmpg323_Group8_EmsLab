@@ -193,6 +193,7 @@ export async function renderAdminBookings() {
 	section.classList.remove('hidden');
 	litRender(html`
 		<div class="card-header">
+			<h2 class="card-title">Bookings Management</h2>
 			<div class="card-subtitle">View, approve, reject, and manage bookings.</div>
 		</div>
 		<div class="card">

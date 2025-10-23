@@ -222,6 +222,7 @@ export async function renderEquipmentManagement() {
        section.classList.remove('hidden');
        litRender(html`
 	       <div class="card-header">
+	         <h2 class="card-title">Equipment Management</h2>
 	         <div class="card-subtitle">View, add, update and delete equipment.</div>
 	       </div>
 	       <div class="card">
