@@ -1,4 +1,8 @@
 # LabEMS - Lab Equipment Management System
+Clicking the [folllowing link](https://labems-a3cjf7e7d8e8czfd.southafricanorth-01.azurewebsites.net/) will take you to the deployed version of the LabEMS project
+
+
+
 
 A web-based application for managing laboratory equipment, bookings, and maintenance schedules.
 
