@@ -13,7 +13,7 @@
 10. [Testing](#testing)
 11. [CI/CD Pipeline](#cicd-pipeline)
 12. [Deployment](#deployment)
-13. [Guidelines](#contributing-guidelines)
+13. [Guidelines](#guidelines)
 
 ## Project Overview
 
