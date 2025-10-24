@@ -4,17 +4,16 @@
 1. [Project Overview](#project-overview)
 2. [Architecture](#architecture)
 3. [Development Environment Setup](#development-environment-setup)
-4. [Project Structure](#project-structure)
-5. [Backend Development](#backend-development)
-6. [Frontend Development](#frontend-development)
-7. [Database Management](#database-management)
-8. [API Documentation](#api-documentation)
-9. [Security](#security)
-10. [Configuration Management](#configuration-management)
-11. [Testing](#testing)
-12. [CI/CD Pipeline](#cicd-pipeline)
-13. [Deployment](#deployment)
-14. [Contributing Guidelines](#contributing-guidelines)
+4. [Backend Development](#backend-development)
+5. [Frontend Development](#frontend-development)
+6. [Database Management](#database-management)
+7. [API Documentation](#api-documentation)
+8. [Security](#security)
+9. [Configuration Management](#configuration-management)
+10. [Testing](#testing)
+11. [CI/CD Pipeline](#cicd-pipeline)
+12. [Deployment](#deployment)
+13. [Contributing Guidelines](#contributing-guidelines)
 
 ## Project Overview
 
@@ -140,39 +139,6 @@ Create a `.env` file within the frontend directory:
 VITE_API_BASE_URL=https://localhost:7000
 ```
 
-## Project Structure
-
-```
-Cmpg323_Group8_EmsLab/
-├── Backend/
-│   └── Group8.LabEms.Api/
-│       └── Group8.LabEms.Api/
-│           ├── Controllers/          # API controllers
-│           ├── Models/              # Data models and DTOs
-│           ├── Services/            # Business logic services
-│           ├── Data/                # Entity Framework DbContext
-│           ├── Middleware/          # Custom middleware
-│           ├── AuditLog/           # Audit logging components
-│           ├── BusinessLogic/      # Core business logic
-│           ├── Configurations/     # Configuration files
-│           └── wwwroot/           # Static files
-├── frontend/
-│   ├── src/
-│   │   ├── api/                   # API communication layer
-│   │   ├── pages/                 # Page components
-│   │   ├── util/                  # Utility functions
-│   │   └── types/                 # TypeScript definitions
-│   ├── public/                    # Static assets
-│   └── package.json
-├── database/
-│   ├── V001__create.sql          # Database schema
-│   └── V002__populate.sql        # Initial data
-├── documents/
-│   ├── Diagrams/                 # System diagrams
-│   └── stories/                  # User stories and requirements
-└── Backend/Group8.LabEms.Test/   # Unit tests
-```
-
 ## Backend Development
 
 ### Key Components
@@ -293,28 +259,6 @@ Log.Logger = new LoggerConfiguration()
    ```
 
 ## Frontend Development
-
-### Project Structure
-
-The frontend makes use of modern JavaScript with Lit web components:
-
-```
-frontend/src/
-├── api/
-│   └── api.js              # API communication layer
-├── pages/
-│   ├── admin_*.js          # Admin-specific pages
-│   ├── dashboard.js        # Main dashboard
-│   ├── bookings.js         # Booking management
-│   └── equipment.js        # Equipment management
-├── util/
-│   ├── auth.js             # Authentication utilities
-│   ├── dom.js              # DOM manipulation helpers
-│   ├── modals.js           # Modal utilities
-│   └── toast.js            # Notification system
-└── types/
-    └── global.d.ts         # TypeScript definitions
-```
 
 ### API Communication
 
@@ -548,20 +492,9 @@ services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 #### Role-Based Access Control (RBAC)
 - **Admin**: Has full admin pages access
-- **Student**: Has access to all equipment booking and viewing and user pages
+- **Student**: Has access to all user pages
 
-#### Security Headers
-```csharp
-// Security headers middleware
-app.UseHsts();
-app.UseHttpsRedirection();
-app.UseXContentTypeOptions();
-app.UseReferrerPolicy(ReferrerPolicyOptions.NoReferrer);
-app.UseXXssProtection(options => options.EnabledWithBlockMode());
-app.UseXfo(options => options.Deny());
-```
-
-### Input Validation and Sanitization
+### Input Validation
 
 #### Model Validation
 ```csharp
@@ -582,29 +515,6 @@ public class BookingCreateDto
     [StringLength(500)]
     public string Purpose { get; set; }
 }
-```
-
-#### SQL Injection Prevention
-- Make use of parameterized queries
-- Entity Framework Core parameter binding
-- Input validation at API level
-
-### Password Security
-- BCrypt hashing implemented
-
-### Cross orgin resource shareing (CORS) Configuration
-```csharp
-services.AddCors(options =>
-{
-    options.AddPolicy("Production", builder =>
-    {
-        builder
-            .WithOrigins("https://yourdomain.com")
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials();
-    });
-});
 ```
 
 ## Configuration Management
@@ -651,38 +561,6 @@ services.AddCors(options =>
         "Password": "${SMTP_PASSWORD}"
     }
 }
-```
-
-### Environment Variables
-
-All required environment variables for production:
-```bash
-DATABASE_CONNECTION_STRING=Server=prod-db;Database=labems;Uid=app_user;Pwd=secure_password;
-JWT_SECRET_KEY=your-super-secure-256-bit-secret-key-here
-SMTP_SERVER=smtp.yourdomain.com
-SMTP_USERNAME=noreply@yourdomain.com
-SMTP_PASSWORD=your-smtp-password
-ASPNETCORE_ENVIRONMENT=Production
-```
-
-### Configuration Validation
-```csharp
-public class DatabaseOptions
-{
-    public const string SectionName = "Database";
-    
-    [Required]
-    public string ConnectionString { get; set; }
-    
-    [Range(1, 3600)]
-    public int CommandTimeout { get; set; } = 30;
-}
-
-// Validate configuration on startup
-services.AddOptions<DatabaseOptions>()
-    .Bind(configuration.GetSection(DatabaseOptions.SectionName))
-    .ValidateDataAnnotations()
-    .ValidateOnStart();
 ```
 
 ## Testing
